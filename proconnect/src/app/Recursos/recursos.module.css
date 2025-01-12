@@ -6,6 +6,7 @@
     padding: 40px;
     margin: 0;
     width: 1500px;
+    max-height: 300px;
   }
   
   .titulo {
@@ -42,7 +43,7 @@
   .footer {
     background-color: #8B2CF5;
     color: #fff;
-    padding: 60px 20px;
+    padding: 100px 20px;
     border-radius: 8px;
   }
   
