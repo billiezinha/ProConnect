@@ -1,4 +1,3 @@
-// Componentes React com estilos para corresponder à imagem fornecida
 import styles from "./recursos.module.css";
 
 export default function Recursos() {
