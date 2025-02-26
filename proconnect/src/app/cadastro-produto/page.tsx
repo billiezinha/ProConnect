@@ -16,19 +16,16 @@ export default function Cadproduto() {
   };
 
   return (
-    
     <div className={styles.body}>
       <div className={styles.container}>
         <div className={styles.logoSection}>
           <p className={styles.logoText}>Adicione uma foto da logo do seu serviço</p>
           <div className={styles.logoWrapper}>
-            {logoPreview ? (
-              <img src={logoPreview} alt="Logo Preview" className={styles.logoPreview} />
-            ) : (
-              <div className={styles.logoPlaceholder}>
-                <i className={styles.cameraIcon}></i>
-              </div>
-            )}
+            <img
+              src={logoPreview || "/Camera.png"}
+              alt="Logo Preview"
+              className={styles.logoPreview}
+            />
             <input
               type="file"
               className={styles.inputFile}
@@ -50,31 +47,11 @@ export default function Cadproduto() {
             <option value="Obra">Obra</option>
           </select>
 
-          <label htmlFor="localizacao" className={styles.label}>Localização</label>
-          <select id="localizacao" className={styles.inputField}>
-            <option value="Santo Antonio">Santo Antonio</option>
-            <option value="Dom Expedito">Dom Expedito</option>
-            <option value="Sussuapara">Sussuapara</option>
-            <option value="Picos">Picos</option>
-          </select>
-
-          <label htmlFor="email" className={styles.label}>Email</label>
-          <input type="email" id="email" className={styles.inputField} />
-
           <label htmlFor="telefone" className={styles.label}>Telefone</label>
           <input type="tel" id="telefone" className={styles.inputField} />
 
-          <label htmlFor="instagram" className={styles.label}>Instagram</label>
-          <input type="url" id="instagram" className={styles.inputField} />
-
-          <label htmlFor="linkedin" className={styles.label}>LinkedIn</label>
-          <input type="url" id="linkedin" className={styles.inputField} />
-
           <label htmlFor="descricao" className={styles.label}>Descrição</label>
           <input type="text" id="descricao" className={styles.inputField} />
-
-          <label htmlFor="preco" className={styles.label}>Especificação de Preço</label>
-          <input type="text" id="preco" className={styles.inputField} />
 
           <input type="submit" value="Finalizar Cadastro" className={styles.submitButton} />
         </div>

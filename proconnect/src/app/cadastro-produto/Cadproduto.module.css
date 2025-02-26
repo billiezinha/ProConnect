@@ -28,6 +28,7 @@
   color: #fff;
   text-align: center;
   padding: 30px;
+
 }
 
 .logoText {
@@ -41,7 +42,7 @@
   height: 120px;
   border-radius: 50%;
   border: 2px solid #fff;
-  background-color: #f3f3f3;
+  background-color: #D9D9D936;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -50,8 +51,8 @@
 }
 
 .logoPreview {
-  width: 100%;
-  height: 100%;
+  width: 50%;
+  height: 50%;
   object-fit: cover;
   border-radius: 50%;
 }
