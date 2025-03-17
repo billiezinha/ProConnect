@@ -2,6 +2,7 @@
 
 import styles from "./Cadproduto.module.css";
 import { useState } from "react";
+import Link from "next/link";
 
 export default function Cadproduto() {
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
@@ -22,7 +23,7 @@ export default function Cadproduto() {
           <p className={styles.logoText}>Adicione uma foto da logo do seu serviço</p>
           <div className={styles.logoWrapper}>
             <img
-              src={logoPreview || "/Camera.png"}
+              src={logoPreview || "/Camera.jpg"}
               alt="Logo Preview"
               className={styles.logoPreview}
             />
@@ -53,7 +54,9 @@ export default function Cadproduto() {
           <label htmlFor="descricao" className={styles.label}>Descrição</label>
           <input type="text" id="descricao" className={styles.inputField} />
 
-          <input type="submit" value="Finalizar Cadastro" className={styles.submitButton} />
+          <Link href="/Busca-profissionais">
+            <button className={styles.submitButton}>Finalizar Cadastro</button>
+          </Link>
         </div>
       </div>
     </div>

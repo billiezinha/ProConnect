@@ -14,7 +14,9 @@ export default function Home() {
         <a href="#footer">
         <button className={styles.butaoPrimary}>ANUNCIE SEU SERVIÇO</button>
         </a>
+        <Link href="/Busca-profissionais">
         <button className={styles.butaoPrimary}>ENCONTRE PROFISSIONAIS</button>
+        </Link>
       </div>
       <div className={styles.recursos}>
         <h1 className={styles.titulo3}>Por que escolher a ProConnect?</h1>
