@@ -1,14 +1,20 @@
 import Link from 'next/link';
 import styles from "./page.module.css";
+import ImageUploader from '@/components/ImageUploader';
 
 export default function Home() {
   return (
-    <div className={styles.body}>
-      <h1 className={styles.titulo}>CONECTANDO</h1>
-      <h1 className={styles.titulo2}>PROFISSIONAIS E CLIENTES</h1>
-      <h2 className={styles.textoPrincipal}>
-        Simplifique a busca por serviços e profissionais com a plataforma mais direta e transparente do mercado
-      </h2>
+
+    <div>
+    <h1>Upload de Imagem para Firebase</h1>
+    <ImageUploader />
+  </div>
+    // <div className={styles.body}>
+    //   <h1 className={styles.titulo}>CONECTANDO</h1>
+    //   <h1 className={styles.titulo2}>PROFISSIONAIS E CLIENTES</h1>
+    //   <h2 className={styles.textoPrincipal}>
+    //     Simplifique a busca por serviços e profissionais com a plataforma mais direta e transparente do mercado
+    //   </h2>
     
       <div>
         <a href="#footer">
