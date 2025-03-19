@@ -1,11 +1,25 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import styles from "./Cadproduto.module.css";
-import { useState } from "react";
-import Link from "next/link";
 
 export default function Cadproduto() {
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [nomeCategoria, setNomeCategoria] = useState<string>("");
+  const [nomeMarca, setNomeMarca] = useState<string>("");
+  const [telefone, setTelefone] = useState<string>("");
+  const [estado, setEstado] = useState<string>("");
+  const [cidade, setCidade] = useState<string>("");
+  const [endereco, setEndereco] = useState<string>("");
+  const [descricao, setDescricao] = useState<string>("");
+  const [servicos, setServicos] = useState<{ nome: string; preco: string }[]>([]);
+  const [erro, setErro] = useState<string>("");
+  const [sucesso, setSucesso] = useState<string>("");
+
+  const categoryId = 6;
+
+  useEffect(() => {
+  }, [categoryId]);
 
   const handleLogoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -13,6 +27,59 @@ export default function Cadproduto() {
       const reader = new FileReader();
       reader.onload = () => setLogoPreview(reader.result as string);
       reader.readAsDataURL(file);
+    }
+  };
+
+  const handleAddServico = () => {
+    setServicos([...servicos, { nome: "", preco: "" }]);
+  };
+
+  const handleServicoChange = (index: number, field: "nome" | "preco", value: string) => {
+    const updatedServicos = [...servicos];
+    updatedServicos[index][field] = value;
+    setServicos(updatedServicos);
+  };
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const formData = new FormData();
+    formData.append("nomeMarca", nomeMarca);
+    formData.append("categoriaId", categoryId.toString());
+    formData.append("telefone", telefone);
+    formData.append("estado", estado);
+    formData.append("cidade", cidade);
+    formData.append("endereco", endereco);
+    formData.append("descricao", descricao);
+
+    if (logoPreview) {
+      const logoBlob = await fetch(logoPreview).then((res) => res.blob());
+      formData.append("logo", logoBlob);
+    }
+
+    servicos.forEach((servico, index) => {
+      formData.append(`servico[${index}][nome]`, servico.nome);
+      formData.append(`servico[${index}][preco]`, servico.preco);
+    });
+
+    try {
+      const response = await fetch("https://proconnect.koyeb.app/servico/2", {
+        method: "POST",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro ao cadastrar produto");
+      }
+
+      const data = await response.json();
+      setSucesso("Produto cadastrado com sucesso!");
+      setErro("");
+    } catch (error) {
+      setErro("Erro ao cadastrar produto. Tente novamente.");
     }
   };
 
@@ -37,26 +104,125 @@ export default function Cadproduto() {
         </div>
 
         <div className={styles.formSection}>
-          <label htmlFor="nome" className={styles.label}>Nome da sua marca</label>
-          <input type="text" id="nome" className={styles.inputField} />
+          {erro && <p className={styles.error}>{erro}</p>}
+          {sucesso && <p className={styles.success}>{sucesso}</p>}
 
-          <label htmlFor="categoria" className={styles.label}>Categoria</label>
-          <select id="categoria" className={styles.inputField}>
-            <option value="Alimento">Alimento</option>
-            <option value="Beleza">Beleza</option>
-            <option value="Saúde">Saúde</option>
-            <option value="Obra">Obra</option>
-          </select>
+          <form onSubmit={handleSubmit}>
+            <label htmlFor="nome" className={styles.label}>
+              Nome do seu negócio
+            </label>
+            <input
+              type="text"
+              id="nome"
+              className={styles.inputField}
+              value={nomeMarca}
+              onChange={(e) => setNomeMarca(e.target.value)}
+            />
 
-          <label htmlFor="telefone" className={styles.label}>Telefone</label>
-          <input type="tel" id="telefone" className={styles.inputField} />
+            <label htmlFor="categoria" className={styles.label}>
+              Categoria
+            </label>
+            <select
+              id="categoria"
+              className={styles.inputField}
+              value={categoryId}
+              disabled
+            >
+              {nomeCategoria ? (
+                <option value={categoryId}>{nomeCategoria}</option>
+              ) : (
+                <option value="">Carregando categoria...</option>
+              )}
+            </select>
 
-          <label htmlFor="descricao" className={styles.label}>Descrição</label>
-          <input type="text" id="descricao" className={styles.inputField} />
+            <label htmlFor="telefone" className={styles.label}>
+              Telefone
+            </label>
+            <input
+              type="tel"
+              id="telefone"
+              className={styles.inputField}
+              value={telefone}
+              onChange={(e) => setTelefone(e.target.value)}
+            />
 
-          <Link href="/Busca-profissionais">
-            <button className={styles.submitButton}>Finalizar Cadastro</button>
-          </Link>
+            <label htmlFor="estado" className={styles.label}>
+              Estado
+            </label>
+            <input
+              type="text"
+              id="estado"
+              className={styles.inputField}
+              value={estado}
+              onChange={(e) => setEstado(e.target.value)}
+            />
+
+            <label htmlFor="cidade" className={styles.label}>
+              Cidade
+            </label>
+            <input
+              type="text"
+              id="cidade"
+              className={styles.inputField}
+              value={cidade}
+              onChange={(e) => setCidade(e.target.value)}
+            />
+
+            <label htmlFor="endereco" className={styles.label}>
+              Endereço
+            </label>
+            <input
+              type="text"
+              id="endereco"
+              className={styles.inputField}
+              value={endereco}
+              onChange={(e) => setEndereco(e.target.value)}
+            />
+
+            <label htmlFor="descricao" className={styles.label}>
+              Descrição
+            </label>
+            <textarea
+              id="descricao"
+              className={styles.inputField}
+              value={descricao}
+              onChange={(e) => setDescricao(e.target.value)}
+            />
+
+            {/* Serviços */}
+            <label htmlFor="servicos" className={styles.label}>
+              Serviços
+            </label>
+            {servicos.map((servico, index) => (
+              <div key={index} className={styles.servicoInput}>
+                <input
+                  type="text"
+                  placeholder="Serviço"
+                  value={servico.nome}
+                  onChange={(e) => handleServicoChange(index, "nome", e.target.value)}
+                  className={styles.inputField}
+                />
+                <input
+                  type="text"
+                  placeholder="Preço"
+                  value={servico.preco}
+                  onChange={(e) => handleServicoChange(index, "preco", e.target.value)}
+                  className={styles.inputField}
+                />
+              </div>
+            ))}
+            <button
+              type="button"
+              className={styles.addButton}
+              onClick={handleAddServico}
+            >
+              +
+            </button>
+
+            <button type="submit" className={styles.submitButton}>
+              Finalizar Cadastro
+            </button>
+          </form>
         </div>
       </div>
     </div>

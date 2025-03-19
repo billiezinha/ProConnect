@@ -1,3 +1,4 @@
+/* Body */
 .body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -9,6 +10,7 @@
   height: 100vh;
 }
 
+/* Container do Formulário */
 .container {
   display: flex;
   width: 900px;
@@ -18,6 +20,7 @@
   overflow: hidden;
 }
 
+/* Seção de Logo */
 .logoSection {
   background-color: #7d4eff;
   width: 40%;
@@ -27,7 +30,7 @@
   align-items: center;
   color: #fff;
   text-align: center;
-  padding: 30px;  
+  padding: 30px;
 }
 
 .logoText {
@@ -41,7 +44,7 @@
   height: 120px;
   border-radius: 50%;
   border: 2px solid #fff;
-  background-color: #D9D9D936;
+  background-color: #d9d9d936;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -56,19 +59,6 @@
   border-radius: 50%;
 }
 
-.logoPlaceholder {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 32px;
-  color: #7d4eff;
-}
-
-.cameraIcon {
-  font-size: 40px;
-  color: #7d4eff;
-}
-
 .inputFile {
   position: absolute;
   width: 120px;
@@ -79,21 +69,23 @@
   left: 0;
 }
 
+/* Seção do Formulário */
 .formSection {
   width: 60%;
   padding: 30px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 20px;
 }
 
+/* Labels e Inputs */
 .label {
   font-size: 14px;
   font-weight: bold;
   color: #333;
 }
 
-.inputField {
+.inputField, .textareaField {
   width: 100%;
   padding: 10px;
   font-size: 14px;
@@ -102,13 +94,38 @@
   background-color: #f9f9f9;
 }
 
-.inputField:focus {
+.inputField:focus, .textareaField:focus {
   border-color: #7d4eff;
   outline: none;
 }
 
+/* Campo de Descrição */
+.textareaField {
+  height: 100px;
+  resize: none;
+}
+
+/* Botão para Adicionar Serviço */
+.addButton {
+  background-color: #7d4eff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.addButton:hover {
+  background-color: #6a3dd9;
+}
+
+/* Botão de Envio */
 .submitButton {
-  grid-column: span 2;
   background-color: #7d4eff;
   color: #fff;
   border: none;
@@ -118,8 +135,27 @@
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
+  margin-top: 5px;
+  width: 480px;
 }
 
 .submitButton:hover {
   background-color: #6a3dd9;
+}
+
+/* Grid do Formulário */
+.inputGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.servicoInput {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.servicoInput input {
+  width: 48%;
 }
