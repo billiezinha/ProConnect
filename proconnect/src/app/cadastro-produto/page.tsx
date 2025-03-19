@@ -5,7 +5,7 @@ import styles from "./Cadproduto.module.css";
 
 export default function Cadproduto() {
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
-  const [nomeCategoria, setNomeCategoria] = useState<string>("");
+  const [nomeCategoria, setNomeCategoria] = useState<string>("");  // Para armazenar o nome da categoria selecionada
   const [nomeMarca, setNomeMarca] = useState<string>("");
   const [telefone, setTelefone] = useState<string>("");
   const [estado, setEstado] = useState<string>("");
@@ -15,11 +15,35 @@ export default function Cadproduto() {
   const [servicos, setServicos] = useState<{ nome: string; preco: string }[]>([]);
   const [erro, setErro] = useState<string>("");
   const [sucesso, setSucesso] = useState<string>("");
+  const [categorias, setCategorias] = useState<any[]>([]);  // Lista de categorias
 
   const categoryId = 6;
 
   useEffect(() => {
-  }, [categoryId]);
+    const fetchCategorias = async () => {
+      try {
+        const response = await fetch('https://proconnect.koyeb.app/categoria');
+        if (!response.ok) {
+          throw new Error("Erro ao carregar categorias");
+        }
+  
+        const data = await response.json();
+        console.log(data);
+  
+        setCategorias(data);
+        if (data.length > 0) {
+          setNomeCategoria(data[0].nome);
+        }
+      } catch (error) {
+        console.error("Erro ao carregar categorias:", error);
+        setErro("Não foi possível carregar as categorias.");
+      }
+    };
+  
+    fetchCategorias();
+  }, []);
+  
+  
 
   const handleLogoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -63,7 +87,7 @@ export default function Cadproduto() {
     });
 
     try {
-      const response = await fetch("https://proconnect.koyeb.app/servico/2", {
+      const response = await fetch("https://proconnect.koyeb.app/servico", {
         method: "POST",
         headers: {
           "Content-Type": "multipart/form-data",
@@ -87,7 +111,7 @@ export default function Cadproduto() {
     <div className={styles.body}>
       <div className={styles.container}>
         <div className={styles.logoSection}>
-          <p className={styles.logoText}>Adicione uma foto da logo do seu serviço</p>
+          <p className={styles.logoText}>Adicione uma foto da logo do seu Negócio</p>
           <div className={styles.logoWrapper}>
             <img
               src={logoPreview || "/Camera.jpg"}
@@ -125,13 +149,18 @@ export default function Cadproduto() {
             <select
               id="categoria"
               className={styles.inputField}
-              value={categoryId}
-              disabled
+              value={nomeCategoria} // A categoria selecionada
+              onChange={(e) => setNomeCategoria(e.target.value)} // Atualiza a categoria
             >
-              {nomeCategoria ? (
-                <option value={categoryId}>{nomeCategoria}</option>
+              <option value="">Selecione uma categoria</option>
+              {categorias.length > 0 ? (
+                categorias.map((categoria) => (
+                  <option key={categoria.id} value={categoria.nome}>
+                    {categoria.nome}
+                  </option>
+                ))
               ) : (
-                <option value="">Carregando categoria...</option>
+                <option>Carregando categorias...</option>
               )}
             </select>
 
@@ -144,39 +173,6 @@ export default function Cadproduto() {
               className={styles.inputField}
               value={telefone}
               onChange={(e) => setTelefone(e.target.value)}
-            />
-
-            <label htmlFor="estado" className={styles.label}>
-              Estado
-            </label>
-            <input
-              type="text"
-              id="estado"
-              className={styles.inputField}
-              value={estado}
-              onChange={(e) => setEstado(e.target.value)}
-            />
-
-            <label htmlFor="cidade" className={styles.label}>
-              Cidade
-            </label>
-            <input
-              type="text"
-              id="cidade"
-              className={styles.inputField}
-              value={cidade}
-              onChange={(e) => setCidade(e.target.value)}
-            />
-
-            <label htmlFor="endereco" className={styles.label}>
-              Endereço
-            </label>
-            <input
-              type="text"
-              id="endereco"
-              className={styles.inputField}
-              value={endereco}
-              onChange={(e) => setEndereco(e.target.value)}
             />
 
             <label htmlFor="descricao" className={styles.label}>

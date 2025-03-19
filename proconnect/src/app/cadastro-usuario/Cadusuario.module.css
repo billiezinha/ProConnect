@@ -1,22 +1,26 @@
 .body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    margin: 0;
-    font-family: Arial, sans-serif;
-  }
+}
 
-  .container {
+
+.container {
     display: flex;
     width: 900px;
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
+    overflow: hidden;
+}
 
-  .logoSection {
+
+.logoSection {
     background-color: #7d4eff;
     width: 40%;
     display: flex;
@@ -26,71 +30,69 @@
     color: #fff;
     text-align: center;
     padding: 40px;
-  }
-  
-  .logo {
+}
+
+.logo {
     width: 300px;
     height: 300px;
+    
+}
 
-  }
-
-  .formSection {
+.formSection {
     width: 60%;
     padding: 40px;
     display: flex;
     flex-direction: column;
     gap: 20px;
-  }
-  
-  .label {
+}
+
+.label {
     font-size: 14px;
     font-weight: bold;
     color: #333;
-  }
-  
-  .inputField {
+}
+
+.inputField {
     width: 100%;
     padding: 10px;
     font-size: 14px;
     border: 1px solid #ccc;
     border-radius: 5px;
     background-color: #f9f9f9;
-  }
-  
-  .inputField:focus {
+}
+
+.inputField:focus {
     border-color: #7d4eff;
     outline: none;
-  }
-  
+}
 
-  .doubleFields {
+
+.doubleFields {
     display: flex;
     gap: 20px;
     width: 100%;
-  }
-  
+}
 
-  .submitButton {
+
+.submitButton {
     background-color: #7d4eff;
     color: white;
     border: none;
-    padding: 15px;
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 5px;
+    padding: 13px;
+    border-radius: 50px;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;
     transition: background-color 0.3s ease;
-  }
-  
-  .submitButton:hover {
+    margin-top: 20px;
+}
+
+.submitButton:hover {
     background-color: #6a3dd9;
-  }
-  
-  .arrowIcon {
+}
+
+.arrowIcon {
     font-size: 18px;
-  }
-  
+    text-decoration: none;
+}

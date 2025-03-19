@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import styles from "./Cadusuario.module.css";
-import Image from "next/image";
+import Link from "next/link";
 
 export default function CadastroUsuario() {
   const [nome, setNome] = useState("");
@@ -108,9 +108,11 @@ export default function CadastroUsuario() {
               onChange={(e) => setEndereco(e.target.value)}
             />
 
-            <button type="submit" className={styles.submitButton}>
-              <span className={styles.arrowIcon}>→</span> Próximo
-            </button>
+            <Link href="/cadastro-produto">
+              <button type="submit" className={styles.submitButton}>
+                <span className={styles.arrowIcon}>→</span>
+              </button>
+            </Link>
           </form>
         </div>
       </div>
