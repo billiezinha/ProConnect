@@ -20,7 +20,7 @@
   overflow: hidden;
 }
 
-/* Seção de Logo */
+
 .logoSection {
   background-color: #7d4eff;
   width: 40%;
@@ -136,7 +136,7 @@
   cursor: pointer;
   transition: background-color 0.3s;
   margin-top: 5px;
-  width: 480px;
+  width: 100%;
 }
 
 .submitButton:hover {

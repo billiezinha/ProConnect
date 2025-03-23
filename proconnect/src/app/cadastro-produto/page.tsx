@@ -5,7 +5,7 @@ import styles from "./Cadproduto.module.css";
 
 export default function Cadproduto() {
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
-  const [nomeCategoria, setNomeCategoria] = useState<string>("");  // Para armazenar o nome da categoria selecionada
+  const [nomeCategoria, setNomeCategoria] = useState<string>("");
   const [nomeMarca, setNomeMarca] = useState<string>("");
   const [telefone, setTelefone] = useState<string>("");
   const [estado, setEstado] = useState<string>("");
@@ -15,9 +15,15 @@ export default function Cadproduto() {
   const [servicos, setServicos] = useState<{ nome: string; preco: string }[]>([]);
   const [erro, setErro] = useState<string>("");
   const [sucesso, setSucesso] = useState<string>("");
-  const [categorias, setCategorias] = useState<any[]>([]);  // Lista de categorias
+  const [categorias, setCategorias] = useState<any[]>([]);
+  const [imageUrl, setImageUrl] = useState<string>("");
 
-  const categoryId = 6;
+  // Declarando isClient corretamente
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true); // Isso garante que o código só execute após o componente ser montado no cliente
+  }, []);
 
   useEffect(() => {
     const fetchCategorias = async () => {
@@ -26,13 +32,11 @@ export default function Cadproduto() {
         if (!response.ok) {
           throw new Error("Erro ao carregar categorias");
         }
-  
         const data = await response.json();
-        console.log(data);
-  
+        console.log("Categorias carregadas:", data);
         setCategorias(data);
         if (data.length > 0) {
-          setNomeCategoria(data[0].nome);
+          setNomeCategoria(data[0].nomeServico);
         }
       } catch (error) {
         console.error("Erro ao carregar categorias:", error);
@@ -41,10 +45,8 @@ export default function Cadproduto() {
     };
   
     fetchCategorias();
-  }, []);
+  }, []); // Esse useEffect rodará apenas no cliente
   
-  
-
   const handleLogoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -68,13 +70,14 @@ export default function Cadproduto() {
     event.preventDefault();
 
     const formData = new FormData();
-    formData.append("nomeMarca", nomeMarca);
-    formData.append("categoriaId", categoryId.toString());
+    formData.append("nomeNegocio", nomeMarca);
+    formData.append("descricao", descricao);
+    formData.append("usuarioId", "1");  // Supondo que o usuário logado tem ID 1 (substitua conforme necessário)
+    formData.append("categoriaId", "1"); // Categoria ID selecionada
     formData.append("telefone", telefone);
     formData.append("estado", estado);
     formData.append("cidade", cidade);
     formData.append("endereco", endereco);
-    formData.append("descricao", descricao);
 
     if (logoPreview) {
       const logoBlob = await fetch(logoPreview).then((res) => res.blob());
@@ -82,8 +85,8 @@ export default function Cadproduto() {
     }
 
     servicos.forEach((servico, index) => {
-      formData.append(`servico[${index}][nome]`, servico.nome);
-      formData.append(`servico[${index}][preco]`, servico.preco);
+      formData.append(`preco[${index}]`, servico.preco); // Enviando o preço
+      formData.append(`servico[${index}][nome]`, servico.nome); // Enviando o nome do serviço
     });
 
     try {
@@ -149,14 +152,14 @@ export default function Cadproduto() {
             <select
               id="categoria"
               className={styles.inputField}
-              value={nomeCategoria} // A categoria selecionada
-              onChange={(e) => setNomeCategoria(e.target.value)} // Atualiza a categoria
+              value={nomeCategoria}
+              onChange={(e) => setNomeCategoria(e.target.value)}
             >
               <option value="">Selecione uma categoria</option>
               {categorias.length > 0 ? (
                 categorias.map((categoria) => (
-                  <option key={categoria.id} value={categoria.nome}>
-                    {categoria.nome}
+                  <option key={categoria.id} value={categoria.id}>
+                    {categoria.nomeServico}
                   </option>
                 ))
               ) : (

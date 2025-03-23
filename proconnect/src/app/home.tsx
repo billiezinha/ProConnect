@@ -45,7 +45,7 @@ export default function Home() {
           <h2 className={styles.textoFooterH2}>
             Junte-se a milhares de profissionais que já estão crescendo com a ProConnect.
           </h2>
-          <div className={styles.buttonWrapper}> 
+          <div className={styles.buttonWrapper}>
             <Link href="/cadastro-usuario">
             <button className={styles.butaoSecondary}>Cadastre-se gratuitamente</button>
             </Link>
