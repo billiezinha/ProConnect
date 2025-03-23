@@ -10,6 +10,7 @@ export default function BuscaServicos() {
   const [filteredServices, setFilteredServices] = useState([]); // Serviços filtrados
   const [localizacoes, setLocalizacoes] = useState([]); // Localizações
 
+  // Carrega serviços e localizações ao montar o componente
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -18,16 +19,11 @@ export default function BuscaServicos() {
           fetch("http://localhost:3333/localizacao"),
         ]);
 
-        if (!servicesResponse.ok || !locationsResponse.ok) {
-          throw new Error("Erro ao carregar dados");
-        }
+        if (!servicesResponse.ok) throw new Error("Erro ao carregar os serviços");
+        if (!locationsResponse.ok) throw new Error("Erro ao carregar as localizações");
 
-        
         const servicesData = await servicesResponse.json();
         const locationsData = await locationsResponse.json();
-
-        console.log("🟢 Serviços:", servicesData);
-        console.log("🟢 Localizações:", locationsData);
 
         setServicos(servicesData);
         setLocalizacoes(locationsData);
@@ -43,16 +39,13 @@ export default function BuscaServicos() {
   // Filtro por categoria e localização
   useEffect(() => {
     const filtered = servicos.filter((servico) => {
-      const categoriaNome = servico?.categoria?.nomeServico?.toLowerCase() || "";
-      const bairro = servico?.localizacao?.bairro?.toLowerCase() || "";
-      const cidade = servico?.localizacao?.cidade?.toLowerCase() || "";
-
-      const searchMatch = categoriaNome.includes(search.toLowerCase());
-      const locationMatch = location
-        ? bairro.includes(location.toLowerCase()) || cidade.includes(location.toLowerCase())
+      const categoriaMatch = servico.categoria?.nome?.toLowerCase().includes(search.toLowerCase());
+      const localizacaoMatch = location
+        ? servico.localizacao?.bairro?.toLowerCase().includes(location.toLowerCase()) ||
+          servico.localizacao?.cidade?.toLowerCase().includes(location.toLowerCase())
         : true;
 
-      return searchMatch && locationMatch;
+      return categoriaMatch && localizacaoMatch;
     });
 
     setFilteredServices(filtered);
@@ -95,7 +88,7 @@ export default function BuscaServicos() {
               <div className={styles.cardInfo}>
                 <h3 className={styles.serviceName}>{servico.nomeNegocio}</h3>
                 <p className={styles.category}>
-                  {servico.categoria?.nomeServico || "Sem categoria"}
+                  {servico.categoria?.nome || "Sem categoria"}
                 </p>
                 <p className={styles.category}>
                   {servico.localizacao?.bairro}, {servico.localizacao?.cidade}
