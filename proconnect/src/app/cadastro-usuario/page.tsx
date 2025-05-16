@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import styles from "./Cadusuario.module.css";
-import Link from "next/link";
 
 export default function CadastroUsuario() {
   const [nome, setNome] = useState("");
@@ -11,21 +10,18 @@ export default function CadastroUsuario() {
   const [estado, setEstado] = useState("");
   const [cidade, setCidade] = useState("");
   const [endereco, setEndereco] = useState("");
+  const [senha, setSenha] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({ nome, email, telefone, estado, cidade, endereco });
+    console.log({ nome, email, telefone, estado, cidade, endereco, senha });
   };
 
   return (
     <div className={styles.body}>
       <div className={styles.container}>
         <div className={styles.logoSection}>
-          <img
-            src="./logo.png"
-            alt="ProConnect"
-            className={styles.logo}
-          />
+          <img src="/logo.png" alt="ProConnect" className={styles.logo} />
         </div>
 
         <div className={styles.formSection}>
@@ -39,63 +35,53 @@ export default function CadastroUsuario() {
               className={styles.inputField}
               value={nome}
               onChange={(e) => setNome(e.target.value)}
+              required
             />
 
-            <div className={styles.doubleFields}>
-              <div>
-                <label htmlFor="email" className={styles.label}>
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  className={styles.inputField}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
+            <label htmlFor="email" className={styles.label}>
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              className={styles.inputField}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
 
-              <div>
-                <label htmlFor="telefone" className={styles.label}>
-                  Telefone
-                </label>
-                <input
-                  type="tel"
-                  id="telefone"
-                  className={styles.inputField}
-                  value={telefone}
-                  onChange={(e) => setTelefone(e.target.value)}
-                />
-              </div>
-            </div>
+            <label htmlFor="telefone" className={styles.label}>
+              Telefone
+            </label>
+            <input
+              type="tel"
+              id="telefone"
+              className={styles.inputField}
+              value={telefone}
+              onChange={(e) => setTelefone(e.target.value)}
+            />
 
-            <div className={styles.doubleFields}>
-              <div>
-                <label htmlFor="estado" className={styles.label}>
-                  Estado
-                </label>
-                <input
-                  type="text"
-                  id="estado"
-                  className={styles.inputField}
-                  value={estado}
-                  onChange={(e) => setEstado(e.target.value)}
-                />
-              </div>
+            <label htmlFor="estado" className={styles.label}>
+              Estado
+            </label>
+            <input
+              type="text"
+              id="estado"
+              className={styles.inputField}
+              value={estado}
+              onChange={(e) => setEstado(e.target.value)}
+            />
 
-              <div>
-                <label htmlFor="cidade" className={styles.label}>
-                  Cidade
-                </label>
-                <input
-                  type="text"
-                  id="cidade"
-                  className={styles.inputField}
-                  value={cidade}
-                  onChange={(e) => setCidade(e.target.value)}
-                />
-              </div>
-            </div>
+            <label htmlFor="cidade" className={styles.label}>
+              Cidade
+            </label>
+            <input
+              type="text"
+              id="cidade"
+              className={styles.inputField}
+              value={cidade}
+              onChange={(e) => setCidade(e.target.value)}
+            />
 
             <label htmlFor="endereco" className={styles.label}>
               Endereço
@@ -108,11 +94,21 @@ export default function CadastroUsuario() {
               onChange={(e) => setEndereco(e.target.value)}
             />
 
-            <Link href="/cadastro-produto">
-              <button type="submit" className={styles.submitButton}>
-                <span className={styles.arrowIcon}>→</span>
-              </button>
-            </Link>
+            <label htmlFor="senha" className={styles.label}>
+              Senha
+            </label>
+            <input
+              type="password"
+              id="senha"
+              className={styles.inputField}
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              required
+            />
+
+            <button type="submit" className={styles.submitButton}>
+              Cadastrar
+            </button>
           </form>
         </div>
       </div>
