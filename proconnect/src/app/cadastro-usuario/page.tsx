@@ -1,9 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { createUser } from "@/service/userService";
+import { CreateUserPayload } from "@/interfaces/UserProps";
 import styles from "./Cadusuario.module.css";
 
 export default function CadastroUsuario() {
+  const router = useRouter();
+
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [telefone, setTelefone] = useState("");
@@ -12,9 +17,27 @@ export default function CadastroUsuario() {
   const [endereco, setEndereco] = useState("");
   const [senha, setSenha] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({ nome, email, telefone, estado, cidade, endereco, senha });
+
+    const payload: CreateUserPayload = {
+      nome,
+      email,
+      telefone,
+      estado,
+      cidade,
+      endereco,
+      senha,
+    };
+
+    try {
+      await createUser(payload);
+      alert("Cadastro realizado com sucesso!");
+      router.push("/login");
+    } catch (err: any) {
+      console.error("Erro no cadastro:", err);
+      alert(err.response?.data?.message || "Falha ao cadastrar usuário.");
+    }
   };
 
   return (
@@ -25,6 +48,7 @@ export default function CadastroUsuario() {
         </div>
 
         <div className={styles.formSection}>
+          <h1>Cadastro de Usuário</h1>
           <form onSubmit={handleSubmit}>
             <label htmlFor="nome" className={styles.label}>
               Nome

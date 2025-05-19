@@ -1,36 +1,36 @@
+import { Localizacao, PrecoItem, Servico } from "@/interfaces/ServicoProps";
 import api from "./api";
 
-export interface ServicoData {
+export interface CreateServicoPayload {
   nomeNegocio: string;
-  preco: Array<{ 
-    id?: number;
-    nomeservico: string; 
-    precificacao: number; 
-    servicoId?: number;
-  }>;
-  avaliacao: Array<{ 
-    id?: number;
-    star: number; 
-    descricao: string; 
-    usuarioId: number;
-  }>;
   descricao: string;
-  categoriaid: number;
+  preco: PrecoItem[];
+  categoriaId: number;
   usuarioId: number;
+  localizacao?: Localizacao;
 }
 
-const createServico = async (data: ServicoData) => {
-  try {
-    const response = await api.post("/servicos", data);
-    return response.data;
-  } catch (error) {
-    console.error("Erro ao criar serviço:", error);
-    throw error;
-  }
-};
+export async function createServico(
+  payload: CreateServicoPayload
+): Promise<Servico> {
+  const resp = await api.post<Servico>("/servico", payload);
+  return resp.data;
+}
 
-const servicoService = {
-  createServico
-};
+export async function getServicos(): Promise<Servico[]> {
+  const resp = await api.get<Servico[]>("/servico");
+  return resp.data;
+}
 
-export default servicoService;
+export async function updateServico(
+  id: number,
+  payload: Partial<CreateServicoPayload>
+): Promise<Servico> {
+  const resp = await api.put<Servico>(`/servico/${id}`, payload);
+  return resp.data;
+}
+
+export async function deleteServico(id: number): Promise<{ message: string }> {
+  const resp = await api.delete<{ message: string }>(`/servico/${id}`);
+  return resp.data;
+}

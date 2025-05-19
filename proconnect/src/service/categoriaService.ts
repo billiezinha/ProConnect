@@ -1,22 +1,14 @@
+import { Categoria } from "@/interfaces/CategoriaProps";
 import api from "./api";
 
-export interface Categoria {
-  id: number;
-  nomeServico: string;
+export async function getCategorias(): Promise<Categoria[]> {
+  const resp = await api.get<Categoria[]>("/categoria");
+  return resp.data;
 }
 
-const getCategoriaNome = async (id: number): Promise<string> => {
-  try {
-    const response = await api.get<Categoria>(`/categoria/${id}`);
-    return response.data.nomeServico;
-  } catch (error) {
-    console.error("Erro ao buscar categoria:", error);
-    throw error;
-  }
-};
+export async function getCategoriaNome(id: number): Promise<string> {
+  const resp = await api.get<Categoria>(`/categoria/${id}`);
+  return resp.data.nomeServico;
+}
 
-const categoriaService = {
-  getCategoriaNome,
-};
-
-export default categoriaService;
+export default { getCategorias, getCategoriaNome };

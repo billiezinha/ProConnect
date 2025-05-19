@@ -1,15 +1,34 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { loginUser } from "@/service/authService";
 import styles from "./Login.module.css";
+import { LoginPayload } from "@/interfaces/LoginProps";
 
-export default function CadastroUsuario() {
+export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({ email, senha });
+    setLoading(true);
+
+    const payload: LoginPayload = { email, senha };
+
+    try {
+      const token = await loginUser(payload);
+      localStorage.setItem("token", token);
+      alert("Login bem-sucedido!");
+      router.push("/cadastro-produto");
+    } catch (err: any) {
+      console.error("Erro no login:", err);
+      alert(err.response?.data?.message || "Falha na autenticação.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -20,6 +39,7 @@ export default function CadastroUsuario() {
         </div>
 
         <div className={styles.formSection}>
+          <h1>Entrar</h1>
           <form onSubmit={handleSubmit}>
             <label htmlFor="email" className={styles.label}>
               Email
@@ -31,6 +51,7 @@ export default function CadastroUsuario() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              disabled={loading}
             />
 
             <label htmlFor="senha" className={styles.label}>
@@ -43,10 +64,15 @@ export default function CadastroUsuario() {
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
               required
+              disabled={loading}
             />
 
-            <button type="submit" className={styles.submitButton}>
-              Entrar
+            <button
+              type="submit"
+              className={styles.submitButton}
+              disabled={loading}
+            >
+              {loading ? "Carregando..." : "Entrar"}
             </button>
           </form>
         </div>

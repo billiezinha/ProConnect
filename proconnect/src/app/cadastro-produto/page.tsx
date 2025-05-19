@@ -1,229 +1,191 @@
-// "use client";
+"use client";
 
-// import { useState, useEffect } from "react";
-// import styles from "./Cadproduto.module.css";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import {
+  createServico,
+  CreateServicoPayload,
+} from "@/service/servicoService";
+import { getCategorias } from "@/service/categoriaService";
+import { PrecoItem } from "@/interfaces/ServicoProps";
+import { Categoria } from "@/interfaces/CategoriaProps";
+import styles from "./Cadproduto.module.css";
 
-// export default function Cadproduto() {
-//   const [logoPreview, setLogoPreview] = useState<string | null>(null);
-//   const [nomeCategoria, setNomeCategoria] = useState<string>("");
-//   const [nomeMarca, setNomeMarca] = useState<string>("");
-//   const [telefone, setTelefone] = useState<string>("");
-//   const [estado, setEstado] = useState<string>("");
-//   const [cidade, setCidade] = useState<string>("");
-//   const [endereco, setEndereco] = useState<string>("");
-//   const [descricao, setDescricao] = useState<string>("");
-//   const [servicos, setServicos] = useState<{ nome: string; preco: string }[]>([]);
-//   const [erro, setErro] = useState<string>("");
-//   const [sucesso, setSucesso] = useState<string>("");
-//   const [categorias, setCategorias] = useState<any[]>([]);
-//   const [imageUrl, setImageUrl] = useState<string>("");
+export default function Cadproduto() {
+  const router = useRouter();
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [nomeCategoria, setNomeCategoria] = useState<number>(1);
+  const [nomeMarca, setNomeMarca] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [estado, setEstado] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [endereco, setEndereco] = useState("");
+  const [descricao, setDescricao] = useState("");
+  const [servicos, setServicos] = useState<PrecoItem[]>([]);
+  const [erro, setErro] = useState("");
+  const [sucesso, setSucesso] = useState("");
+  const [categorias, setCategorias] = useState<Categoria[]>([]);
 
-//   // Declarando isClient corretamente
-//   const [isClient, setIsClient] = useState(false);
+  // Carrega as categorias via categoriaService
+  useEffect(() => {
+    getCategorias()
+      .then((data) => {
+        setCategorias(data);
+        if (data.length) {
+          setNomeCategoria(data[0].id);
+        }
+      })
+      .catch(() => {
+        setErro("Não foi possível carregar as categorias.");
+      });
+  }, []);
 
-//   useEffect(() => {
-//     setIsClient(true); // Isso garante que o código só execute após o componente ser montado no cliente
-//   }, []);
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => setLogoPreview(reader.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
 
-//   useEffect(() => {
-//     const fetchCategorias = async () => {
-//       try {
-//         const response = await fetch('https://proconnect.koyeb.app/categoria');
-//         if (!response.ok) {
-//           throw new Error("Erro ao carregar categorias");
-//         }
-//         const data = await response.json();
-//         console.log("Categorias carregadas:", data);
-//         setCategorias(data);
-//         if (data.length > 0) {
-//           setNomeCategoria(data[0].nomeServico);
-//         }
-//       } catch (error) {
-//         console.error("Erro ao carregar categorias:", error);
-//         setErro("Não foi possível carregar as categorias.");
-//       }
-//     };
-  
-//     fetchCategorias();
-//   }, []); // Esse useEffect rodará apenas no cliente
-  
-//   const handleLogoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-//     const file = event.target.files?.[0];
-//     if (file) {
-//       const reader = new FileReader();
-//       reader.onload = () => setLogoPreview(reader.result as string);
-//       reader.readAsDataURL(file);
-//     }
-//   };
+  const handleAddServico = () => {
+    setServicos([...servicos, { nomeservico: "", precificacao: 0 }]);
+  };
 
-//   const handleAddServico = () => {
-//     setServicos([...servicos, { nome: "", preco: "" }]);
-//   };
+  const handleServicoChange = (
+    idx: number,
+    field: keyof PrecoItem,
+    value: string
+  ) => {
+    const updated = [...servicos];
+    if (field === "precificacao") {
+      updated[idx][field] = Number(value);
+    } else {
+      updated[idx][field] = value;
+    }
+    setServicos(updated);
+  };
 
-//   const handleServicoChange = (index: number, field: "nome" | "preco", value: string) => {
-//     const updatedServicos = [...servicos];
-//     updatedServicos[index][field] = value;
-//     setServicos(updatedServicos);
-//   };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-//   const handleSubmit = async (event: React.FormEvent) => {
-//     event.preventDefault();
+    const payload: CreateServicoPayload = {
+      nomeNegocio: nomeMarca,
+      descricao,
+      preco: servicos,
+      categoriaId: nomeCategoria,
+      usuarioId: Number(localStorage.getItem("userId") || "1"),
+      localizacao: {
+        numero: endereco,
+        bairro: telefone,
+        cidade,
+        estado,
+      },
+    };
 
-//     const formData = new FormData();
-//     formData.append("nomeNegocio", nomeMarca);
-//     formData.append("descricao", descricao);
-//     formData.append("usuarioId", "1");  // Supondo que o usuário logado tem ID 1 (substitua conforme necessário)
-//     formData.append("categoriaId", "1"); // Categoria ID selecionada
-//     formData.append("telefone", telefone);
-//     formData.append("estado", estado);
-//     formData.append("cidade", cidade);
-//     formData.append("endereco", endereco);
+    try {
+      await createServico(payload);
+      setSucesso("Serviço cadastrado com sucesso!");
+      setErro("");
+      router.push("/meus-servicos");
+    } catch (err: any) {
+      console.error("Erro ao cadastrar serviço:", err);
+      setErro(err.response?.data?.message || "Falha ao cadastrar serviço.");
+      setSucesso("");
+    }
+  };
 
-//     if (logoPreview) {
-//       const logoBlob = await fetch(logoPreview).then((res) => res.blob());
-//       formData.append("logo", logoBlob);
-//     }
+  return (
+    <div className={styles.body}>
+      <div className={styles.container}>
+        {/* Logo */}
+        <div className={styles.logoSection}>
+          <p className={styles.logoText}>Foto da Logo do Negócio</p>
+          <div className={styles.logoWrapper}>
+            <img
+              src={logoPreview || "/Camera.jpg"}
+              alt="Logo Preview"
+              className={styles.logoPreview}
+            />
+            <input
+              type="file"
+              className={styles.inputFile}
+              onChange={handleLogoChange}
+            />
+          </div>
+        </div>
 
-//     servicos.forEach((servico, index) => {
-//       formData.append(`preco[${index}]`, servico.preco); // Enviando o preço
-//       formData.append(`servico[${index}][nome]`, servico.nome); // Enviando o nome do serviço
-//     });
+        <div className={styles.formSection}>
+          {erro && <p className={styles.error}>{erro}</p>}
+          {sucesso && <p className={styles.success}>{sucesso}</p>}
 
-//     try {
-//       const response = await fetch("https://proconnect.koyeb.app/servico", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "multipart/form-data",
-//         },
-//         body: formData,
-//       });
+          <form onSubmit={handleSubmit}>
+            <label className={styles.label}>Nome do Negócio</label>
+            <input
+              type="text"
+              className={styles.inputField}
+              value={nomeMarca}
+              onChange={(e) => setNomeMarca(e.target.value)}
+              required
+            />
 
-//       if (!response.ok) {
-//         throw new Error("Erro ao cadastrar produto");
-//       }
+            <label className={styles.label}>Categoria</label>
+            <select
+              className={styles.inputField}
+              value={nomeCategoria}
+              onChange={(e) => setNomeCategoria(Number(e.target.value))}
+            >
+              {categorias.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.nomeServico}
+                </option>
+              ))}
+            </select>
 
-//       const data = await response.json();
-//       setSucesso("Produto cadastrado com sucesso!");
-//       setErro("");
-//     } catch (error) {
-//       setErro("Erro ao cadastrar produto. Tente novamente.");
-//     }
-//   };
+            <label className={styles.label}>Descrição</label>
+            <textarea
+              className={styles.inputField}
+              value={descricao}
+              onChange={(e) => setDescricao(e.target.value)}
+              required
+            />
 
-//   return (
-//     <div className={styles.body}>
-//       <div className={styles.container}>
-//         <div className={styles.logoSection}>
-//           <p className={styles.logoText}>Adicione uma foto da logo do seu Negócio</p>
-//           <div className={styles.logoWrapper}>
-//             <img
-//               src={logoPreview || "/Camera.jpg"}
-//               alt="Logo Preview"
-//               className={styles.logoPreview}
-//             />
-//             <input
-//               type="file"
-//               className={styles.inputFile}
-//               onChange={handleLogoChange}
-//               aria-label="Upload da logo"
-//             />
-//           </div>
-//         </div>
+            <label className={styles.label}>Serviços & Preços</label>
+            {servicos.map((s, i) => (
+              <div key={i} className={styles.servicoInput}>
+                <input
+                  type="text"
+                  placeholder="Serviço"
+                  className={styles.inputField}
+                  value={s.nomeservico}
+                  onChange={(e) =>
+                    handleServicoChange(i, "nomeservico", e.target.value)
+                  }
+                  required
+                />
+                <input
+                  type="number"
+                  placeholder="Preço"
+                  className={styles.inputField}
+                  value={s.precificacao}
+                  onChange={(e) =>
+                    handleServicoChange(i, "precificacao", e.target.value)
+                  }
+                  required
+                />
+              </div>
+            ))}
+            <button type="button" onClick={handleAddServico}>
+              + Serviço
+            </button>
 
-//         <div className={styles.formSection}>
-//           {erro && <p className={styles.error}>{erro}</p>}
-//           {sucesso && <p className={styles.success}>{sucesso}</p>}
-
-//           <form onSubmit={handleSubmit}>
-//             <label htmlFor="nome" className={styles.label}>
-//               Nome do seu negócio
-//             </label>
-//             <input
-//               type="text"
-//               id="nome"
-//               className={styles.inputField}
-//               value={nomeMarca}
-//               onChange={(e) => setNomeMarca(e.target.value)}
-//             />
-
-//             <label htmlFor="categoria" className={styles.label}>
-//               Categoria
-//             </label>
-//             <select
-//               id="categoria"
-//               className={styles.inputField}
-//               value={nomeCategoria}
-//               onChange={(e) => setNomeCategoria(e.target.value)}
-//             >
-//               <option value="">Selecione uma categoria</option>
-//               {categorias.length > 0 ? (
-//                 categorias.map((categoria) => (
-//                   <option key={categoria.id} value={categoria.id}>
-//                     {categoria.nomeServico}
-//                   </option>
-//                 ))
-//               ) : (
-//                 <option>Carregando categorias...</option>
-//               )}
-//             </select>
-
-//             <label htmlFor="telefone" className={styles.label}>
-//               Telefone
-//             </label>
-//             <input
-//               type="tel"
-//               id="telefone"
-//               className={styles.inputField}
-//               value={telefone}
-//               onChange={(e) => setTelefone(e.target.value)}
-//             />
-
-//             <label htmlFor="descricao" className={styles.label}>
-//               Descrição
-//             </label>
-//             <textarea
-//               id="descricao"
-//               className={styles.inputField}
-//               value={descricao}
-//               onChange={(e) => setDescricao(e.target.value)}
-//             />
-
-//             {/* Serviços */}
-//             <label htmlFor="servicos" className={styles.label}>
-//               Serviços
-//             </label>
-//             {servicos.map((servico, index) => (
-//               <div key={index} className={styles.servicoInput}>
-//                 <input
-//                   type="text"
-//                   placeholder="Serviço"
-//                   value={servico.nome}
-//                   onChange={(e) => handleServicoChange(index, "nome", e.target.value)}
-//                   className={styles.inputField}
-//                 />
-//                 <input
-//                   type="text"
-//                   placeholder="Preço"
-//                   value={servico.preco}
-//                   onChange={(e) => handleServicoChange(index, "preco", e.target.value)}
-//                   className={styles.inputField}
-//                 />
-//               </div>
-//             ))}
-//             <button
-//               type="button"
-//               className={styles.addButton}
-//               onClick={handleAddServico}
-//             >
-//               +
-//             </button>
-
-//             <button type="submit" className={styles.submitButton}>
-//               Finalizar Cadastro
-//             </button>
-//           </form>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
+            <button type="submit" className={styles.submitButton}>
+              Finalizar Cadastro
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
