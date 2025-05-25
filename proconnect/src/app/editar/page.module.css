@@ -1,0 +1,112 @@
+.container {
+  display: flex;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.sidebar {
+  background-color: #470089;
+  color: white;
+  width: 35%;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sidebarText {
+  margin: 10px 0;
+  display: flex;
+  align-items: center;
+}
+
+.iconMargin {
+  margin-right: 8px;
+}
+
+.avatar {
+  width: 100px;
+  height: 100px;
+  background-color: white;
+  border-radius: 50%;
+  margin-bottom: 30px;
+}
+
+.form {
+  width: 65%;
+  padding: 40px;
+  background-color: #fff6f6;
+  position: relative;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 20px;
+}
+
+.titulo {
+  color: #470089;
+  margin-bottom: 20px;
+}
+
+.input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  background: #e8e8e8;
+  border: none;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+.servicoField {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #e8e8e8;
+  padding: 10px;
+}
+
+.servicoInput {
+  border: none;
+  background: transparent;
+  flex: 1;
+}
+
+.icons {
+  display: flex;
+  gap: 10px;
+}
+
+.clickableIcon {
+  cursor: pointer;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.excluir {
+  background: #d6d6d6;
+  padding: 10px 20px;
+  border: none;
+  color: #470089;
+  font-weight: bold;
+}
+
+.salvar {
+  background: #470089;
+  padding: 10px 20px;
+  border: none;
+  color: white;
+  font-weight: bold;
+}
