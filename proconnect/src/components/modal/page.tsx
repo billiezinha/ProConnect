@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styles from "./ModalServico.module.css"; // Importe o CSS para estilizar o modal
+import Image from "next/image"
 
 interface Comment {
   name: string;
@@ -40,7 +41,7 @@ const ModalServico: React.FC = () => {
     <div className={styles.modalContainer}>
       <div className={styles.modal}>
         <div className={styles.header}>
-          <img src="/path-to-your-logo.png" alt="Logo" className={styles.logo} />
+          <Image src="/path-to-your-logo.png" alt="Logo" className={styles.logo} />
           <h2>Hair Salon</h2>
           <p className={styles.category}>Cabeleireira</p>
           <p className={styles.location}>São Paulo - SP</p>

@@ -17,10 +17,10 @@ export default function Cadproduto() {
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [nomeCategoria, setNomeCategoria] = useState<number>(1);
   const [nomeMarca, setNomeMarca] = useState("");
-  const [telefone, setTelefone] = useState("");
-  const [estado, setEstado] = useState("");
-  const [cidade, setCidade] = useState("");
-  const [endereco, setEndereco] = useState("");
+  const [telefone] = useState("");
+  const [estado] = useState("");
+  const [cidade] = useState("");
+  const [endereco] = useState("");
   const [descricao, setDescricao] = useState("");
   const [servicos, setServicos] = useState<PrecoInput[]>([]);
   const [erro, setErro] = useState("");
