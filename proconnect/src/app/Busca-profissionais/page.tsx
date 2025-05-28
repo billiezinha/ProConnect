@@ -1,13 +1,11 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
 import { getServicos } from "@/service/servicoService";
 import { Servico } from "@/interfaces/ServicoProps";
 import styles from "./page.module.css";
 
 export default function BuscaServicos() {
-  const router = useRouter();
   const [search, setSearch] = useState("");
   const [location, setLocation] = useState("");
   const [servicos, setServicos] = useState<Servico[]>([]);

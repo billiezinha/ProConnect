@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import {
   createServico,
   CreateServicoPayload,
@@ -11,8 +10,9 @@ import { getCategorias } from "@/service/categoriaService";
 import { Categoria } from "@/interfaces/CategoriaProps";
 import styles from "./Cadproduto.module.css";
 
+import Image from 'next/image';
+
 export default function Cadproduto() {
-  const router = useRouter();
 
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [nomeCategoria, setNomeCategoria] = useState<number>(1);
@@ -87,10 +87,10 @@ export default function Cadproduto() {
       setSucesso("Serviço cadastrado com sucesso!");
       setErro("");
       //router.push("/meus-servicos");
-    } catch (err: any) {
-      console.error("Erro ao cadastrar serviço:", err);
-      setErro(err.response?.data?.message || "Falha ao cadastrar serviço.");
-      setSucesso("");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error(err.message);
+      }
     }
   };
 
@@ -101,7 +101,7 @@ export default function Cadproduto() {
         <div className={styles.logoSection}>
           <p className={styles.logoText}>Foto da Logo do Negócio</p>
           <div className={styles.logoWrapper}>
-            <img
+            <Image
               src={logoPreview || "/Camera.jpg"}
               alt="Logo Preview"
               className={styles.logoPreview}

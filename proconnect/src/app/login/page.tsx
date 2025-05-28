@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { loginUser } from "@/service/authService";
 import styles from "./Login.module.css";
 import { LoginPayload } from "@/interfaces/LoginProps";
+import Image from 'next/image';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -23,9 +24,10 @@ export default function LoginPage() {
       localStorage.setItem("token", token);
       alert("Login bem-sucedido!");
       router.push("/cadastro-produto");
-    } catch (err: any) {
-      console.error("Erro no login:", err);
-      alert(err.response?.data?.message || "Falha na autenticação.");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error(err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -35,7 +37,7 @@ export default function LoginPage() {
     <div className={styles.body}>
       <div className={styles.container}>
         <div className={styles.logoSection}>
-          <img src="/logo.png" alt="ProConnect" className={styles.logo} />
+          <Image src="/logo.png" alt="ProConnect" className={styles.logo} />
         </div>
 
         <div className={styles.formSection}>

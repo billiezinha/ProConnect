@@ -6,6 +6,8 @@ import { createUser } from "@/service/userService";
 import { CreateUserPayload } from "@/interfaces/UserProps";
 import styles from "./Cadusuario.module.css";
 
+import Image from 'next/image';
+
 export default function CadastroUsuario() {
   const router = useRouter();
 
@@ -34,9 +36,10 @@ export default function CadastroUsuario() {
       await createUser(payload);
       alert("Cadastro realizado com sucesso!");
       router.push("/login");
-    } catch (err: any) {
-      console.error("Erro no cadastro:", err);
-      alert(err.response?.data?.message || "Falha ao cadastrar usuário.");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error(err.message);
+      }
     }
   };
 
@@ -44,7 +47,7 @@ export default function CadastroUsuario() {
     <div className={styles.body}>
       <div className={styles.container}>
         <div className={styles.logoSection}>
-          <img src="/logo.png" alt="ProConnect" className={styles.logo} />
+          <Image src="/logo.png" alt="ProConnect" className={styles.logo} />
         </div>
 
         <div className={styles.formSection}>
