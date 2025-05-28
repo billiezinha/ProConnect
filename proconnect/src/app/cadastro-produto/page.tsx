@@ -5,14 +5,15 @@ import { useRouter } from "next/navigation";
 import {
   createServico,
   CreateServicoPayload,
+  PrecoInput,
 } from "@/service/servicoService";
 import { getCategorias } from "@/service/categoriaService";
-import { PrecoItem } from "@/interfaces/ServicoProps";
 import { Categoria } from "@/interfaces/CategoriaProps";
 import styles from "./Cadproduto.module.css";
 
 export default function Cadproduto() {
   const router = useRouter();
+
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [nomeCategoria, setNomeCategoria] = useState<number>(1);
   const [nomeMarca, setNomeMarca] = useState("");
@@ -21,19 +22,16 @@ export default function Cadproduto() {
   const [cidade, setCidade] = useState("");
   const [endereco, setEndereco] = useState("");
   const [descricao, setDescricao] = useState("");
-  const [servicos, setServicos] = useState<PrecoItem[]>([]);
+  const [servicos, setServicos] = useState<PrecoInput[]>([]);
   const [erro, setErro] = useState("");
   const [sucesso, setSucesso] = useState("");
   const [categorias, setCategorias] = useState<Categoria[]>([]);
 
-  // Carrega as categorias via categoriaService
   useEffect(() => {
     getCategorias()
       .then((data) => {
         setCategorias(data);
-        if (data.length) {
-          setNomeCategoria(data[0].id);
-        }
+        if (data.length) setNomeCategoria(data[0].id);
       })
       .catch(() => {
         setErro("Não foi possível carregar as categorias.");
@@ -55,7 +53,7 @@ export default function Cadproduto() {
 
   const handleServicoChange = (
     idx: number,
-    field: keyof PrecoItem,
+    field: keyof PrecoInput,
     value: string
   ) => {
     const updated = [...servicos];
@@ -88,7 +86,7 @@ export default function Cadproduto() {
       await createServico(payload);
       setSucesso("Serviço cadastrado com sucesso!");
       setErro("");
-      router.push("/meus-servicos");
+      //router.push("/meus-servicos");
     } catch (err: any) {
       console.error("Erro ao cadastrar serviço:", err);
       setErro(err.response?.data?.message || "Falha ao cadastrar serviço.");
@@ -99,7 +97,7 @@ export default function Cadproduto() {
   return (
     <div className={styles.body}>
       <div className={styles.container}>
-        {/* Logo */}
+        {/* logo */}
         <div className={styles.logoSection}>
           <p className={styles.logoText}>Foto da Logo do Negócio</p>
           <div className={styles.logoWrapper}>
@@ -176,8 +174,13 @@ export default function Cadproduto() {
                 />
               </div>
             ))}
-            <button type="button" onClick={handleAddServico}>
-              + Serviço
+
+            <button
+              type="button"
+              className={styles.addButton}
+              onClick={handleAddServico}
+            >
+              +
             </button>
 
             <button type="submit" className={styles.submitButton}>

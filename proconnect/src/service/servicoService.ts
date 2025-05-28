@@ -1,13 +1,24 @@
-import { Localizacao, PrecoItem, Servico } from "@/interfaces/ServicoProps";
 import api from "./api";
+import { Servico } from "@/interfaces/ServicoProps";
+
+export interface PrecoInput {
+  nomeservico: string;
+  precificacao: number;
+}
+export interface LocalizacaoInput {
+  numero: string;
+  bairro: string;
+  cidade: string;
+  estado: string;
+}
 
 export interface CreateServicoPayload {
   nomeNegocio: string;
   descricao: string;
-  preco: PrecoItem[];
+  preco: PrecoInput[];
   categoriaId: number;
   usuarioId: number;
-  localizacao?: Localizacao;
+  localizacao?: LocalizacaoInput;
 }
 
 export async function createServico(
