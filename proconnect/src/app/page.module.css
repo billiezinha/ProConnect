@@ -7,7 +7,7 @@
   color: black;
   height: 150vh; 
   margin: 0;
-  margin-top: 50px;
+  margin-top: 22%;
 }
 
 .titulo {
@@ -59,7 +59,6 @@
   margin: 0;
   width: 100%;
   max-height: 300px;
-  margin-top: 150px;
 }
 
 .titulo3 {
@@ -145,3 +144,80 @@
   font-size: 0.9rem;
   margin-top: 10px;
 }
+
+
+.planos {
+  background-color: #f9f4ff;
+  padding: 60px 20px;
+  text-align: center;
+  width: 100%;
+  margin-top: 150px;
+}
+
+.tituloPlanos {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #000;
+  margin-bottom: 40px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.planosWrapper {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+.cardPlano {
+  background: white;
+  padding: 30px 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  width: 360px;
+  text-align: left;
+}
+
+.planoTitulo {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.planoLista {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 25px;
+  font-size: 1rem;
+  color: #222;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.planoLista li {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+.botaoPlano {
+  display: block;
+  margin: 0 auto;
+  background-color: #8B2CF5;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.botaoPlano:hover {
+  background-color: #6a00cc;
+}
+
