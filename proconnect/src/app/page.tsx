@@ -27,9 +27,9 @@ export default function Home() {
             <div className={styles.cardPlano}>
               <h3 className={styles.planoTitulo}>Gratuito</h3>
               <ul className={styles.planoLista}>
-                <li>✔️ Cadastre Seu Perfil</li>
                 <li>✔️ Tenha Seu Perfil Visível Para Clientes</li>
-                <li>✔️ Visibilidade Limitada</li>
+                <li>✔️ Contato Direto</li>
+                <li>✔️ Receber Avaliações</li>
               </ul>
               <button className={styles.botaoPlano}>Assinar Gratuito</button>
             </div>
@@ -38,9 +38,13 @@ export default function Home() {
             <div className={styles.cardPlano}>
               <h3 className={styles.planoTitulo}>Premium</h3>
               <ul className={styles.planoLista}>
+                <li>✔️ Cadastre Seu Perfil</li>
+                <li>✔️ Tenha Seu Perfil Visível Para Clientes</li>
+                <li>✔️ Contato Direto</li>
+                <li>✔️ Receber Avaliações</li>
                 <li>✔️ Destaque Nos Resultados De Busca</li>
-                <li>✔️ Mais Visibilidade</li>
                 <li>✔️ Prioridade Nas Indicações De Clientes</li>
+                <li>✔️ Ver metricas de desempenho</li>
               </ul>
               <button className={styles.botaoPlano}>Assinar Premium</button>
             </div>
