@@ -37,11 +37,8 @@ export default function LoginPage() {
     <div className={styles.body}>
       <div className={styles.container}>
         <div className={styles.logoSection}>
-<<<<<<< HEAD
-          <Image src="/logo.png" alt="ProConnect" className={styles.logo} width={1000} height={1000} />
-=======
+
           <Image src="/logo.png" alt="ProConnect" className={styles.logo} width={1000} height={1000}/>
->>>>>>> c33daf8f108d05d96675965d09c0bc81b9142b56
         </div>
 
         <div className={styles.formSection}>
