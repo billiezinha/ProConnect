@@ -45,3 +45,7 @@ export async function deleteServico(id: number): Promise<{ message: string }> {
   const resp = await api.delete<{ message: string }>(`/servico/${id}`);
   return resp.data;
 }
+export async function getServicoById(id: number): Promise<Servico> {
+  const resp = await api.get<Servico>(`/servico/${id}`);
+  return resp.data;
+}

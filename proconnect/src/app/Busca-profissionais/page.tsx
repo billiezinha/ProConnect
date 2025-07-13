@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { getServicos } from "@/service/servicoService";
 import { Servico } from "@/interfaces/ServicoProps";
 import styles from "./page.module.css";
@@ -12,6 +13,8 @@ export default function BuscaServicos() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const router = useRouter();
+
   useEffect(() => {
     getServicos()
       .then((data) => setServicos(data))
@@ -21,6 +24,10 @@ export default function BuscaServicos() {
       })
       .finally(() => setLoading(false));
   }, []);
+
+  const abrirDetalhe = (id: number) => {
+    router.push(`/modal-servico?id=${id}`);
+  };
 
   const filtered = useMemo(() => {
     return servicos.filter((s) => {
@@ -78,18 +85,14 @@ export default function BuscaServicos() {
         <div className={styles.cardContainer}>
           {filtered.map((s) => (
             <div key={s.id} className={styles.card}>
-              <div className={styles.imagePlaceholder}>
-              </div>
+              <div className={styles.imagePlaceholder}></div>
               <div className={styles.cardInfo}>
                 <h3 className={styles.serviceName}>{s.nomeNegocio}</h3>
-                <p className={styles.category}>
-                  {s.categoria.nomeServico}
-                </p>
-                <div className={styles.stars}>
-                  ⭐⭐⭐
-                </div>
+                <p className={styles.category}>{s.categoria.nomeServico}</p>
+                <div className={styles.stars}>⭐⭐⭐</div>
                 <button
                   className={styles.detailsButton}
+                  onClick={() => abrirDetalhe(s.id)}
                 >
                   Detalhes
                 </button>

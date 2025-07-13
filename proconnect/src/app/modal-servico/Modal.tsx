@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
-import styles from "./ModalServico.module.css"; // Importe o CSS para estilizar o modal
-import Image from "next/image"
+import React, { useState, useEffect } from "react";
+import styles from "./Modal.module.css";
+import Image from "next/image";
+import { getServicoById } from "@/service/servicoService";
+import { Servico } from "@/interfaces/ServicoProps";
 
 interface Comment {
   name: string;
@@ -10,13 +12,27 @@ interface Comment {
   text: string;
 }
 
-const ModalServico: React.FC = () => {
-  const [rating, setRating] = useState<number>(0); // Avaliação do usuário
-  const [feedback, setFeedback] = useState<string>(""); // Feedback do usuário
+type Props = {
+  id: number;
+  onClose: () => void;
+};
+
+const Modal: React.FC<Props> = ({ id, onClose }) => {
+  const [servico, setServico] = useState<Servico | null>(null);
+  const [rating, setRating] = useState<number>(0);
+  const [feedback, setFeedback] = useState<string>("");
   const [comments, setComments] = useState<Comment[]>([
     { name: "Maria", rating: 5, text: "Excelente atendimento! A Joana foi super atenciosa e meu cabelo ficou incrível. Recomendo demais!" },
     { name: "Anonymous", rating: 4, text: "Fiz progressiva e achei que não durou tanto quanto esperava, mas o atendimento foi bom." },
   ]);
+
+  useEffect(() => {
+    if (!id || isNaN(id)) return;
+
+    getServicoById(id)
+      .then(setServico)
+      .catch(console.error);
+  }, [id]);
 
   const handleFeedbackChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setFeedback(e.target.value);
@@ -28,59 +44,74 @@ const ModalServico: React.FC = () => {
 
   const handleSubmitFeedback = () => {
     if (feedback) {
-      setComments([
-        ...comments,
-        { name: "Você", rating, text: feedback }
-      ]);
+      setComments([...comments, { name: "Você", rating, text: feedback }]);
       setFeedback("");
       setRating(0);
     }
   };
 
+  if (!servico) return <div className={styles.modalContainer}><p>Carregando...</p></div>;
+
   return (
     <div className={styles.modalContainer}>
       <div className={styles.modal}>
         <div className={styles.header}>
-          <Image src="/path-to-your-logo.png" alt="Logo" className={styles.logo} />
-          <h2>Hair Salon</h2>
-          <p className={styles.category}>Cabeleireira</p>
-          <p className={styles.location}>São Paulo - SP</p>
+          <Image
+            src="/Camera.jpg"
+            alt="Logo"
+            width={80}
+            height={80}
+            className={styles.logo}
+          />
+          <h2>{servico.nomeNegocio}</h2>
+          <p className={styles.category}>{servico.categoria?.nomeServico}</p>
+          <p className={styles.location}>{servico.localizacao?.cidade} - {servico.localizacao?.estado}</p>
           <div className={styles.rating}>
-            {/* Exibindo estrelas */}
             {[1, 2, 3, 4, 5].map((star) => (
               <span
                 key={star}
                 className={star <= rating ? styles.filledStar : styles.emptyStar}
                 onClick={() => handleRatingChange(star)}
-              >
-                ★
-              </span>
+              >★</span>
             ))}
             <p>{rating} de 5</p>
           </div>
         </div>
+
         <div className={styles.about}>
           <h3>Sobre</h3>
-          <p>Especialista em cortes modernos, coloração e tratamentos capilares. Atendimento personalizado para realçar a sua beleza.</p>
+          <p>{servico.descricao}</p>
         </div>
+
         <div className={styles.specifications}>
           <h3>Especificação</h3>
           <ul>
-            <li>Cortes femininos e masculinos</li>
-            <li>Escova progressiva e hidratação</li>
-            <li>Atendimento a domicílio</li>
+            {servico.preco?.map((p, i) => (
+              <li key={i}>✔ {p.nomeservico} - R$ {p.precificacao.toFixed(2)}</li>
+            ))}
           </ul>
         </div>
+
         <div className={styles.feedbackSection}>
-          <h3>O que você achou desse serviço?</h3>
+          <h3>O QUE VOCÊ ACHOU DESSE SERVIÇO?</h3>
+          <div className={styles.rating}>
+            {[1, 2, 3, 4, 5].map((star) => (
+              <span
+                key={star}
+                className={star <= rating ? styles.filledStar : styles.emptyStar}
+                onClick={() => handleRatingChange(star)}
+              >★</span>
+            ))}
+          </div>
           <textarea
-            placeholder="Escreva aqui sua avaliação ou feedback"
+            placeholder="Escreva sua avaliação ou feedback"
             value={feedback}
             onChange={handleFeedbackChange}
             className={styles.feedbackInput}
           />
           <button onClick={handleSubmitFeedback} className={styles.submitFeedback}>Enviar</button>
         </div>
+
         <div className={styles.previousComments}>
           <h3>Avaliações anteriores</h3>
           {comments.map((comment, index) => (
@@ -88,9 +119,7 @@ const ModalServico: React.FC = () => {
               <p className={styles.commentAuthor}>{comment.name}</p>
               <div className={styles.commentRating}>
                 {[1, 2, 3, 4, 5].map((star) => (
-                  <span key={star} className={star <= comment.rating ? styles.filledStar : styles.emptyStar}>
-                    ★
-                  </span>
+                  <span key={star} className={star <= comment.rating ? styles.filledStar : styles.emptyStar}>★</span>
                 ))}
                 <p>{comment.rating} de 5</p>
               </div>
@@ -98,12 +127,14 @@ const ModalServico: React.FC = () => {
             </div>
           ))}
         </div>
+
         <div className={styles.contactButton}>
           <button>Entre em contato</button>
+          <button onClick={onClose}>Fechar</button>
         </div>
       </div>
     </div>
   );
 };
 
-export default ModalServico;
+export default Modal;

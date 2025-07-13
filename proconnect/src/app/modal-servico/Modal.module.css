@@ -1,0 +1,197 @@
+.modalContainer {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+}
+
+.modal {
+  background: #f2f2f2;
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
+  max-height: 95vh;
+}
+
+.logo {
+  border-radius: 50%;
+  display: block;
+  margin: 0 auto 1rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.header h2 {
+  font-size: 1.5rem;
+  margin: 0.5rem 0 0.2rem;
+}
+
+.category,
+.location {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+}
+
+.rating {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  margin: 0.6rem 0;
+  flex-wrap: wrap;
+}
+
+.filledStar,
+.emptyStar {
+  font-size: 1.3rem;
+  color: #ffc107;
+  cursor: pointer;
+}
+
+.about,
+.specifications,
+.feedbackSection,
+.previousComments {
+  margin-top: 1.5rem;
+}
+
+.about p,
+.comment p {
+  font-size: 0.95rem;
+  color: #333;
+  line-height: 1.5;
+}
+
+.specifications ul {
+  list-style: none;
+  padding-left: 0;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.specifications ul li::before {
+  content: '✔';
+  color: #6a0dad;
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+
+.feedbackSection h3 {
+  font-size: 1rem;
+  color: #6a0dad;
+  margin-bottom: 0.5rem;
+}
+
+.feedbackInput {
+  width: 100%;
+  min-height: 70px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 0.6rem;
+  font-size: 0.9rem;
+  resize: vertical;
+  margin-top: 0.4rem;
+}
+
+.submitFeedback {
+  background-color: #6a0dad;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  margin-top: 0.7rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.3s ease;
+}
+
+.submitFeedback:hover {
+  background-color: #580ca8;
+}
+
+.previousComments h3 {
+  font-size: 1rem;
+  margin-bottom: 0.7rem;
+}
+
+.comment {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.commentAuthor {
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 0.3rem;
+}
+
+.commentRating {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 0.4rem;
+}
+
+.contactButton {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.contactButton button {
+  flex: 1;
+  padding: 0.6rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.contactButton button:first-child {
+  background-color: #8000ff;
+  color: white;
+}
+
+.contactButton button:last-child {
+  background-color: #ddd;
+  color: #333;
+}
+
+/* Responsivo */
+@media (max-width: 600px) {
+  .modal {
+    padding: 1.2rem;
+  }
+
+  .header h2 {
+    font-size: 1.2rem;
+  }
+
+  .feedbackInput {
+    min-height: 60px;
+  }
+
+  .submitFeedback,
+  .contactButton button {
+    font-size: 0.9rem;
+    padding: 0.5rem;
+  }
+  
+}
