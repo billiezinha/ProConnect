@@ -5,7 +5,7 @@ const baseURL =
     ? "http://localhost:3333"
     : "https://proconnectapi.onrender.com";
 
-// 🔽 crie a API ANTES de usar o interceptador
+
 const api = axios.create({
   baseURL,
   headers: {
@@ -13,7 +13,7 @@ const api = axios.create({
   },
 });
 
-// 🔽 agora sim pode usar
+
 api.interceptors.request.use((config) => {
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
   if (token) config.headers!["Authorization"] = `Bearer ${token}`;

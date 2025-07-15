@@ -5,7 +5,7 @@ import Modal from "./Modal";
 
 export default function ModalServicoPage() {
   const searchParams = useSearchParams();
-  const id = Number(searchParams.get("id")); // pega ?id=1 da URL
+  const id = Number(searchParams.get("id")); 
 
   return <Modal id={id} onClose={() => {}} />;
 }
