@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
 import { getServicos } from "@/service/servicoService";
 import { Servico } from "@/interfaces/ServicoProps";
 import styles from "./page.module.css";
+import Modal from "@/components/Modal";
 
 export default function BuscaServicos() {
   const [search, setSearch] = useState("");
@@ -12,8 +12,7 @@ export default function BuscaServicos() {
   const [servicos, setServicos] = useState<Servico[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  const router = useRouter();
+  const [selectedId, setSelectedId] = useState<number | null>(null);
 
   useEffect(() => {
     getServicos()
@@ -26,7 +25,10 @@ export default function BuscaServicos() {
   }, []);
 
   const abrirDetalhe = (id: number) => {
-    router.push(`/modal-servico?id=${id}`);
+    setSelectedId(id);
+  };
+  const fecharModal = () => {
+    setSelectedId(null);
   };
 
   const filtered = useMemo(() => {
@@ -100,6 +102,10 @@ export default function BuscaServicos() {
             </div>
           ))}
         </div>
+      )}
+
+      {selectedId !== null && (
+        <Modal id={selectedId} onClose={fecharModal} />
       )}
     </div>
   );
