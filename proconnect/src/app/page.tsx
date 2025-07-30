@@ -1,9 +1,19 @@
 import Link from 'next/link';
 import styles from './page.module.css';
+import { FaUserCircle } from 'react-icons/fa';
 
 export default function Home() {
   return (
     <div className={styles.body}>
+
+            {/* Ícone de login no canto superior direito */}
+      <div className={styles.loginIconWrapper}>
+        <Link href="/login">
+          <FaUserCircle className={styles.loginIcon} />
+        </Link>
+      </div>
+
+
       <h1 className={styles.titulo}>CONECTANDO</h1>
       <h1 className={styles.titulo2}>PROFISSIONAIS E CLIENTES</h1>
       <h2 className={styles.textoPrincipal}>
