@@ -5,9 +5,10 @@
   justify-content: center;
   background-color: white;
   color: black;
-  height: 150vh; 
+  min-height: 100vh;
+  padding: 60px 20px;
+  text-align: center;
   margin: 0;
-  margin-top: 22%;
 }
 
 .titulo {
@@ -74,6 +75,7 @@
   justify-content: center;
   gap: 20px;
   margin-bottom: 50px;
+  flex-wrap: wrap;
 }
 
 .lista {
@@ -113,6 +115,9 @@
 
 .buttonWrapper {
   margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .butaoSecondary {
@@ -145,7 +150,6 @@
   margin-top: 10px;
 }
 
-
 .planos {
   background-color: #f9f4ff;
   padding: 60px 20px;
@@ -174,7 +178,8 @@
   padding: 30px 25px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  width: 360px;
+  width: 100%;
+  max-width: 360px;
   text-align: left;
 }
 
@@ -202,7 +207,6 @@
   gap: 8px;
 }
 
-
 .botaoPlano {
   display: block;
   margin: 0 auto;
@@ -221,3 +225,87 @@
   background-color: #6a00cc;
 }
 
+/* Responsividade para telas pequenas */
+@media (max-width: 768px) {
+  .body {
+    padding: 40px 15px;
+  }
+
+  .titulo {
+    font-size: 2rem;
+  }
+
+  .titulo2 {
+    font-size: 2rem;
+  }
+
+  .textoPrincipal {
+    font-size: 1rem;
+    padding: 0 10px;
+  }
+
+  .butaoPrimary {
+    width: 100%;
+    max-width: 300px;
+    font-size: 0.95rem;
+    padding: 12px 24px;
+  }
+
+  .buttonWrapper {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .planos {
+    margin-top: 80px;
+    padding: 40px 15px;
+  }
+
+  .tituloPlanos {
+    font-size: 1.5rem;
+  }
+
+  .cardPlano {
+    width: 90%;
+    max-width: 400px;
+  }
+
+  .planoTitulo {
+    font-size: 1.2rem;
+  }
+
+  .planoLista {
+    font-size: 0.95rem;
+  }
+
+  .botaoPlano {
+    font-size: 0.95rem;
+    padding: 10px 20px;
+  }
+
+  .listaWrapper {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .itemLista {
+    font-size: 0.95rem;
+    padding: 8px 16px;
+  }
+
+  .footer {
+    padding: 40px 10px;
+  }
+
+  .titulo4 {
+    font-size: 1.5rem;
+  }
+
+  .textoFooterH2 {
+    font-size: 0.95rem;
+  }
+
+  .butaoSecondary {
+    font-size: 0.95rem;
+  }
+}

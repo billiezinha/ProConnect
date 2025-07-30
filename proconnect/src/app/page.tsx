@@ -31,7 +31,6 @@ export default function Home() {
                 <li>✔️ Contato Direto</li>
                 <li>✔️ Receber Avaliações</li>
               </ul>
-              <button className={styles.botaoPlano}>Assinar Gratuito</button>
             </div>
 
             {/* Premium */}
