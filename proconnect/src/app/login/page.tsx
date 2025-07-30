@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { loginUser } from "@/service/authService";
 import styles from "./Login.module.css";
 import { LoginPayload } from "@/interfaces/LoginProps";
-import Image from 'next/image';
+import Image from "next/image";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -37,15 +37,20 @@ export default function LoginPage() {
     <div className={styles.body}>
       <div className={styles.container}>
         <div className={styles.logoSection}>
-
-          <Image src="/logo.png" alt="ProConnect" className={styles.logo} width={1000} height={1000}/>
+          <Image
+            src="/logo.png"
+            alt="ProConnect"
+            className={styles.logo}
+            width={1000}
+            height={1000}
+          />
         </div>
 
         <div className={styles.formSection}>
-          <h1>Entrar</h1>
+          <h1 className={styles.title}>LOGIN</h1>
           <form onSubmit={handleSubmit}>
             <label htmlFor="email" className={styles.label}>
-              Email
+              Email:
             </label>
             <input
               type="email"
@@ -58,7 +63,7 @@ export default function LoginPage() {
             />
 
             <label htmlFor="senha" className={styles.label}>
-              Senha
+              Senha:
             </label>
             <input
               type="password"
@@ -70,14 +75,20 @@ export default function LoginPage() {
               disabled={loading}
             />
 
+            <div className={styles.forgot}>Esqueceu a senha?</div>
+
             <button
               type="submit"
               className={styles.submitButton}
               disabled={loading}
             >
-              {loading ? "Carregando..." : "Entrar"}
+              {loading ? "Carregando..." : "ENTRAR"}
             </button>
           </form>
+
+          <div className={styles.register}>
+            Não tem conta? <a href="/cadastro-usuario">cadastre-se</a>
+          </div>
         </div>
       </div>
     </div>
