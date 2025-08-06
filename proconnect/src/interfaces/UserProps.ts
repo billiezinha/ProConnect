@@ -1,7 +1,4 @@
-/**
- * Estrutura de dados para criar um novo utilizador.
- * Contém a senha.
- */
+// Para enviar dados para criar um utilizador
 export interface CreateUserPayload {
   nome: string;
   email: string;
@@ -12,10 +9,7 @@ export interface CreateUserPayload {
   senha: string;
 }
 
-/**
- * Representa um utilizador como ele vem da API.
- * NUNCA deve conter a senha.
- */
+// Para receber dados de um utilizador da API (sem a senha!)
 export interface User {
   id: number;
   nome: string;

@@ -1,112 +1,107 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
-import { getServicos } from "@/service/servicoService";
-import { Servico } from "@/interfaces/ServicoProps";
-import styles from "./page.module.css";
-import Modal from "@/components/Modal";
+import { useState, useEffect, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { getServicos } from '@/service/servicoService';
+import { Servico } from '@/interfaces/ServicoProps';
+import styles from './page.module.css';
+import { FaSearch, FaUserCircle } from 'react-icons/fa';
 
-export default function BuscaServicos() {
-  const [search, setSearch] = useState("");
-  const [location, setLocation] = useState("");
+export default function BuscaProfissionaisPage() {
+  const router = useRouter();
   const [servicos, setServicos] = useState<Servico[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
-    getServicos()
-      .then((data) => setServicos(data))
-      .catch((err) => {
-        console.error("Erro ao carregar serviços:", err);
-        setError("Não foi possível carregar os serviços.");
-      })
-      .finally(() => setLoading(false));
+    const fetchServicos = async () => {
+      try {
+        const data = await getServicos();
+        setServicos(data);
+      } catch (err) {
+        console.error("Erro ao ir buscar serviços:", err);
+        setError("Não foi possível carregar os serviços. Tente novamente mais tarde.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchServicos();
   }, []);
 
-  const abrirDetalhe = (id: number) => {
-    setSelectedId(id);
-  };
-  const fecharModal = () => {
-    setSelectedId(null);
-  };
-
-  const filtered = useMemo(() => {
-    return servicos.filter((s) => {
-      const matchName = s.nomeNegocio
-        .toLowerCase()
-        .includes(search.toLowerCase());
-      const matchLoc = location
-        ? s.localizacao?.cidade.toLowerCase() === location.toLowerCase()
-        : true;
-      return matchName && matchLoc;
-    });
-  }, [servicos, search, location]);
-
-  if (loading) return <p className={styles.message}>Carregando serviços…</p>;
-  if (error) return <p className={styles.messageError}>{error}</p>;
-
-  const cidades = Array.from(
-    new Set(
-      servicos
-        .map((s) => s.localizacao?.cidade)
-        .filter((c): c is string => Boolean(c))
-    )
-  );
+  // Filtra os serviços com base no termo de pesquisa
+  const filteredServicos = useMemo(() => {
+    if (!searchTerm) {
+      return servicos;
+    }
+    return servicos.filter(servico =>
+      servico.nomeNegocio.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      servico.descricao.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      servico.categoria.nomeServico.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [searchTerm, servicos]);
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>Encontre o profissional ideal</h1>
-
-      <div className={styles.searchContainer}>
-        <input
-          className={styles.searchInput}
-          type="text"
-          placeholder="🔍 Busque por um serviço..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-
-        <select
-          className={styles.locationSelect}
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-        >
-          <option value="">Todas as localidades</option>
-          {cidades.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {filtered.length === 0 ? (
-        <p className={styles.message}>Nenhum serviço encontrado.</p>
-      ) : (
-        <div className={styles.cardContainer}>
-          {filtered.map((s) => (
-            <div key={s.id} className={styles.card}>
-              <div className={styles.imagePlaceholder}></div>
-              <div className={styles.cardInfo}>
-                <h3 className={styles.serviceName}>{s.nomeNegocio}</h3>
-                <p className={styles.category}>{s.categoria.nomeServico}</p>
-                <div className={styles.stars}>⭐⭐⭐</div>
-                <button
-                  className={styles.detailsButton}
-                  onClick={() => abrirDetalhe(s.id)}
-                >
-                  Detalhes
-                </button>
-              </div>
-            </div>
-          ))}
+    <div className={styles.body}>
+      <header className={styles.header}>
+        <div className={styles.container}>
+          <Link href="/" className={styles.logo}>ProConnect</Link>
+          <div className={styles.searchBar}>
+            <FaSearch className={styles.searchIcon} />
+            <input 
+              type="text" 
+              placeholder="Pesquisar por serviço, categoria ou profissional..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <nav>
+            <Link href="/perfil" className={styles.profileLink}>
+              <FaUserCircle />
+              <span>Meu Perfil</span>
+            </Link>
+          </nav>
         </div>
-      )}
-
-      {selectedId !== null && (
-        <Modal id={selectedId} onClose={fecharModal} />
-      )}
+      </header>
+      
+      <main className={styles.mainContent}>
+        <div className={styles.container}>
+          {loading && <p className={styles.loadingState}>A carregar profissionais...</p>}
+          {error && <p className={styles.errorState}>{error}</p>}
+          
+          {!loading && !error && (
+            <>
+              <h1 className={styles.pageTitle}>Profissionais Disponíveis</h1>
+              {filteredServicos.length > 0 ? (
+                <div className={styles.grid}>
+                  {filteredServicos.map(servico => (
+                    <div key={servico.id} className={styles.card}>
+                      <div className={styles.cardHeader}>
+                        <h2 className={styles.cardTitle}>{servico.nomeNegocio}</h2>
+                        <span className={styles.cardCategory}>{servico.categoria.nomeServico}</span>
+                      </div>
+                      <p className={styles.cardDescription}>{servico.descricao}</p>
+                      <div className={styles.cardFooter}>
+                        <div className={styles.userInfo}>
+                          <FaUserCircle />
+                          <span>{servico.usuario.nome}</span>
+                        </div>
+                        <Link href={`/servico/${servico.id}`} className={styles.detailsButton}>
+                          Ver Detalhes
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className={styles.noResults}>Nenhum serviço encontrado para a sua pesquisa.</p>
+              )}
+            </>
+          )}
+        </div>
+      </main>
     </div>
   );
 }

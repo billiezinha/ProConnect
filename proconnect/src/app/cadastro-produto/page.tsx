@@ -6,11 +6,6 @@ import { FaUpload, FaTrash } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { CreateServicoPayload, PrecoInput } from "@/interfaces/ServicoProps";
 import { createServico } from "@/service/servicoService";
-import { jwtDecode } from "jwt-decode"; // Para obter o ID do utilizador
-
-interface DecodedToken {
-  sub: string;
-}
 
 export default function CadastroServicoPage() {
   const router = useRouter();
@@ -19,7 +14,7 @@ export default function CadastroServicoPage() {
   const [descricao, setDescricao] = useState("");
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   
-  // CORRIGIDO: O estado agora usa a estrutura correta da interface PrecoInput
+  // O estado usa a estrutura correta: 'nomeservico' e 'precificacao'
   const [servicos, setServicos] = useState<PrecoInput[]>([{ nomeservico: "", precificacao: 0 }]);
   
   const [loading, setLoading] = useState(false);
@@ -36,14 +31,12 @@ export default function CadastroServicoPage() {
     }
   };
 
-  // CORRIGIDO: A função agora atualiza os campos 'nomeservico' e 'precificacao'
   const handleServicoChange = (index: number, field: keyof PrecoInput, value: string | number) => {
     const novosServicos = [...servicos];
     novosServicos[index] = { ...novosServicos[index], [field]: value };
     setServicos(novosServicos);
   };
 
-  // CORRIGIDO: Adiciona um novo serviço com a estrutura correta
   const adicionarServico = () => {
     setServicos([...servicos, { nomeservico: "", precificacao: 0 }]);
   };
@@ -58,21 +51,20 @@ export default function CadastroServicoPage() {
     setLoading(true);
     setError("");
 
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setError("Sessão expirada. Por favor, faça login novamente.");
-      setLoading(false);
-      router.push("/login");
-      return;
+    // ✅ CORREÇÃO: Lê o ID do utilizador diretamente do localStorage, de forma mais segura.
+    const userId = Number(localStorage.getItem("userId") || "0"); 
+    
+    if (!userId) {
+        setError("Sessão inválida. Por favor, faça login novamente.");
+        setLoading(false);
+        router.push("/login");
+        return;
     }
-
-    const decodedToken: DecodedToken = jwtDecode(token);
-    const userId = Number(decodedToken.sub);
 
     const payload: CreateServicoPayload = {
       nomeNegocio: nomeMarca,
       descricao,
-      // CORRIGIDO: O 'map' agora usa os nomes corretos e garante que o valor é um número
+      // Garante que a estrutura enviada para a API está correta
       preco: servicos.map(s => ({
         nomeservico: s.nomeservico,
         precificacao: Number(s.precificacao) || 0
@@ -139,7 +131,7 @@ export default function CadastroServicoPage() {
           <h2 className={styles.sectionTitle}>Tabela de Preços</h2>
           {servicos.map((servico, index) => (
             <div key={index} className={styles.servicoItem}>
-              {/* CORRIGIDO: Os inputs agora usam 'nomeservico' e 'precificacao' */}
+              {/* Os inputs usam 'nomeservico' e 'precificacao' para alinhar com a API */}
               <input type="text" placeholder="Nome do serviço" value={servico.nomeservico} onChange={(e) => handleServicoChange(index, 'nomeservico', e.target.value)} required />
               <input type="number" placeholder="Preço (R$)" value={servico.precificacao} onChange={(e) => handleServicoChange(index, 'precificacao', parseFloat(e.target.value))} required />
               {servicos.length > 1 && (

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import "./globals.css";
+import "./globals.css"; // Apenas a importação do nosso Design System
 
 export const metadata: Metadata = {
   title: "ProConnect - Conectando Profissionais e Clientes",

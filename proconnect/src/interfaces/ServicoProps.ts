@@ -1,6 +1,4 @@
-// ===================================================================
-//  INTERFACES PARA DADOS RECEBIDOS DA API (O que o backend envia)
-// ===================================================================
+// Dados RECEBIDOS da API
 export interface PrecoItem {
   id: number;
   nomeservico: string;
@@ -16,9 +14,7 @@ export interface Servico {
   // ... outras propriedades que a API retorna
 }
 
-// ===================================================================
-//  INTERFACES PARA DADOS ENVIADOS PARA A API (O que o frontend envia)
-// ===================================================================
+// Dados ENVIADOS para a API
 export interface PrecoInput {
   nomeservico: string;
   precificacao: number;
@@ -30,5 +26,5 @@ export interface CreateServicoPayload {
   preco: PrecoInput[];
   categoriaId: number;
   usuarioId: number;
-  imagem: string | null; // A imagem é enviada como base64
+  imagem: string | null;
 }

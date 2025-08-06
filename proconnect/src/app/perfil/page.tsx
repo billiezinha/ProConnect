@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getUser } from '@/service/userService'; // Vamos precisar de ir buscar o utilizador
 import { User } from '@/interfaces/UserProps';
-import styles from './perfil.module.css';
+import styles from './page.module.css';
 import { FaUserCircle, FaEnvelope, FaPhone, FaMapMarkerAlt, FaEdit } from 'react-icons/fa';
 
 // Supõe que o token JWT tem um 'sub' (subject) com o ID do utilizador
