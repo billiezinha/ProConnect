@@ -2,44 +2,71 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
 import { createUser } from "@/service/userService";
 import { CreateUserPayload } from "@/interfaces/UserProps";
 import styles from "./Cadusuario.module.css";
 
-import Image from 'next/image';
-
-export default function CadastroUsuario() {
+export default function CadastroUsuarioPage() {
   const router = useRouter();
+  
+  const [step, setStep] = useState<number>(1);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
-  const [nome, setNome] = useState("");
-  const [email, setEmail] = useState("");
-  const [telefone, setTelefone] = useState("");
-  const [estado, setEstado] = useState("");
-  const [cidade, setCidade] = useState("");
-  const [endereco, setEndereco] = useState("");
-  const [senha, setSenha] = useState("");
+  const [formData, setFormData] = useState<CreateUserPayload & { confirmarSenha?: string }>({
+    nome: "",
+    email: "",
+    senha: "",
+    confirmarSenha: "",
+    telefone: "",
+    estado: "",
+    cidade: "",
+    endereco: "",
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { id, value } = e.target;
+    setFormData(prevState => ({ ...prevState, [id]: value }));
+  };
+
+  const handleNextStep = () => {
+    if (formData.senha !== formData.confirmarSenha) {
+      setError("As senhas não coincidem.");
+      return;
+    }
+    if (formData.senha.length < 6) {
+      setError("A senha deve ter no mínimo 6 caracteres.");
+      return;
+    }
+    setError("");
+    setStep(2);
+  };
+
+  const handlePrevStep = () => {
+    setError("");
+    setStep(1);
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
+    setError("");
 
-    const payload: CreateUserPayload = {
-      nome,
-      email,
-      telefone,
-      estado,
-      cidade,
-      endereco,
-      senha,
-    };
+    // Remove o campo confirmarSenha antes de enviar para a API
+    const { confirmarSenha, ...payload } = formData;
 
     try {
       await createUser(payload);
-      alert("Cadastro realizado com sucesso!");
+      alert("Cadastro realizado com sucesso! Faça o login para continuar.");
       router.push("/login");
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        console.error(err.message);
-      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Não foi possível completar o cadastro.";
+      setError(errorMessage);
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -47,96 +74,70 @@ export default function CadastroUsuario() {
     <div className={styles.body}>
       <div className={styles.container}>
         <div className={styles.logoSection}>
-          <Image src="/logo.png" alt="ProConnect" className={styles.logo} width={1000} height={1000} />
+          <Link href="/">
+            <Image src="/logo.png" alt="Logo ProConnect" width={200} height={200} priority className={styles.logo} />
+          </Link>
         </div>
-
         <div className={styles.formSection}>
-          <h1>Cadastro de Usuário</h1>
+          <div className={styles.formHeader}>
+            <h1>{step === 1 ? 'Crie a sua Conta' : 'Complete seu Perfil'}</h1>
+            <span className={styles.stepIndicator}>Passo {step} de 2</span>
+          </div>
           <form onSubmit={handleSubmit}>
-            <label htmlFor="nome" className={styles.label}>
-              Nome
-            </label>
-            <input
-              type="text"
-              id="nome"
-              className={styles.inputField}
-              value={nome}
-              onChange={(e) => setNome(e.target.value)}
-              required
-            />
+            {error && <p className={styles.error}>{error}</p>}
+            
+            {step === 1 && (
+              <>
+                <div className={styles.formGroup}>
+                  <label htmlFor="nome">Nome Completo</label>
+                  <input id="nome" type="text" value={formData.nome} onChange={handleChange} required disabled={loading} />
+                </div>
+                <div className={styles.formGroup}>
+                  <label htmlFor="email">Email</label>
+                  <input id="email" type="email" value={formData.email} onChange={handleChange} required disabled={loading} />
+                </div>
+                <div className={styles.formGroup}>
+                  <label htmlFor="senha">Senha (mín. 6 caracteres)</label>
+                  <input id="senha" type="password" value={formData.senha} onChange={handleChange} required disabled={loading} />
+                </div>
+                <div className={styles.formGroup}>
+                  <label htmlFor="confirmarSenha">Confirmar Senha</label>
+                  <input id="confirmarSenha" type="password" value={formData.confirmarSenha} onChange={handleChange} required disabled={loading} />
+                </div>
+                <button type="button" onClick={handleNextStep} className={styles.submitButton} disabled={loading}>
+                  Próximo
+                </button>
+              </>
+            )}
 
-            <label htmlFor="email" className={styles.label}>
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              className={styles.inputField}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-
-            <label htmlFor="telefone" className={styles.label}>
-              Telefone
-            </label>
-            <input
-              type="tel"
-              id="telefone"
-              className={styles.inputField}
-              value={telefone}
-              onChange={(e) => setTelefone(e.target.value)}
-            />
-
-            <label htmlFor="estado" className={styles.label}>
-              Estado
-            </label>
-            <input
-              type="text"
-              id="estado"
-              className={styles.inputField}
-              value={estado}
-              onChange={(e) => setEstado(e.target.value)}
-            />
-
-            <label htmlFor="cidade" className={styles.label}>
-              Cidade
-            </label>
-            <input
-              type="text"
-              id="cidade"
-              className={styles.inputField}
-              value={cidade}
-              onChange={(e) => setCidade(e.target.value)}
-            />
-
-            <label htmlFor="endereco" className={styles.label}>
-              Endereço
-            </label>
-            <input
-              type="text"
-              id="endereco"
-              className={styles.inputField}
-              value={endereco}
-              onChange={(e) => setEndereco(e.target.value)}
-            />
-
-            <label htmlFor="senha" className={styles.label}>
-              Senha
-            </label>
-            <input
-              type="password"
-              id="senha"
-              className={styles.inputField}
-              value={senha}
-              onChange={(e) => setSenha(e.target.value)}
-              required
-            />
-
-            <button type="submit" className={styles.submitButton}>
-              Cadastrar
-            </button>
+            {step === 2 && (
+              <>
+                <div className={styles.formGroup}>
+                  <label htmlFor="telefone">Telefone (Opcional)</label>
+                  <input id="telefone" type="tel" value={formData.telefone} onChange={handleChange} disabled={loading} placeholder="(00) 00000-0000" />
+                </div>
+                <div className={styles.formGroup}>
+                  <label htmlFor="estado">Estado</label>
+                  <input id="estado" type="text" value={formData.estado} onChange={handleChange} required disabled={loading} />
+                </div>
+                <div className={styles.formGroup}>
+                  <label htmlFor="cidade">Cidade</label>
+                  <input id="cidade" type="text" value={formData.cidade} onChange={handleChange} required disabled={loading} />
+                </div>
+                <div className={styles.buttonContainer}>
+                  <button type="button" onClick={handlePrevStep} className={`${styles.submitButton} ${styles.secondaryButton}`} disabled={loading}>
+                    Voltar
+                  </button>
+                  <button type="submit" className={styles.submitButton} disabled={loading}>
+                    {loading ? "A finalizar..." : "Finalizar Cadastro"}
+                  </button>
+                </div>
+              </>
+            )}
           </form>
+          <div className={styles.loginLink}>
+            Já tem uma conta? <Link href="/login">Faça login</Link>
+          </div>
         </div>
       </div>
     </div>

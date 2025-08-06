@@ -1,154 +1,146 @@
 .body {
+  /* Garante que o corpo ocupa a tela inteira, sem margens ou padding */
   width: 100vw;
   height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
-  padding: 0;
   margin: 0;
+  padding: 0;
+  overflow: hidden; /* Evita barras de scroll indesejadas no layout principal */
 }
 
 .container {
+  display: flex;
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: row;
-  background-color: white;
+  /* Removemos os estilos que o limitavam a um "card" */
+  max-width: none;
+  border-radius: 0;
+  box-shadow: none;
+  background-color: var(--cor-fundo);
 }
 
-/* Lado esquerdo com logo (desktop) */
 .logoSection {
   flex: 1;
-  background-color: #4C00A0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: grid;
+  place-items: center;
+  background: var(--cor-primaria);
+  padding: 40px;
 }
 
 .logo {
-  width: 70%;
-  max-width: 300px;
+  width: 60%;
   height: auto;
+  max-width: 250px;
 }
 
-/* Lado direito com formulário (desktop) */
 .formSection {
-  flex: 1;
+  flex: 1.2;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 60px;
-  background-color: white;
+  padding: 2rem 5rem; /* Aumentamos o padding lateral para mais respiro */
+  overflow-y: auto; /* Adiciona scroll apenas na secção do formulário, se necessário */
 }
 
-/* Estilos do formulário */
 .title {
-  text-align: center;
   font-size: 1.8rem;
-  font-weight: bold;
-  color: #4C00A0;
-  margin-bottom: 25px;
+  font-weight: 700;
+  color: var(--cor-primaria);
+  text-align: center;
+  margin-bottom: 2rem;
 }
 
-.label {
-  font-size: 0.875rem;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 5px;
-  display: block;
-}
-
-.inputField {
+.formGroup {
   width: 100%;
-  padding: 10px 15px;
+  margin-bottom: 1rem;
+}
+
+.formGroup label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--cor-texto-secundario);
+}
+
+.formGroup input {
+  width: 100%;
+  padding: 12px 15px;
   font-size: 1rem;
-  border: 1px solid #999;
-  border-radius: 20px;
-  background-color: white;
-  margin-bottom: 15px;
+  font-family: var(--fonte-principal);
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  background-color: var(--cor-fundo-input);
+  transition: all 0.2s ease;
 }
 
-.inputField:focus {
-  border-color: #4C00A0;
+.formGroup input:focus {
   outline: none;
-}
-
-.forgot {
-  font-size: 0.85rem;
-  text-align: right;
-  margin-bottom: 20px;
-  color: #444;
+  border-color: var(--cor-primaria);
+  box-shadow: 0 0 0 3px rgba(139, 44, 245, 0.15);
 }
 
 .submitButton {
   width: 100%;
-  max-width: 300px;
-  margin: 0 auto;
-  background-color: #4C00A0;
-  color: white;
-  border: none;
   padding: 12px;
+  margin-top: 1rem;
   font-size: 1rem;
-  font-weight: bold;
-  border-radius: 25px;
+  font-weight: 700;
+  color: var(--cor-texto-claro);
+  background-color: var(--cor-primaria);
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
 }
 
-.submitButton:hover {
-  background-color: #3a0080;
+.submitButton:hover:not(:disabled) {
+  background-color: var(--cor-primaria-hover);
+  transform: translateY(-2px);
+}
+
+.submitButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 
 .register {
-  margin-top: 20px;
-  font-size: 0.9rem;
+  margin-top: 1.5rem;
   text-align: center;
+  font-size: 0.9rem;
 }
 
 .register a {
-  color: #4C00A0;
-  font-weight: bold;
-  text-decoration: none;
+  color: var(--cor-primaria);
+  font-weight: 500;
 }
 
-.register a:hover {
-  text-decoration: underline;
+.error {
+  padding: 10px;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--cor-erro);
+  background-color: var(--cor-fundo-erro);
+  border: 1px solid var(--cor-borda-erro);
+  border-radius: 8px;
 }
 
-/* Responsivo: layout empilhado em telas menores */
+/* Responsividade para telemóveis */
 @media (max-width: 768px) {
+  .body {
+    height: auto;
+    min-height: 100vh;
+  }
   .container {
     flex-direction: column;
     height: auto;
-    background-color: #4C00A0;
   }
-
   .logoSection {
-    padding: 30px 20px;
+    /* Esconde a logo em telemóveis para dar mais espaço ao formulário */
+    display: none;
   }
-
   .formSection {
-    background-color: #e9e9e9;
-    border-radius: 20px;
-    padding: 30px 25px;
-    margin: 0 auto 30px;
-    width: 90%;
-    max-width: 350px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  }
-
-  .title {
-    color: #4C00A0;
-  }
-
-  .logo {
-    width: 60%;
-    max-width: 350px;
-  }
-
-  .submitButton {
-    width: 100%;
+    flex-grow: 1; /* Garante que o formulário ocupe o espaço vertical */
+    padding: 2rem 1.5rem;
   }
 }
