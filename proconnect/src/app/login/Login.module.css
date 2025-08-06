@@ -1,21 +1,16 @@
 .body {
-  /* Garante que o corpo ocupa a tela inteira, sem margens ou padding */
   width: 100vw;
   height: 100vh;
   margin: 0;
   padding: 0;
-  overflow: hidden; /* Evita barras de scroll indesejadas no layout principal */
+  overflow: hidden;
+  background-color: var(--cor-fundo-secao);
 }
 
 .container {
   display: flex;
   width: 100%;
   height: 100%;
-  /* Removemos os estilos que o limitavam a um "card" */
-  max-width: none;
-  border-radius: 0;
-  box-shadow: none;
-  background-color: var(--cor-fundo);
 }
 
 .logoSection {
@@ -37,8 +32,9 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 2rem 5rem; /* Aumentamos o padding lateral para mais respiro */
-  overflow-y: auto; /* Adiciona scroll apenas na secção do formulário, se necessário */
+  padding: 2rem 5rem;
+  overflow-y: auto;
+  background-color: var(--cor-fundo);
 }
 
 .title {
@@ -125,22 +121,8 @@
   border-radius: 8px;
 }
 
-/* Responsividade para telemóveis */
 @media (max-width: 768px) {
-  .body {
-    height: auto;
-    min-height: 100vh;
-  }
-  .container {
-    flex-direction: column;
-    height: auto;
-  }
   .logoSection {
-    /* Esconde a logo em telemóveis para dar mais espaço ao formulário */
     display: none;
-  }
-  .formSection {
-    flex-grow: 1; /* Garante que o formulário ocupe o espaço vertical */
-    padding: 2rem 1.5rem;
   }
 }

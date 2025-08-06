@@ -1,6 +1,4 @@
-// src/app/layout.tsx
 import type { Metadata } from "next";
-// Remova as importações da fonte Geist
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -8,7 +6,11 @@ export const metadata: Metadata = {
   description: "A plataforma mais direta para encontrar e anunciar serviços.",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html lang="pt-BR">
       <body>{children}</body>

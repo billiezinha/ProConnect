@@ -1,184 +1,193 @@
-/* Body */
 .body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #f4f4f4;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  background-color: var(--cor-fundo-secao);
+  padding: 3rem 1rem;
+  min-height: 100vh;
 }
 
-/* Container do Formulário */
 .container {
-  display: flex;
-  width: 900px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: var(--cor-fundo);
+  padding: 2.5rem;
+  border-radius: var(--raio-borda);
+  box-shadow: var(--sombra-suave);
 }
 
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--cor-primaria);
+  text-align: center;
+}
 
-.logoSection {
-  background-color: #7d4eff;
-  width: 40%;
+.subtitle {
+  text-align: center;
+  color: var(--cor-texto-secundario);
+  margin-bottom: 2.5rem;
+}
+
+.form {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  color: #fff;
-  text-align: center;
-  padding: 30px;
+  gap: 1.5rem;
 }
 
-.logoText {
-  font-size: 16px;
-  margin-bottom: 20px;
+.logoUploader {
+  margin-bottom: 1rem;
 }
 
-.logoWrapper {
-  position: relative;
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  border: 2px solid #fff;
-  background-color: #d9d9d936;
+.uploadArea {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 20px;
-  overflow: hidden;
+  height: 180px;
+  border: 2px dashed var(--cor-borda);
+  border-radius: var(--raio-borda);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.uploadArea:hover {
+  border-color: var(--cor-primaria);
+  background-color: var(--cor-fundo-secao);
+}
+
+.uploadPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  color: var(--cor-texto-secundario);
+}
+
+.uploadPlaceholder svg {
+  font-size: 2rem;
 }
 
 .logoPreview {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
+  object-fit: contain;
+  border-radius: var(--raio-borda);
 }
 
-.inputFile {
-  position: absolute;
-  width: 120px;
-  height: 120px;
-  opacity: 0;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-}
-
-/* Seção do Formulário */
-.formSection {
-  width: 60%;
-  padding: 30px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-/* Labels e Inputs */
-.label {
-  font-size: 14px;
-  font-weight: bold;
-  color: #333;
-}
-
-.inputField, .textareaField {
-  width: 100%;
-  padding: 10px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-}
-
-.inputField:focus, .textareaField:focus {
-  border-color: #7d4eff;
-  outline: none;
-}
-
-/* Campo de Descrição */
-.textareaField {
-  height: 100px;
-  resize: none;
-}
-
-/* Botão para Adicionar Serviço */
-.addButton {
-  background-color: #7d4eff;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  font-size: 16px;
-  font-weight: bold;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  width: 100%;
-  margin-top: 10px;
-}
-
-.addButton:hover {
-  background-color: #6a3dd9;
-}
-
-/* Botão de Envio */
-.submitButton {
-  background-color: #7d4eff;
-  color: #fff;
-  border: none;
-  padding: 15px 0;
-  font-size: 16px;
-  font-weight: bold;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  margin-top: 5px;
-  width: 100%;
-}
-
-.submitButton:hover {
-  background-color: #6a3dd9;
-}
-
-/* Grid do Formulário */
-.inputGrid {
+.formGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 1.5rem;
 }
 
-.servicoInput {
+.formGroup label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--cor-texto-secundario);
+}
+
+.formGroup input, .formGroup select, .formGroup textarea {
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 1rem;
+  font-family: var(--fonte-principal);
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  background-color: var(--cor-fundo-input);
+  transition: all 0.2s ease;
+}
+
+.formGroup input:focus, .formGroup select:focus, .formGroup textarea:focus {
+  outline: none;
+  border-color: var(--cor-primaria);
+  box-shadow: 0 0 0 3px rgba(139, 44, 245, 0.15);
+}
+
+.sectionTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  border-top: 1px solid var(--cor-borda);
+  padding-top: 1.5rem;
+}
+
+.servicoItem {
   display: flex;
-  justify-content: space-between;
-  gap: 10px;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
 }
 
-.servicoInput input {
-  width: 48%;
+.servicoItem input[type="text"] {
+  flex-grow: 3;
+}
+.servicoItem input[type="number"] {
+  flex-grow: 1;
+}
+
+.removeButton, .addButton {
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.removeButton {
+  background-color: transparent;
+  color: var(--cor-erro);
+}
+.removeButton:hover {
+  background-color: var(--cor-fundo-erro);
 }
 
 .addButton {
-  background: linear-gradient(135deg, #7d4eff, #a96eff);
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  font-size: 24px;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.12);
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  margin-top: 10px; /* ou ajuste conforme seu layout */
+  align-self: flex-start;
+  background-color: #e9ecef;
+  color: var(--cor-texto-secundario);
+  font-weight: 500;
+}
+.addButton:hover {
+  background-color: #dee2e6;
 }
 
-.addButton:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+.submitButton {
+  width: 100%;
+  padding: 12px;
+  margin-top: 1rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--cor-texto-claro);
+  background-color: var(--cor-primaria);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submitButton:hover:not(:disabled) {
+  background-color: var(--cor-primaria-hover);
+  transform: translateY(-2px);
+}
+
+.submitButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.error {
+  padding: 10px;
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--cor-erro);
+  background-color: var(--cor-fundo-erro);
+  border: 1px solid var(--cor-borda-erro);
+  border-radius: 8px;
+}
+
+@media (max-width: 600px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
 }

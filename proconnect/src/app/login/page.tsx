@@ -13,12 +13,12 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(""); // Estado para o erro
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError(""); // Limpa erros anteriores
+    setError("");
 
     const payload: LoginPayload = { email, senha };
 
@@ -29,10 +29,9 @@ export default function LoginPage() {
       router.push("/perfil");
     } catch (err: unknown) {
       if (err instanceof Error) {
-        setError(err.message); // Define a mensagem de erro para a UI
-        console.error(err.message);
+        setError(err.message);
       } else {
-        setError("Ocorreu um erro desconhecido. Tente novamente.");
+        setError("Ocorreu um erro desconhecido.");
       }
     } finally {
       setLoading(false);
@@ -67,7 +66,6 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={loading}
-                placeholder="seuemail@exemplo.com"
               />
             </div>
             <div className={styles.formGroup}>
@@ -81,8 +79,7 @@ export default function LoginPage() {
                 disabled={loading}
               />
             </div>
-
-            {/* Exibe o erro aqui */}
+            
             {error && <p className={styles.error}>{error}</p>}
 
             <button

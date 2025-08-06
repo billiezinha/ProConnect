@@ -34,7 +34,7 @@ export default function Home() {
             <a href="#planos" className={styles.butaoPrimary}>
               Anuncie seu Serviço
             </a>
-            <Link href="/busca-profissionais" className={styles.butaoOutline}>
+            <Link href="/Busca-profissionais" className={styles.butaoOutline}>
               Encontre Profissionais
             </Link>
           </div>
