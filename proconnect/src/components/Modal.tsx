@@ -22,8 +22,16 @@ const Modal: React.FC<Props> = ({ id, onClose }) => {
   const [rating, setRating] = useState<number>(0);
   const [feedback, setFeedback] = useState<string>("");
   const [comments, setComments] = useState<Comment[]>([
-    { name: "Maria", rating: 5, text: "Excelente atendimento! A Joana foi super atenciosa e meu cabelo ficou incrível. Recomendo demais!" },
-    { name: "Anonymous", rating: 4, text: "Fiz progressiva e achei que não durou tanto quanto esperava, mas o atendimento foi bom." },
+    {
+      name: "Maria",
+      rating: 5,
+      text: "Excelente atendimento! A Joana foi super atenciosa e meu cabelo ficou incrível. Recomendo demais!",
+    },
+    {
+      name: "Anonymous",
+      rating: 4,
+      text: "Fiz progressiva e achei que não durou tanto quanto esperava, mas o atendimento foi bom.",
+    },
   ]);
 
   useEffect(() => {
@@ -44,13 +52,22 @@ const Modal: React.FC<Props> = ({ id, onClose }) => {
 
   const handleSubmitFeedback = () => {
     if (feedback) {
-      setComments([...comments, { name: "Você", rating, text: feedback }]);
+      setComments((prev) => [...prev, { name: "Você", rating, text: feedback }]);
       setFeedback("");
       setRating(0);
     }
   };
 
-  if (!servico) return <div className={styles.modalContainer}><p>Carregando...</p></div>;
+  if (!servico)
+    return (
+      <div className={styles.modalContainer}>
+        <p>Carregando...</p>
+      </div>
+    );
+
+  // Cidade/estado vindos do usuário dono do serviço
+  const cidade = servico.usuario?.cidade ?? "";
+  const estado = servico.usuario?.estado ?? "";
 
   return (
     <div className={styles.modalContainer}>
@@ -65,14 +82,24 @@ const Modal: React.FC<Props> = ({ id, onClose }) => {
           />
           <h2>{servico.nomeNegocio}</h2>
           <p className={styles.category}>{servico.categoria?.nomeServico}</p>
-          <p className={styles.location}>{servico.localizacao?.cidade} - {servico.localizacao?.estado}</p>
+
+          {(cidade || estado) && (
+            <p className={styles.location}>
+              {cidade}
+              {cidade && estado ? " - " : ""}
+              {estado}
+            </p>
+          )}
+
           <div className={styles.rating}>
             {[1, 2, 3, 4, 5].map((star) => (
               <span
                 key={star}
                 className={star <= rating ? styles.filledStar : styles.emptyStar}
                 onClick={() => handleRatingChange(star)}
-              >★</span>
+              >
+                ★
+              </span>
             ))}
             <p>{rating} de 5</p>
           </div>
@@ -86,8 +113,16 @@ const Modal: React.FC<Props> = ({ id, onClose }) => {
         <div className={styles.specifications}>
           <h3>Especificação</h3>
           <ul>
-            {servico.preco?.map((p, i) => (
-              <li key={i}>✔ {p.nomeservico} - R$ {p.precificacao.toFixed(2)}</li>
+            {servico.preco?.map((p) => (
+              <li key={p.id}>
+                ✔ {p.nomeservico} -{" "}
+                R$
+                {" "}
+                {Number(p.precificacao).toLocaleString("pt-BR", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </li>
             ))}
           </ul>
         </div>
@@ -100,7 +135,9 @@ const Modal: React.FC<Props> = ({ id, onClose }) => {
                 key={star}
                 className={star <= rating ? styles.filledStar : styles.emptyStar}
                 onClick={() => handleRatingChange(star)}
-              >★</span>
+              >
+                ★
+              </span>
             ))}
           </div>
           <textarea
@@ -109,7 +146,9 @@ const Modal: React.FC<Props> = ({ id, onClose }) => {
             onChange={handleFeedbackChange}
             className={styles.feedbackInput}
           />
-          <button onClick={handleSubmitFeedback} className={styles.submitFeedback}>Enviar</button>
+          <button onClick={handleSubmitFeedback} className={styles.submitFeedback}>
+            Enviar
+          </button>
         </div>
 
         <div className={styles.previousComments}>
@@ -119,7 +158,12 @@ const Modal: React.FC<Props> = ({ id, onClose }) => {
               <p className={styles.commentAuthor}>{comment.name}</p>
               <div className={styles.commentRating}>
                 {[1, 2, 3, 4, 5].map((star) => (
-                  <span key={star} className={star <= comment.rating ? styles.filledStar : styles.emptyStar}>★</span>
+                  <span
+                    key={star}
+                    className={star <= comment.rating ? styles.filledStar : styles.emptyStar}
+                  >
+                    ★
+                  </span>
                 ))}
                 <p>{comment.rating} de 5</p>
               </div>
