@@ -8,15 +8,16 @@ import { createUser } from "@/service/userService";
 import { CreateUserPayload } from "@/interfaces/UserProps";
 import styles from "./Cadusuario.module.css";
 
+type FormData = CreateUserPayload & { confirmarSenha?: string };
+
 export default function CadastroUsuarioPage() {
   const router = useRouter();
-  
+
   const [step, setStep] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
-  // Usando um único estado para todos os campos do formulário
-  const [formData, setFormData] = useState<CreateUserPayload & { confirmarSenha?: string }>({
+  const [formData, setFormData] = useState<FormData>({
     nome: "",
     email: "",
     senha: "",
@@ -29,11 +30,10 @@ export default function CadastroUsuarioPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { id, value } = e.target;
-    setFormData(prevState => ({ ...prevState, [id]: value }));
+    setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
   const handleNextStep = () => {
-    // Validações antes de ir para o próximo passo
     if (formData.senha !== formData.confirmarSenha) {
       setError("As senhas não coincidem.");
       return;
@@ -56,17 +56,16 @@ export default function CadastroUsuarioPage() {
     setLoading(true);
     setError("");
 
-    // AQUI ESTÁ A "MÁGICA":
-    // Esta linha USA a variável 'confirmarSenha' para removê-la do objeto
-    // que será enviado à API. Isso evita o erro de "variável não usada".
-    const { confirmarSenha, ...payload } = formData;
+    // Renomeia para _confirmarSenha para não violar no-unused-vars
+    const { confirmarSenha: _confirmarSenha, ...payload } = formData;
 
     try {
-      await createUser(payload);
+      await createUser(payload as CreateUserPayload);
       alert("Cadastro realizado com sucesso! Faça o login para continuar.");
       router.push("/login");
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Não foi possível completar o cadastro.";
+      const errorMessage =
+        err instanceof Error ? err.message : "Não foi possível completar o cadastro.";
       setError(errorMessage);
       console.error(err);
     } finally {
@@ -79,36 +78,82 @@ export default function CadastroUsuarioPage() {
       <div className={styles.container}>
         <div className={styles.logoSection}>
           <Link href="/">
-            <Image src="/logo.png" alt="Logo ProConnect" width={200} height={200} priority className={styles.logo} />
+            <Image
+              src="/logo.png"
+              alt="Logo ProConnect"
+              width={200}
+              height={200}
+              priority
+              className={styles.logo}
+            />
           </Link>
         </div>
+
         <div className={styles.formSection}>
           <div className={styles.formHeader}>
-            <h1>{step === 1 ? 'Crie a sua Conta' : 'Complete seu Perfil'}</h1>
+            <h1>{step === 1 ? "Crie a sua Conta" : "Complete seu Perfil"}</h1>
             <span className={styles.stepIndicator}>Passo {step} de 2</span>
           </div>
+
           <form onSubmit={handleSubmit}>
             {error && <p className={styles.error}>{error}</p>}
-            
+
             {step === 1 && (
               <>
                 <div className={styles.formGroup}>
                   <label htmlFor="nome">Nome Completo</label>
-                  <input id="nome" type="text" value={formData.nome} onChange={handleChange} required disabled={loading} />
+                  <input
+                    id="nome"
+                    type="text"
+                    value={formData.nome}
+                    onChange={handleChange}
+                    required
+                    disabled={loading}
+                  />
                 </div>
+
                 <div className={styles.formGroup}>
                   <label htmlFor="email">Email</label>
-                  <input id="email" type="email" value={formData.email} onChange={handleChange} required disabled={loading} />
+                  <input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    disabled={loading}
+                  />
                 </div>
+
                 <div className={styles.formGroup}>
                   <label htmlFor="senha">Senha (mín. 6 caracteres)</label>
-                  <input id="senha" type="password" value={formData.senha} onChange={handleChange} required disabled={loading} />
+                  <input
+                    id="senha"
+                    type="password"
+                    value={formData.senha}
+                    onChange={handleChange}
+                    required
+                    disabled={loading}
+                  />
                 </div>
+
                 <div className={styles.formGroup}>
                   <label htmlFor="confirmarSenha">Confirmar Senha</label>
-                  <input id="confirmarSenha" type="password" value={formData.confirmarSenha} onChange={handleChange} required disabled={loading} />
+                  <input
+                    id="confirmarSenha"
+                    type="password"
+                    value={formData.confirmarSenha}
+                    onChange={handleChange}
+                    required
+                    disabled={loading}
+                  />
                 </div>
-                <button type="button" onClick={handleNextStep} className={styles.submitButton} disabled={loading}>
+
+                <button
+                  type="button"
+                  onClick={handleNextStep}
+                  className={styles.submitButton}
+                  disabled={loading}
+                >
                   Próximo
                 </button>
               </>
@@ -118,20 +163,50 @@ export default function CadastroUsuarioPage() {
               <>
                 <div className={styles.formGroup}>
                   <label htmlFor="telefone">Telefone (Opcional)</label>
-                  <input id="telefone" type="tel" value={formData.telefone} onChange={handleChange} disabled={loading} placeholder="(00) 00000-0000" />
+                  <input
+                    id="telefone"
+                    type="tel"
+                    value={formData.telefone}
+                    onChange={handleChange}
+                    disabled={loading}
+                    placeholder="(00) 00000-0000"
+                  />
                 </div>
+
                 <div className={styles.formGroup}>
                   <label htmlFor="estado">Estado</label>
-                  <input id="estado" type="text" value={formData.estado} onChange={handleChange} required disabled={loading} />
+                  <input
+                    id="estado"
+                    type="text"
+                    value={formData.estado}
+                    onChange={handleChange}
+                    required
+                    disabled={loading}
+                  />
                 </div>
+
                 <div className={styles.formGroup}>
                   <label htmlFor="cidade">Cidade</label>
-                  <input id="cidade" type="text" value={formData.cidade} onChange={handleChange} required disabled={loading} />
+                  <input
+                    id="cidade"
+                    type="text"
+                    value={formData.cidade}
+                    onChange={handleChange}
+                    required
+                    disabled={loading}
+                  />
                 </div>
+
                 <div className={styles.buttonContainer}>
-                  <button type="button" onClick={handlePrevStep} className={`${styles.submitButton} ${styles.secondaryButton}`} disabled={loading}>
+                  <button
+                    type="button"
+                    onClick={handlePrevStep}
+                    className={`${styles.submitButton} ${styles.secondaryButton}`}
+                    disabled={loading}
+                  >
                     Voltar
                   </button>
+
                   <button type="submit" className={styles.submitButton} disabled={loading}>
                     {loading ? "A finalizar..." : "Finalizar Cadastro"}
                   </button>
@@ -139,6 +214,7 @@ export default function CadastroUsuarioPage() {
               </>
             )}
           </form>
+
           <div className={styles.loginLink}>
             Já tem uma conta? <Link href="/login">Faça login</Link>
           </div>
