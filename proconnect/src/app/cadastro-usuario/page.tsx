@@ -58,12 +58,19 @@ export default function CadastroUsuarioPage() {
     setLoading(true);
     setError("");
 
-    // remove 'confirmarSenha' do payload e marca a variável como usada
-    const { confirmarSenha: _omit, ...payload } = formData;
-    void _omit; // satisfaz o eslint sem efeitos colaterais
+    // Monta o payload explicitamente sem incluir confirmarSenha
+    const payload: CreateUserPayload = {
+      nome: formData.nome,
+      email: formData.email,
+      senha: formData.senha,
+      telefone: formData.telefone,
+      estado: formData.estado,
+      cidade: formData.cidade,
+      endereco: formData.endereco,
+    };
 
     try {
-      await createUser(payload as CreateUserPayload);
+      await createUser(payload);
       alert("Cadastro realizado com sucesso! Faça o login para continuar.");
       router.push("/login");
     } catch (err) {
@@ -210,9 +217,9 @@ export default function CadastroUsuarioPage() {
                     Voltar
                   </button>
 
-                    <button type="submit" className={styles.submitButton} disabled={loading}>
-                      {loading ? "A finalizar..." : "Finalizar Cadastro"}
-                    </button>
+                  <button type="submit" className={styles.submitButton} disabled={loading}>
+                    {loading ? "A finalizar..." : "Finalizar Cadastro"}
+                  </button>
                 </div>
               </>
             )}
