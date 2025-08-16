@@ -15,6 +15,7 @@ export default function CadastroUsuarioPage() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
+  // Usando um único estado para todos os campos do formulário
   const [formData, setFormData] = useState<CreateUserPayload & { confirmarSenha?: string }>({
     nome: "",
     email: "",
@@ -32,6 +33,7 @@ export default function CadastroUsuarioPage() {
   };
 
   const handleNextStep = () => {
+    // Validações antes de ir para o próximo passo
     if (formData.senha !== formData.confirmarSenha) {
       setError("As senhas não coincidem.");
       return;
@@ -54,7 +56,9 @@ export default function CadastroUsuarioPage() {
     setLoading(true);
     setError("");
 
-    // Remove o campo confirmarSenha antes de enviar para a API
+    // AQUI ESTÁ A "MÁGICA":
+    // Esta linha USA a variável 'confirmarSenha' para removê-la do objeto
+    // que será enviado à API. Isso evita o erro de "variável não usada".
     const { confirmarSenha, ...payload } = formData;
 
     try {
