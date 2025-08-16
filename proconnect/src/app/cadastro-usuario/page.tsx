@@ -28,7 +28,9 @@ export default function CadastroUsuarioPage() {
     endereco: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
     const { id, value } = e.target;
     setFormData((prev) => ({ ...prev, [id]: value }));
   };
@@ -56,8 +58,9 @@ export default function CadastroUsuarioPage() {
     setLoading(true);
     setError("");
 
-    // Renomeia para _confirmarSenha para não violar no-unused-vars
-    const { confirmarSenha: _confirmarSenha, ...payload } = formData;
+    // remove 'confirmarSenha' do payload e marca a variável como usada
+    const { confirmarSenha: _omit, ...payload } = formData;
+    void _omit; // satisfaz o eslint sem efeitos colaterais
 
     try {
       await createUser(payload as CreateUserPayload);
@@ -207,9 +210,9 @@ export default function CadastroUsuarioPage() {
                     Voltar
                   </button>
 
-                  <button type="submit" className={styles.submitButton} disabled={loading}>
-                    {loading ? "A finalizar..." : "Finalizar Cadastro"}
-                  </button>
+                    <button type="submit" className={styles.submitButton} disabled={loading}>
+                      {loading ? "A finalizar..." : "Finalizar Cadastro"}
+                    </button>
                 </div>
               </>
             )}
