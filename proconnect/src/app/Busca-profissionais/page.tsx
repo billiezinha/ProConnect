@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+// import { useRouter } from 'next/navigation'; // Removido
 import Link from 'next/link';
 import { getServicos } from '@/service/servicoService';
 import { Servico } from '@/interfaces/ServicoProps';
@@ -9,7 +9,7 @@ import styles from './page.module.css';
 import { FaSearch, FaUserCircle } from 'react-icons/fa';
 
 export default function BuscaProfissionaisPage() {
-  const router = useRouter();
+  // const router = useRouter(); // Removido
   const [servicos, setServicos] = useState<Servico[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
@@ -50,9 +50,9 @@ export default function BuscaProfissionaisPage() {
           <Link href="/" className={styles.logo}>ProConnect</Link>
           <div className={styles.searchBar}>
             <FaSearch className={styles.searchIcon} />
-            <input 
-              type="text" 
-              placeholder="Pesquisar por serviço, categoria ou profissional..." 
+            <input
+              type="text"
+              placeholder="Pesquisar por serviço, categoria ou profissional..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -65,12 +65,12 @@ export default function BuscaProfissionaisPage() {
           </nav>
         </div>
       </header>
-      
+
       <main className={styles.mainContent}>
         <div className={styles.container}>
           {loading && <p className={styles.loadingState}>A carregar profissionais...</p>}
           {error && <p className={styles.errorState}>{error}</p>}
-          
+
           {!loading && !error && (
             <>
               <h1 className={styles.pageTitle}>Profissionais Disponíveis</h1>

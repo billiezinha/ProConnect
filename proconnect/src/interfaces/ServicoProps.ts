@@ -1,3 +1,6 @@
+import { Categoria } from "./CategoriaProps";
+import { User } from "./UserProps";
+
 // Dados RECEBIDOS da API
 export interface PrecoItem {
   id: number;
@@ -11,7 +14,9 @@ export interface Servico {
   descricao: string;
   imagemUrl?: string;
   preco: PrecoItem[];
-  // ... outras propriedades que a API retorna
+  // Linhas adicionadas para corrigir o erro
+  categoria: Categoria;
+  usuario: User;
 }
 
 // Dados ENVIADOS para a API
