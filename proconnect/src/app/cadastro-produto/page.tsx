@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import styles from "./cadastro-servico.module.css";
+import styles from "./Cadproduto.module.css";
 import { FaUpload, FaTrash } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { CreateServicoPayload, PrecoInput } from "@/interfaces/ServicoProps";
