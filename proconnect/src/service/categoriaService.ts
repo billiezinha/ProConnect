@@ -1,5 +1,5 @@
 import api from "./api";
-import { Categoria } from "@/interfaces/CategoriaProps";
+import type { Categoria } from "@/interfaces/CategoriaProps";
 
 export async function getCategorias(): Promise<Categoria[]> {
   const { data } = await api.get<Categoria[]>("/categoria");
@@ -11,4 +11,10 @@ export async function getCategoriaNome(id: number): Promise<string> {
   return data.nomeServico;
 }
 
-export default { getCategorias, getCategoriaNome };
+// ✅ default export nomeado (evita import/no-anonymous-default-export)
+const categoriaService = {
+  getCategorias,
+  getCategoriaNome,
+};
+
+export default categoriaService;
