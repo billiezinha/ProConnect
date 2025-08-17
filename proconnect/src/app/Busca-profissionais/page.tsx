@@ -17,7 +17,7 @@ export default function BuscaProfissionaisPage() {
       try {
         const data = await getServicos();
         setServicos(data);
-      } catch (err) {
+      } catch { // 'err' removido daqui
         setError("Não foi possível carregar os serviços.");
       } finally {
         setLoading(false);

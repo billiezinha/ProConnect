@@ -34,7 +34,7 @@ export default function MeusServicosPage() {
         );
         
         setServicos(meusServicos);
-      } catch (err) {
+      } catch { // 'err' removido daqui
         setError("Não foi possível carregar os serviços. Tente novamente mais tarde.");
       } finally {
         setLoading(false);
@@ -50,7 +50,7 @@ export default function MeusServicosPage() {
       try {
         await deleteServico(id);
         setServicos(servicos.filter((s: Servico) => s.id !== id));
-      } catch (err) {
+      } catch { // 'err' removido daqui
         setError("Falha ao excluir o serviço. Tente novamente.");
       }
     }
@@ -75,7 +75,7 @@ export default function MeusServicosPage() {
         servicos.map((s: Servico) => (s.id === updatedServico.id ? updatedServico : s)),
       );
       closeModal();
-    } catch (err) {
+    } catch { // 'err' removido daqui
       setError("Falha ao atualizar o serviço.");
     }
   };

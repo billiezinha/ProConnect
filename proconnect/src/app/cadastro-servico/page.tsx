@@ -26,7 +26,7 @@ export default function CadastroServicoPage() {
       try {
         const data = await getCategorias();
         setCategorias(data);
-      } catch (err) {
+      } catch { // 'err' removido daqui
         setError("Não foi possível carregar as categorias.");
       }
     };
@@ -52,7 +52,7 @@ export default function CadastroServicoPage() {
         preco,
       });
       router.push("/meus-servicos");
-    } catch (err) {
+    } catch { // 'err' removido daqui
       setError("Ocorreu um erro ao cadastrar o serviço. Tente novamente.");
     } finally {
       setLoading(false);
@@ -67,7 +67,6 @@ export default function CadastroServicoPage() {
             <FaArrowLeft />
           </Link>
           <h1 className={styles.headerTitle}>Cadastro de Serviço</h1>
-          {/* Espaço reservado para manter o título centralizado */}
           <div style={{ width: "30px" }}></div>
         </div>
       </header>
@@ -126,7 +125,6 @@ export default function CadastroServicoPage() {
               </select>
             </div>
 
-            {/* A lógica de múltiplos preços foi mantida, mas simplificada para um único preço por padrão */}
             <div className={styles.formGroup}>
               <label htmlFor="preco" className={styles.label}>
                 Preço (R$)

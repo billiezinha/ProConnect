@@ -27,7 +27,7 @@ export default function LoginPage() {
       }
 
       router.push("/Busca-profissionais");
-    } catch (err) {
+    } catch { // 'err' removido daqui
       setError("E-mail ou senha inválidos. Por favor, tente novamente.");
     } finally {
       setLoading(false);
