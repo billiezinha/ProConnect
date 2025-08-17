@@ -61,7 +61,7 @@ export default function PerfilPage() {
               <div className={styles.profileHeader}>
                 <FaUserCircle className={styles.profileIcon} />
                 <h2 className={styles.profileName}>{user.nome}</h2>
-                <Link href="/perfil/editar" className={styles.editButton}>
+                <Link href="../editar" className={styles.editButton}>
                   <FaEdit /> Editar Perfil
                 </Link>
               </div>

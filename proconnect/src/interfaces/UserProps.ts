@@ -1,4 +1,4 @@
-// Para enviar dados para criar um utilizador
+// Para enviar dados para criar um usuário
 export interface CreateUserPayload {
   nome: string;
   email: string;
@@ -9,7 +9,17 @@ export interface CreateUserPayload {
   senha: string;
 }
 
-// Para receber dados de um utilizador da API (sem a senha!)
+// Para atualizar (parcial ou total) — aqui incluí email porque sua tela permite editar
+export interface UpdateUserPayload {
+  nome?: string;
+  email?: string;
+  telefone?: string;
+  estado?: string;
+  cidade?: string;
+  endereco?: string;
+}
+
+// Para receber dados do usuário da API (sem senha)
 export interface User {
   id: number;
   nome: string;
@@ -18,4 +28,10 @@ export interface User {
   estado?: string;
   cidade?: string;
   endereco?: string;
+}
+
+// Token pode trazer userId como string/number, ou até em "sub"
+export interface DecodedToken {
+  userId?: number | string;
+  sub?: string | number;
 }

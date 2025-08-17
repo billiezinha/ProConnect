@@ -11,6 +11,9 @@
   padding: 2.5rem;
   border-radius: var(--raio-borda);
   box-shadow: var(--sombra-suave);
+  --price-width: 120px;
+  --remove-width: 45px;
+  --grid-gap: 1rem;
 }
 
 .title {
@@ -32,45 +35,6 @@
   gap: 1.5rem;
 }
 
-.logoUploader {
-  margin-bottom: 1rem;
-}
-
-.uploadArea {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 180px;
-  border: 2px dashed var(--cor-borda);
-  border-radius: var(--raio-borda);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.uploadArea:hover {
-  border-color: var(--cor-primaria);
-  background-color: var(--cor-fundo-secao);
-}
-
-.uploadPlaceholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.8rem;
-  color: var(--cor-texto-secundario);
-}
-
-.uploadPlaceholder svg {
-  font-size: 2rem;
-}
-
-.logoPreview {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  border-radius: var(--raio-borda);
-}
-
 .formGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -85,7 +49,9 @@
   color: var(--cor-texto-secundario);
 }
 
-.formGroup input, .formGroup select, .formGroup textarea {
+.formGroup input,
+.formGroup select,
+.formGroup textarea {
   width: 100%;
   padding: 12px 15px;
   font-size: 1rem;
@@ -94,9 +60,15 @@
   border-radius: 8px;
   background-color: var(--cor-fundo-input);
   transition: all 0.2s ease;
+  box-sizing: border-box;
+  min-height: 45px;
 }
 
-.formGroup input:focus, .formGroup select:focus, .formGroup textarea:focus {
+.formGroup input:focus,
+.formGroup select:focus,
+.formGroup textarea:focus,
+.servicoItem input[type="text"]:focus,
+.priceWrapper:focus-within {
   outline: none;
   border-color: var(--cor-primaria);
   box-shadow: 0 0 0 3px rgba(139, 44, 245, 0.15);
@@ -111,50 +83,125 @@
   padding-top: 1.5rem;
 }
 
+.servicoItemHeader,
 .servicoItem {
-  display: flex;
-  gap: 1rem;
+  display: grid;
+  grid-template-columns: 1fr var(--price-width) var(--remove-width);
+  gap: var(--grid-gap);
   align-items: center;
   margin-bottom: 0.5rem;
 }
 
-.servicoItem input[type="text"] {
-  flex-grow: 3;
-}
-.servicoItem input[type="number"] {
-  flex-grow: 1;
+.servicoNameHeader {
+  grid-column: 1;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--cor-texto-secundario);
 }
 
-.removeButton, .addButton {
-  border: none;
-  cursor: pointer;
-  padding: 0.5rem;
+.servicoPriceHeader {
+  grid-column: 2;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--cor-texto-secundario);
+}
+
+.servicoItem input[type="text"] {
+  grid-column: 1;
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 1rem;
+  border: 1px solid var(--cor-borda);
   border-radius: 8px;
-  transition: background-color 0.2s ease;
+  background-color: var(--cor-fundo-input);
+  transition: all 0.2s ease;
+  min-height: 45px;
+}
+
+.priceWrapper {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  height: 45px;
+  width: 100%;
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  background-color: var(--cor-fundo-input);
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.currencySymbol {
+  padding-left: 15px;
+  font-weight: 500;
+  color: var(--cor-texto-secundario);
+}
+
+.servicoItem input[type="number"] {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  border: none;
+  background-color: transparent;
+  padding: 0 8px 0 6px;
+  font-size: 1rem;
+}
+
+.servicoItem input[type="number"]:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.servicoItem input[type="number"]::-webkit-outer-spin-button,
+.servicoItem input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .removeButton {
+  grid-column: 3;
+  width: var(--remove-width);
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: transparent;
   color: var(--cor-erro);
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
+
 .removeButton:hover {
   background-color: var(--cor-fundo-erro);
+  border-color: var(--cor-borda-erro);
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
 }
 
 .addButton {
-  align-self: flex-start;
+  border: none;
+  cursor: pointer;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+  font-weight: 500;
   background-color: #e9ecef;
   color: var(--cor-texto-secundario);
-  font-weight: 500;
 }
+
 .addButton:hover {
   background-color: #dee2e6;
 }
 
 .submitButton {
-  width: 100%;
   padding: 12px;
-  margin-top: 1rem;
   font-size: 1rem;
   font-weight: 700;
   color: var(--cor-texto-claro);
@@ -186,8 +233,52 @@
   border-radius: 8px;
 }
 
+.successMessage {
+  text-align: center;
+  color: var(--cor-primaria);
+  padding: 3rem 1rem;
+  animation: fadeInOut 2s ease-in-out forwards;
+}
+
+.successMessage p {
+  font-size: 1.3rem;
+  font-weight: 500;
+  margin: 0.5rem 0;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.05); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
 @media (max-width: 600px) {
   .formGrid {
     grid-template-columns: 1fr;
+  }
+
+  .servicoItemHeader {
+    display: none;
+  }
+
+  .servicoItem {
+    grid-template-columns: 1fr var(--remove-width);
+    row-gap: 0.75rem;
+  }
+
+  .servicoItem input[type="text"] {
+
+    grid-column: 1 / 2;
+    grid-row: 1;
+  }
+  
+  .priceWrapper {
+    grid-column: 1 / 2;
+    grid-row: 2;
+  }
+
+  .removeButton {
+    grid-column: 2 / 3;
+    grid-row: 1 / 3;
   }
 }

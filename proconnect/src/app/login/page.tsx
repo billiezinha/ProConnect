@@ -14,6 +14,7 @@ export default function LoginPage() {
   const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false); // Novo estado de sucesso
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,15 +26,16 @@ export default function LoginPage() {
     try {
       const token = await loginUser(payload);
       localStorage.setItem("token", token);
-      alert("Login bem-sucedido!");
-      router.push("/perfil");
+      setSuccess(true); // Ativa a mensagem de sucesso
+      setTimeout(() => {
+        router.push("/perfil");
+      }, 1500); // Redireciona após a animação
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
         setError("Ocorreu um erro desconhecido.");
       }
-    } finally {
       setLoading(false);
     }
   };
@@ -55,44 +57,53 @@ export default function LoginPage() {
         </div>
 
         <div className={styles.formSection}>
-          <h1 className={styles.title}>Acesse sua Conta</h1>
-          <form onSubmit={handleSubmit}>
-            <div className={styles.formGroup}>
-              <label htmlFor="email">Email</label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                disabled={loading}
-              />
+          {success ? (
+            <div className={styles.successMessage}>
+              <p>Login bem-sucedido!</p>
+              <p>Redirecionando...</p>
             </div>
-            <div className={styles.formGroup}>
-              <label htmlFor="senha">Senha</label>
-              <input
-                id="senha"
-                type="password"
-                value={senha}
-                onChange={(e) => setSenha(e.target.value)}
-                required
-                disabled={loading}
-              />
-            </div>
-            
-            {error && <p className={styles.error}>{error}</p>}
+          ) : (
+            <>
+              <h1 className={styles.title}>Acesse sua Conta</h1>
+              <form onSubmit={handleSubmit}>
+                <div className={styles.formGroup}>
+                  <label htmlFor="email">Email</label>
+                  <input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    disabled={loading}
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label htmlFor="senha">Senha</label>
+                  <input
+                    id="senha"
+                    type="password"
+                    value={senha}
+                    onChange={(e) => setSenha(e.target.value)}
+                    required
+                    disabled={loading}
+                  />
+                </div>
 
-            <button
-              type="submit"
-              className={styles.submitButton}
-              disabled={loading}
-            >
-              {loading ? "A carregar..." : "ENTRAR"}
-            </button>
-          </form>
-          <div className={styles.register}>
-            Não tem conta? <Link href="/cadastro-usuario">cadastre-se</Link>
-          </div>
+                {error && <p className={styles.error}>{error}</p>}
+
+                <button
+                  type="submit"
+                  className={styles.submitButton}
+                  disabled={loading}
+                >
+                  {loading ? "A carregar..." : "ENTRAR"}
+                </button>
+              </form>
+              <div className={styles.register}>
+                Não tem conta? <Link href="/cadastro-usuario">cadastre-se</Link>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
