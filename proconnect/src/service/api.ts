@@ -3,7 +3,7 @@ import axios from "axios";
 // URL FORÇADA PARA TESTES LOCAIS. ISTO VAI FUNCIONAR.
 // const baseURL = "https://proconnectapi-1.onrender.com";
 
-const baseURL = "https://proconnectapi-1.onrender.com/";
+const baseURL = "https://proconnectapi-2.onrender.com/";
 
 const api = axios.create({
   baseURL,
