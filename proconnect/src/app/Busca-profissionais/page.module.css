@@ -28,7 +28,7 @@
 .logo a {
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--cor-primaria); /* Corrigido: Logo roxo */
+  color: var(--cor-primaria);
   text-decoration: none;
 }
 
@@ -53,7 +53,7 @@
 /* === SEÇÃO DE BUSCA MINIMALISTA ========================== */
 .searchSection {
   text-align: center;
-  padding: 3rem 0; /* Corrigido: Diminuído o espaçamento vertical */
+  padding: 3rem 0;
 }
 
 .title {
@@ -66,7 +66,7 @@
 .subtitle {
   font-size: 1.1rem;
   color: var(--cor-texto-secundario);
-  margin-bottom: 2rem; /* Corrigido: Diminuído o espaçamento inferior */
+  margin-bottom: 2rem;
 }
 
 .searchBar {
@@ -113,16 +113,22 @@
 }
 
 .servicoCard {
-  background-color: transparent;
+  background-color: var(--cor-fundo);
   border: 1px solid var(--cor-borda);
   border-radius: var(--raio-borda);
   transition: border-color 0.2s, box-shadow 0.2s;
-  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .servicoCard:hover {
   border-color: var(--cor-primaria);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.cardContent {
+    padding: 1.5rem;
+    flex-grow: 1;
 }
 
 .servicoTitle {
@@ -141,14 +147,14 @@
 .servicoDescription {
   color: var(--cor-texto-secundario);
   font-size: 0.95rem;
-  margin-bottom: 1.5rem;
+  line-height: 1.5;
 }
 
 .cardFooter {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 1rem;
+  padding: 1rem 1.5rem;
   border-top: 1px solid var(--cor-borda);
 }
 
@@ -158,10 +164,22 @@
   color: var(--cor-texto-secundario);
 }
 
-.servicoPrice {
-  font-size: 1.1rem;
+/* === BOTÃO DE DETALHES (ADICIONADO) ===================== */
+.detailsButton {
+  font-size: 0.9rem;
   font-weight: 600;
   color: var(--cor-primaria);
+  background-color: transparent;
+  border: 1px solid var(--cor-primaria);
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.detailsButton:hover {
+  background-color: var(--cor-primaria);
+  color: var(--cor-texto-claro);
 }
 
 /* === ESTADOS ============================================== */
@@ -192,6 +210,6 @@
     font-size: 1rem;
   }
   .searchSection {
-    padding: 2.5rem 0; /* Espaçamento ainda menor para mobile */
+    padding: 2.5rem 0;
   }
 }

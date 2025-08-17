@@ -1,24 +1,27 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { getServicos } from "@/service/servicoService";
-import type { Servico } from "@/interfaces/ServicoProps";
+import { Servico } from "@/interfaces/ServicoProps";
 import styles from "./page.module.css";
-import { FaUserCircle, FaSearch } from "react-icons/fa";
+import { FaSearch, FaUserCircle } from "react-icons/fa";
+import Modal from "@/components/Modal";
 
 export default function BuscaProfissionaisPage() {
   const [servicos, setServicos] = useState<Servico[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchServicos = async () => {
       try {
         const data = await getServicos();
         setServicos(data);
-      } catch { // 'err' removido daqui
-        setError("Não foi possível carregar os serviços.");
+      } catch {
+        setError("Não foi possível carregar os serviços. Tente novamente mais tarde.");
       } finally {
         setLoading(false);
       }
@@ -26,14 +29,38 @@ export default function BuscaProfissionaisPage() {
     fetchServicos();
   }, []);
 
-  const filteredServicos = searchTerm
-    ? servicos.filter(
-        (servico) =>
-          servico.nomeNegocio.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          servico.descricao.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          servico.categoria?.nomeServico.toLowerCase().includes(searchTerm.toLowerCase()),
-      )
-    : servicos;
+  useEffect(() => {
+    if (showModal) {
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = "unset";
+      };
+    }
+  }, [showModal]);
+
+  const openModal = (id: number) => {
+    setSelectedId(id);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedId(null);
+  };
+
+  const norm = (s?: string) =>
+    (s ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+  const filteredServicos = useMemo(() => {
+    if (!searchTerm) return servicos;
+    const t = norm(searchTerm);
+    return servicos.filter((servico) => 
+      norm(servico.nomeNegocio).includes(t) ||
+      norm(servico.descricao).includes(t) ||
+      norm(servico.categoria?.nomeServico).includes(t) ||
+      norm(servico.usuario?.nome).includes(t)
+    );
+  }, [searchTerm, servicos]);
 
   return (
     <div className={styles.body}>
@@ -89,11 +116,14 @@ export default function BuscaProfissionaisPage() {
                       <span className={styles.servicoCategory}>
                         {servico.categoria?.nomeServico || "Sem Categoria"}
                       </span>
-                      {servico.preco && servico.preco.length > 0 && (
-                         <span className={styles.servicoPrice}>
-                           R$ {servico.preco[0].precificacao.toFixed(2)}
-                         </span>
-                      )}
+                      {/* BOTÃO ADICIONADO AQUI */}
+                      <button
+                        type="button"
+                        className={styles.detailsButton}
+                        onClick={() => openModal(servico.id)}
+                      >
+                        Ver Detalhes
+                      </button>
                     </div>
                   </div>
                 ))
@@ -104,6 +134,10 @@ export default function BuscaProfissionaisPage() {
           )}
         </div>
       </main>
+
+      {showModal && selectedId !== null && (
+        <Modal id={selectedId} onClose={closeModal} />
+      )}
     </div>
   );
 }
