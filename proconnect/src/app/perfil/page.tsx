@@ -3,24 +3,15 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { getMe, getUser } from "@/service/userService";
+import { getMe } from "@/service/userService";
 import type { User } from "@/interfaces/UserProps";
 import styles from "./page.module.css";
 import { FaUserCircle, FaEnvelope, FaPhone, FaMapMarkerAlt, FaEdit } from "react-icons/fa";
-import { jwtDecode } from "jwt-decode";
-
-interface DecodedToken {
-  sub: string | number;
-  email?: string;
-  exp?: number;
-  iat?: number;
-}
 
 export default function PerfilPage() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>("");
 
   const logout = useCallback(() => {
     localStorage.removeItem("token");
@@ -30,12 +21,15 @@ export default function PerfilPage() {
   useEffect(() => {
     (async () => {
       const token = localStorage.getItem("token");
-      if (!token) { router.replace("/login"); return; }
+      if (!token) {
+        router.replace("/login");
+        return;
+      }
 
       try {
         const userData = await getMe();
         setUser(userData);
-      } catch (e: any) {
+      } catch (_err: unknown) {
         localStorage.removeItem("token");
         router.replace("/login");
       } finally {
@@ -46,10 +40,6 @@ export default function PerfilPage() {
 
   if (loading) {
     return <div className={styles.loadingState}>Carregando seu perfil…</div>;
-  }
-
-  if (error) {
-    return <div className={styles.errorState}>{error}</div>;
   }
 
   return (

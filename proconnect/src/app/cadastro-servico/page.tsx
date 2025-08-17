@@ -43,14 +43,32 @@ export default function CadastroServicoPage() {
     })();
   }, []);
 
-  function handleServicoChange(
+  // Helper seguro para extrair mensagem de erro (sem 'any')
+  function extractErrorMessage(err: unknown): string {
+    if (err && typeof err === "object") {
+      const maybeAxios = err as {
+        response?: { data?: { message?: string; error?: string } };
+        message?: string;
+      };
+      return (
+        maybeAxios.response?.data?.message ||
+        maybeAxios.response?.data?.error ||
+        maybeAxios.message ||
+        "Ocorreu um erro ao cadastrar o serviço."
+      );
+    }
+    return "Ocorreu um erro ao cadastrar o serviço.";
+  }
+
+  // Atualização tipada da tabela de preços
+  function handleServicoChange<K extends keyof PrecoInput>(
     index: number,
-    field: keyof PrecoInput,
-    value: string | number
+    field: K,
+    value: PrecoInput[K]
   ) {
     setServicos((prev) => {
       const copy = [...prev];
-      copy[index] = { ...copy[index], [field]: value as never };
+      copy[index] = { ...copy[index], [field]: value };
       return copy;
     });
   }
@@ -68,7 +86,7 @@ export default function CadastroServicoPage() {
     if (!descricao.trim()) return true;
     if (!categoriaId || typeof categoriaId !== "number") return true;
 
-    // pelo menos um serviço válido
+    // Pelo menos um serviço válido
     const temUmValido = servicos.some(
       (s) => s.nomeservico.trim().length > 0 && Number(s.precificacao) >= 0
     );
@@ -97,7 +115,7 @@ export default function CadastroServicoPage() {
     }
 
     // Sanitiza a tabela de preços: remove linhas totalmente vazias
-    const precoSanitizado = servicos
+    const precoSanitizado: PrecoInput[] = servicos
       .map((s) => ({
         nomeservico: s.nomeservico.trim(),
         precificacao: Number(s.precificacao) || 0,
@@ -121,12 +139,8 @@ export default function CadastroServicoPage() {
       await createServico(payload);
       alert("Serviço cadastrado com sucesso!");
       router.push("/perfil");
-    } catch (err: any) {
-      const msg =
-        err?.response?.data?.message ||
-        err?.response?.data?.error ||
-        err?.message ||
-        "Ocorreu um erro ao cadastrar o serviço.";
+    } catch (err: unknown) {
+      const msg = extractErrorMessage(err);
       setError(msg);
       console.error(err);
     } finally {
@@ -255,7 +269,7 @@ export default function CadastroServicoPage() {
                 formularioInvalido
               }
             >
-              {loading ? "A cadastrar..." : "Finalizar Cadastro do Serviço"}
+              {loading ? "Cadastrando..." : "Finalizar Cadastro do Serviço"}
             </button>
           </div>
         </form>
