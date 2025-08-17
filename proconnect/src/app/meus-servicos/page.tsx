@@ -8,6 +8,21 @@ import styles from "./page.module.css";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 
+/** Helper seguro para mensagens de erro (sem `any`) */
+function parseHttpError(err: unknown): { message: string; status?: number } {
+  if (err && typeof err === "object") {
+    const e = err as {
+      message?: string;
+      response?: { status?: number; data?: { message?: string; error?: string } };
+    };
+    return {
+      message: e.response?.data?.message || e.response?.data?.error || e.message || "Falha ao executar a ação.",
+      status: e.response?.status,
+    };
+  }
+  return { message: "Falha ao executar a ação." };
+}
+
 export default function MeusServicosPage() {
   const [servicos, setServicos] = useState<Servico[]>([]);
   const [loading, setLoading] = useState(true);
@@ -19,9 +34,10 @@ export default function MeusServicosPage() {
       try {
         const data = await getMeusServicos();
         setServicos(data);
-      } catch (err: any) {
-        setError(err.message || "Falha ao carregar seus serviços.");
-        if (err.message.includes("autenticado")) {
+      } catch (err: unknown) {
+        const { message, status } = parseHttpError(err);
+        setError(message || "Falha ao carregar seus serviços.");
+        if (status === 401 || status === 403 || /autenticad/i.test(message)) {
           router.push("/login");
         }
       } finally {
