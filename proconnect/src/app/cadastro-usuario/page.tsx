@@ -5,8 +5,10 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { createUser } from "@/service/userService";
+import { loginUser } from "@/service/authService"; // Importa a função de login
 import { CreateUserPayload } from "@/interfaces/UserProps";
 import styles from "./Cadusuario.module.css";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 type FormData = CreateUserPayload & { confirmarSenha?: string };
 
@@ -16,6 +18,8 @@ export default function CadastroUsuarioPage() {
   const [step, setStep] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [formData, setFormData] = useState<FormData>({
     nome: "",
@@ -28,9 +32,7 @@ export default function CadastroUsuarioPage() {
     endereco: "",
   });
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setFormData((prev) => ({ ...prev, [id]: value }));
   };
@@ -58,7 +60,6 @@ export default function CadastroUsuarioPage() {
     setLoading(true);
     setError("");
 
-    // Monta o payload explicitamente sem incluir confirmarSenha
     const payload: CreateUserPayload = {
       nome: formData.nome,
       email: formData.email,
@@ -70,14 +71,23 @@ export default function CadastroUsuarioPage() {
     };
 
     try {
+      // 1. Cria o usuário
       await createUser(payload);
-      alert("Cadastro realizado com sucesso! Faça o login para continuar.");
-      router.push("/login");
+
+      // 2. Faz o login automático
+      const token = await loginUser({ email: payload.email, senha: payload.senha });
+      if (typeof window !== "undefined") {
+        localStorage.setItem("token", token);
+      }
+
+      // 3. Redireciona para o cadastro de serviço
+      alert("Cadastro realizado com sucesso! Agora, cadastre seu primeiro serviço.");
+      router.push("/cadastro-servico");
+
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : "Não foi possível completar o cadastro.";
       setError(errorMessage);
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -112,58 +122,31 @@ export default function CadastroUsuarioPage() {
               <>
                 <div className={styles.formGroup}>
                   <label htmlFor="nome">Nome Completo</label>
-                  <input
-                    id="nome"
-                    type="text"
-                    value={formData.nome}
-                    onChange={handleChange}
-                    required
-                    disabled={loading}
-                  />
+                  <input id="nome" type="text" value={formData.nome} onChange={handleChange} required disabled={loading} />
                 </div>
-
                 <div className={styles.formGroup}>
                   <label htmlFor="email">Email</label>
-                  <input
-                    id="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    disabled={loading}
-                  />
+                  <input id="email" type="email" value={formData.email} onChange={handleChange} required disabled={loading} />
                 </div>
-
                 <div className={styles.formGroup}>
-                  <label htmlFor="senha">Senha (mín. 6 caracteres)</label>
-                  <input
-                    id="senha"
-                    type="password"
-                    value={formData.senha}
-                    onChange={handleChange}
-                    required
-                    disabled={loading}
-                  />
+                  <label htmlFor="senha">Senha</label>
+                  <div className={styles.passwordWrapper}>
+                    <input id="senha" type={showPassword ? "text" : "password"} value={formData.senha} onChange={handleChange} required disabled={loading} />
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className={styles.showPasswordButton}>
+                      {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    </button>
+                  </div>
                 </div>
-
                 <div className={styles.formGroup}>
                   <label htmlFor="confirmarSenha">Confirmar Senha</label>
-                  <input
-                    id="confirmarSenha"
-                    type="password"
-                    value={formData.confirmarSenha}
-                    onChange={handleChange}
-                    required
-                    disabled={loading}
-                  />
+                  <div className={styles.passwordWrapper}>
+                    <input id="confirmarSenha" type={showConfirmPassword ? "text" : "password"} value={formData.confirmarSenha} onChange={handleChange} required disabled={loading} />
+                    <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className={styles.showPasswordButton}>
+                      {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                    </button>
+                  </div>
                 </div>
-
-                <button
-                  type="button"
-                  onClick={handleNextStep}
-                  className={styles.submitButton}
-                  disabled={loading}
-                >
+                <button type="button" onClick={handleNextStep} className={styles.submitButton} disabled={loading}>
                   Próximo
                 </button>
               </>
@@ -173,60 +156,26 @@ export default function CadastroUsuarioPage() {
               <>
                 <div className={styles.formGroup}>
                   <label htmlFor="telefone">Telefone</label>
-                  <input
-                    id="telefone"
-                    type="tel"
-                    value={formData.telefone}
-                    onChange={handleChange}
-                    disabled={loading}
-                    placeholder="(00) 00000-0000"
-                    required
-                  />
+                  <input id="telefone" type="tel" value={formData.telefone} onChange={handleChange} required disabled={loading} placeholder="(00) 00000-0000" />
                 </div>
-
                 <div className={styles.formGroup}>
                   <label htmlFor="estado">Estado</label>
-                  <input
-                    id="estado"
-                    type="text"
-                    value={formData.estado}
-                    onChange={handleChange}
-                    required
-                    disabled={loading}
-                  />
+                  <input id="estado" type="text" value={formData.estado} onChange={handleChange} required disabled={loading} />
                 </div>
-
                 <div className={styles.formGroup}>
                   <label htmlFor="cidade">Cidade</label>
-                  <input
-                    id="cidade"
-                    type="text"
-                    value={formData.cidade}
-                    onChange={handleChange}
-                    required
-                    disabled={loading}
-                  />
+                  <input id="cidade" type="text" value={formData.cidade} onChange={handleChange} required disabled={loading} />
                 </div>
-
                 <div className={styles.formGroup}>
                   <label htmlFor="endereco">Endereço</label>
-                  <input
-                    id="endereco"
-                    type="text"
-                    value={formData.endereco}
-                    onChange={handleChange}
-                    required
-                    disabled={loading}
-                    placeholder="Rua, número, complemento…"
-                  />
+                  <input id="endereco" type="text" value={formData.endereco} onChange={handleChange} required disabled={loading} placeholder="Rua, número, complemento…" />
                 </div>
-
                 <div className={styles.buttonContainer}>
                   <button type="button" onClick={handlePrevStep} className={`${styles.submitButton} ${styles.secondaryButton}`} disabled={loading}>
                     Voltar
                   </button>
                   <button type="submit" className={styles.submitButton} disabled={loading}>
-                    {loading ? "A finalizar..." : "Finalizar Cadastro"}
+                    {loading ? "Finalizando..." : "Finalizar Cadastro"}
                   </button>
                 </div>
               </>

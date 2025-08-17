@@ -1,9 +1,11 @@
+/* === LAYOUT GERAL ======================================== */
 .body {
   width: 100vw;
   height: 100vh;
   margin: 0;
   padding: 0;
   overflow: hidden;
+  font-family: var(--fonte-principal);
 }
 
 .container {
@@ -12,24 +14,22 @@
   height: 100%;
 }
 
-/* A MUDANÇA ESTÁ AQUI */
+/* === SEÇÃO DO LOGO (PAINEL ROXO) ========================= */
 .logoSection {
   flex: 1;
   background-color: var(--cor-primaria);
-  padding: 40px;
-  
-  /* Usando CSS Grid para centralização perfeita */
+  padding: 2.5rem;
   display: grid;
   place-items: center; 
 }
 
 .logo {
-  width: 90%;
+  width: 80%;
   max-width: 350px;
   height: auto;
-  margin-left: 10px;
 }
 
+/* === SEÇÃO DO FORMULÁRIO ================================ */
 .formSection {
   flex: 1.5;
   display: flex;
@@ -37,15 +37,15 @@
   justify-content: center;
   padding: 2rem 5rem;
   overflow-y: auto;
+  background-color: var(--cor-fundo);
 }
 
 .formHeader {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+  margin-bottom: 2rem;
+  gap: 1rem;
 }
 
 .formHeader h1 {
@@ -62,8 +62,7 @@
 }
 
 .formGroup {
-  width: 100%;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .formGroup label {
@@ -79,29 +78,51 @@
   width: 100%;
   padding: 12px 15px;
   font-size: 1rem;
-  font-family: var(--fonte-principal);
-  border: 1px solid #ccc;
+  border: 1px solid var(--cor-borda);
   border-radius: 8px;
   background-color: var(--cor-fundo-input);
   transition: all 0.2s ease;
 }
 
-.formGroup input:focus {
+.formGroup input:focus,
+.formGroup select:focus {
   outline: none;
   border-color: var(--cor-primaria);
   box-shadow: 0 0 0 3px rgba(139, 44, 245, 0.15);
 }
 
+/* === ESTILOS DO BOTÃO DE VISUALIZAR SENHA (ADICIONADO) ==== */
+.passwordWrapper {
+  position: relative;
+}
+
+.showPasswordButton {
+  position: absolute;
+  right: 0.8rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--cor-texto-secundario);
+  font-size: 1.2rem;
+  padding: 0.5rem; /* Aumenta a área de clique */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* === BOTÕES DE AÇÃO ====================================== */
 .buttonContainer {
   display: flex;
   gap: 1rem;
-  margin-top: 1.5rem;
+  margin-top: 2rem;
 }
 
 .submitButton {
   flex-grow: 1;
   width: 100%;
-  padding: 12px;
+  padding: 14px;
   font-size: 1rem;
   font-weight: 700;
   color: var(--cor-texto-claro);
@@ -114,31 +135,39 @@
 
 .submitButton.secondaryButton {
   background-color: var(--cor-secundaria);
+  color: var(--cor-texto);
 }
 
 .submitButton:hover:not(:disabled) {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(139, 44, 245, 0.2);
 }
 
 .submitButton:disabled {
   background-color: #ccc;
   cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .loginLink {
-  margin-top: 1.5rem;
+  margin-top: 2rem;
   text-align: center;
   font-size: 0.9rem;
+  color: var(--cor-texto-secundario);
 }
 
 .loginLink a {
   color: var(--cor-primaria);
-  font-weight: 500;
+  font-weight: 600;
+  text-decoration: none;
+}
+.loginLink a:hover {
+  text-decoration: underline;
 }
 
 .error {
-  padding: 10px;
-  margin-bottom: 1rem;
+  padding: 0.8rem;
+  margin-bottom: 1.5rem;
   text-align: center;
   font-size: 0.9rem;
   color: var(--cor-erro);
@@ -147,6 +176,7 @@
   border-radius: 8px;
 }
 
+/* === RESPONSIVIDADE ====================================== */
 @media (max-width: 768px) {
   .body {
     height: auto;
@@ -158,10 +188,10 @@
     height: auto;
   }
   .logoSection {
-    padding: 0rem 0rem;
-    flex: none;
+    display: none;
   }
   .formSection {
+    padding: 2rem;
     overflow-y: visible;
   }
 }
