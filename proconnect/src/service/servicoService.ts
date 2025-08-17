@@ -15,3 +15,9 @@ export async function getServicoById(id: number): Promise<Servico> {
   const resp = await api.get<Servico>(`/servico/${id}`);
   return resp.data;
 }
+
+export async function getMeusServicos(): Promise<Servico[]> {
+  const resp = await api.get<Servico[]>("/usuario/me/servicos");
+  return resp.data;
+}
+

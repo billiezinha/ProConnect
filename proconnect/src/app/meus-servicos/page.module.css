@@ -1,0 +1,135 @@
+.body {
+  background-color: var(--cor-fundo-secao);
+  min-height: 100vh;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--largura-container);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.header {
+  background-color: var(--cor-fundo);
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--cor-borda);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.backLink {
+  color: var(--cor-texto-secundario);
+  font-weight: 500;
+}
+
+.headerTitle {
+  font-size: 1.8rem;
+  color: var(--cor-texto);
+}
+
+.addButton {
+  background-color: var(--cor-primaria);
+  color: var(--cor-texto-claro);
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.addButton:hover {
+  background-color: var(--cor-primaria-hover);
+  transform: translateY(-2px);
+}
+
+.mainContent {
+  padding: 3rem 0;
+}
+
+.error {
+  color: var(--cor-erro);
+  text-align: center;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.card {
+  background-color: var(--cor-fundo);
+  border-radius: var(--raio-borda);
+  box-shadow: var(--sombra-suave);
+  display: flex;
+  flex-direction: column;
+}
+
+.cardHeader {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+.cardTitle {
+  font-size: 1.3rem;
+  color: var(--cor-texto);
+  margin-bottom: 0.25rem;
+}
+
+.cardCategory {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--cor-primaria);
+}
+
+.cardDescription {
+  padding: 1.5rem;
+  color: var(--cor-texto-secundario);
+  flex-grow: 1;
+}
+
+.cardFooter {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--cor-borda);
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.actionButton {
+  background: none;
+  border: 1px solid var(--cor-borda);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.deleteButton {
+  color: var(--cor-erro);
+}
+
+.noResults {
+  text-align: center;
+  padding: 4rem 2rem;
+  background-color: var(--cor-fundo);
+  border-radius: var(--raio-borda);
+  grid-column: 1 / -1;
+}
+
+.noResults h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
