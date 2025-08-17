@@ -1,19 +1,22 @@
 "use client";
 
-import { useState, useEffect, useMemo } from 'react';
-// import { useRouter } from 'next/navigation'; // Removido
-import Link from 'next/link';
-import { getServicos } from '@/service/servicoService';
-import { Servico } from '@/interfaces/ServicoProps';
-import styles from './page.module.css';
-import { FaSearch, FaUserCircle } from 'react-icons/fa';
+import { useState, useEffect, useMemo } from "react";
+import Link from "next/link";
+import { getServicos } from "@/service/servicoService";
+import { Servico } from "@/interfaces/ServicoProps";
+import styles from "./page.module.css";
+import { FaSearch, FaUserCircle } from "react-icons/fa";
+import Modal from "@/components/Modal";
 
 export default function BuscaProfissionaisPage() {
-  // const router = useRouter(); // Removido
   const [servicos, setServicos] = useState<Servico[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>('');
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [error, setError] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
+  // modal
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchServicos = async () => {
@@ -31,23 +34,62 @@ export default function BuscaProfissionaisPage() {
     fetchServicos();
   }, []);
 
-  // Filtra os serviços com base no termo de pesquisa
-  const filteredServicos = useMemo(() => {
-    if (!searchTerm) {
-      return servicos;
+  // evita scroll do fundo quando o modal está aberto
+  useEffect(() => {
+    if (showModal) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = prev;
+      };
     }
-    return servicos.filter(servico =>
-      servico.nomeNegocio.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      servico.descricao.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      servico.categoria.nomeServico.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+  }, [showModal]);
+
+  const openModal = (id: number) => {
+    setSelectedId(id);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedId(null);
+  };
+
+  // filtro (ignora acentos e case) e lida com campos opcionais
+  const norm = (s?: string) =>
+    (s ?? "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
+
+  const filteredServicos = useMemo(() => {
+    if (!searchTerm) return servicos;
+    const t = norm(searchTerm);
+
+    return servicos.filter((servico) => {
+      const nomeNegocio = norm(servico.nomeNegocio);
+      const descricao = norm(servico.descricao);
+      const categoria = norm(servico.categoria?.nomeServico);
+      const usuario = norm(servico.usuario?.nome);
+      const temPrecoMatch = (servico.preco ?? []).some((p) => norm(p.nomeservico).includes(t));
+
+      return (
+        nomeNegocio.includes(t) ||
+        descricao.includes(t) ||
+        categoria.includes(t) ||
+        usuario.includes(t) ||
+        temPrecoMatch
+      );
+    });
   }, [searchTerm, servicos]);
 
   return (
     <div className={styles.body}>
       <header className={styles.header}>
         <div className={styles.container}>
-          <Link href="/" className={styles.logo}>ProConnect</Link>
+          <Link href="/" className={styles.logo}>
+            ProConnect
+          </Link>
           <div className={styles.searchBar}>
             <FaSearch className={styles.searchIcon} />
             <input
@@ -55,6 +97,7 @@ export default function BuscaProfissionaisPage() {
               placeholder="Pesquisar por serviço, categoria ou profissional..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              aria-label="Pesquisar serviços"
             />
           </div>
           <nav>
@@ -76,21 +119,33 @@ export default function BuscaProfissionaisPage() {
               <h1 className={styles.pageTitle}>Profissionais Disponíveis</h1>
               {filteredServicos.length > 0 ? (
                 <div className={styles.grid}>
-                  {filteredServicos.map(servico => (
+                  {filteredServicos.map((servico) => (
                     <div key={servico.id} className={styles.card}>
                       <div className={styles.cardHeader}>
                         <h2 className={styles.cardTitle}>{servico.nomeNegocio}</h2>
-                        <span className={styles.cardCategory}>{servico.categoria.nomeServico}</span>
+                        <span className={styles.cardCategory}>
+                          {servico.categoria?.nomeServico ?? "Sem categoria"}
+                        </span>
                       </div>
+
                       <p className={styles.cardDescription}>{servico.descricao}</p>
+
                       <div className={styles.cardFooter}>
                         <div className={styles.userInfo}>
                           <FaUserCircle />
-                          <span>{servico.usuario.nome}</span>
+                          <span>{servico.usuario?.nome ?? "Profissional"}</span>
                         </div>
-                        <Link href={`/servico/${servico.id}`} className={styles.detailsButton}>
+
+                        {/* Abrir modal em vez de navegar */}
+                        <button
+                          type="button"
+                          className={styles.detailsButton}
+                          onClick={() => openModal(servico.id)}
+                          aria-haspopup="dialog"
+                          aria-controls="servico-detalhes"
+                        >
                           Ver Detalhes
-                        </Link>
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -102,6 +157,10 @@ export default function BuscaProfissionaisPage() {
           )}
         </div>
       </main>
+
+      {showModal && selectedId !== null && (
+        <Modal id={selectedId} onClose={closeModal} />
+      )}
     </div>
   );
 }

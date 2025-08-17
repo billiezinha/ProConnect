@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import styles from "./Modal.module.css";
 import Image from "next/image";
 import { getServicoById } from "@/service/servicoService";
@@ -35,12 +35,26 @@ const Modal: React.FC<Props> = ({ id, onClose }) => {
   ]);
 
   useEffect(() => {
-    if (!id || isNaN(id)) return;
-
-    getServicoById(id)
-      .then(setServico)
-      .catch(console.error);
+    if (!id || Number.isNaN(id)) return;
+    getServicoById(id).then(setServico).catch(console.error);
   }, [id]);
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    },
+    [onClose]
+  );
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [handleKeyDown]);
+
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    // fecha ao clicar no overlay (fora do modal)
+    if (e.target === e.currentTarget) onClose();
+  };
 
   const handleFeedbackChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setFeedback(e.target.value);
@@ -51,37 +65,43 @@ const Modal: React.FC<Props> = ({ id, onClose }) => {
   };
 
   const handleSubmitFeedback = () => {
-    if (feedback) {
-      setComments((prev) => [...prev, { name: "Você", rating, text: feedback }]);
+    if (feedback.trim()) {
+      setComments((prev) => [...prev, { name: "Você", rating, text: feedback.trim() }]);
       setFeedback("");
       setRating(0);
     }
   };
 
-  if (!servico)
+  if (!servico) {
     return (
-      <div className={styles.modalContainer}>
-        <p>Carregando...</p>
+      <div className={styles.modalContainer} onClick={handleOverlayClick} role="dialog" aria-modal="true">
+        <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+          <p>Carregando...</p>
+          <div className={styles.contactButton}>
+            <button onClick={onClose}>Fechar</button>
+          </div>
+        </div>
       </div>
     );
+  }
 
-  // Cidade/estado vindos do usuário dono do serviço
   const cidade = servico.usuario?.cidade ?? "";
   const estado = servico.usuario?.estado ?? "";
 
   return (
-    <div className={styles.modalContainer}>
-      <div className={styles.modal}>
+    <div
+      className={styles.modalContainer}
+      onClick={handleOverlayClick}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-titulo-servico"
+      id="servico-detalhes"
+    >
+      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
-          <Image
-            src="/Camera.jpg"
-            alt="Logo"
-            width={80}
-            height={80}
-            className={styles.logo}
-          />
-          <h2>{servico.nomeNegocio}</h2>
-          <p className={styles.category}>{servico.categoria?.nomeServico}</p>
+          <Image src="/Camera.jpg" alt="Logo" width={80} height={80} className={styles.logo} />
+          <h2 id="modal-titulo-servico">{servico.nomeNegocio}</h2>
+          <p className={styles.category}>{servico.categoria?.nomeServico ?? "Sem categoria"}</p>
 
           {(cidade || estado) && (
             <p className={styles.location}>
@@ -91,12 +111,16 @@ const Modal: React.FC<Props> = ({ id, onClose }) => {
             </p>
           )}
 
-          <div className={styles.rating}>
+          <div className={styles.rating} aria-label="Sua avaliação deste serviço">
             {[1, 2, 3, 4, 5].map((star) => (
               <span
                 key={star}
                 className={star <= rating ? styles.filledStar : styles.emptyStar}
                 onClick={() => handleRatingChange(star)}
+                role="button"
+                tabIndex={0}
+                aria-label={`Definir avaliação ${star} de 5`}
+                onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleRatingChange(star)}
               >
                 ★
               </span>
@@ -113,11 +137,9 @@ const Modal: React.FC<Props> = ({ id, onClose }) => {
         <div className={styles.specifications}>
           <h3>Especificação</h3>
           <ul>
-            {servico.preco?.map((p) => (
+            {(servico.preco ?? []).map((p) => (
               <li key={p.id}>
-                ✔ {p.nomeservico} -{" "}
-                R$
-                {" "}
+                ✔ {p.nomeservico} – R{"$ "}
                 {Number(p.precificacao).toLocaleString("pt-BR", {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
@@ -135,6 +157,10 @@ const Modal: React.FC<Props> = ({ id, onClose }) => {
                 key={star}
                 className={star <= rating ? styles.filledStar : styles.emptyStar}
                 onClick={() => handleRatingChange(star)}
+                role="button"
+                tabIndex={0}
+                aria-label={`Definir avaliação ${star} de 5`}
+                onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleRatingChange(star)}
               >
                 ★
               </span>
@@ -173,8 +199,19 @@ const Modal: React.FC<Props> = ({ id, onClose }) => {
         </div>
 
         <div className={styles.contactButton}>
-          <button>Entre em contato</button>
-          <button onClick={onClose}>Fechar</button>
+          {/* Se tiver telefone, vira um link clicável */}
+          {servico.usuario?.telefone ? (
+            <a href={`tel:${servico.usuario.telefone}`} className={styles.primaryButton}>
+              Entre em contato
+            </a>
+          ) : (
+            <button className={styles.primaryButton} disabled title="Telefone não informado">
+              Entre em contato
+            </button>
+          )}
+          <button onClick={onClose} className={styles.secondaryButton}>
+            Fechar
+          </button>
         </div>
       </div>
     </div>

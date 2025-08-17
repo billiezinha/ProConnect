@@ -172,7 +172,7 @@ export default function CadastroUsuarioPage() {
             {step === 2 && (
               <>
                 <div className={styles.formGroup}>
-                  <label htmlFor="telefone">Telefone (Opcional)</label>
+                  <label htmlFor="telefone">Telefone</label>
                   <input
                     id="telefone"
                     type="tel"
@@ -180,6 +180,7 @@ export default function CadastroUsuarioPage() {
                     onChange={handleChange}
                     disabled={loading}
                     placeholder="(00) 00000-0000"
+                    required
                   />
                 </div>
 
@@ -207,16 +208,23 @@ export default function CadastroUsuarioPage() {
                   />
                 </div>
 
-                <div className={styles.buttonContainer}>
-                  <button
-                    type="button"
-                    onClick={handlePrevStep}
-                    className={`${styles.submitButton} ${styles.secondaryButton}`}
+                <div className={styles.formGroup}>
+                  <label htmlFor="endereco">Endereço</label>
+                  <input
+                    id="endereco"
+                    type="text"
+                    value={formData.endereco}
+                    onChange={handleChange}
+                    required
                     disabled={loading}
-                  >
+                    placeholder="Rua, número, complemento…"
+                  />
+                </div>
+
+                <div className={styles.buttonContainer}>
+                  <button type="button" onClick={handlePrevStep} className={`${styles.submitButton} ${styles.secondaryButton}`} disabled={loading}>
                     Voltar
                   </button>
-
                   <button type="submit" className={styles.submitButton} disabled={loading}>
                     {loading ? "A finalizar..." : "Finalizar Cadastro"}
                   </button>

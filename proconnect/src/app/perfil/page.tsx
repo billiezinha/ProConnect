@@ -1,62 +1,51 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { getUser } from '@/service/userService'; // Vamos precisar de ir buscar o utilizador
-import { User } from '@/interfaces/UserProps';
-import styles from './page.module.css';
-import { FaUserCircle, FaEnvelope, FaPhone, FaMapMarkerAlt, FaEdit } from 'react-icons/fa';
-
-// Supõe que o token JWT tem um 'sub' (subject) com o ID do utilizador
-import { jwtDecode } from 'jwt-decode';
+import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { getMe, getUser } from "@/service/userService";
+import type { User } from "@/interfaces/UserProps";
+import styles from "./page.module.css";
+import { FaUserCircle, FaEnvelope, FaPhone, FaMapMarkerAlt, FaEdit } from "react-icons/fa";
+import { jwtDecode } from "jwt-decode";
 
 interface DecodedToken {
-  sub: string; // O ID do utilizador está aqui
-  // ... outras propriedades do token
+  sub: string | number;
+  email?: string;
+  exp?: number;
+  iat?: number;
 }
 
 export default function PerfilPage() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
+
+  const logout = useCallback(() => {
+    localStorage.removeItem("token");
+    router.replace("/login");
+  }, [router]);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        // Se não houver token, redireciona para o login
-        router.push('/login');
-        return;
-      }
+    (async () => {
+      const token = localStorage.getItem("token");
+      if (!token) { router.replace("/login"); return; }
 
       try {
-        const decodedToken: DecodedToken = jwtDecode(token);
-        const userId = parseInt(decodedToken.sub, 10); // Converte o ID para número
-
-        if (isNaN(userId)) {
-          throw new Error("ID de utilizador inválido no token.");
-        }
-
-        const userData = await getUser(userId);
+        const userData = await getMe();
         setUser(userData);
-      } catch (err) {
-        console.error("Erro ao ir buscar dados do utilizador:", err);
-        setError("Não foi possível carregar os seus dados. Por favor, tente fazer login novamente.");
-        // Limpa o token inválido e redireciona
-        localStorage.removeItem('token');
-        router.push('/login');
+      } catch (e: any) {
+        localStorage.removeItem("token");
+        router.replace("/login");
       } finally {
         setLoading(false);
       }
-    };
-
-    fetchUserData();
+    })();
   }, [router]);
 
   if (loading) {
-    return <div className={styles.loadingState}>A carregar o seu perfil...</div>;
+    return <div className={styles.loadingState}>Carregando seu perfil…</div>;
   }
 
   if (error) {
@@ -68,10 +57,7 @@ export default function PerfilPage() {
       <header className={styles.header}>
         <div className={styles.container}>
           <h1 className={styles.headerTitle}>Meu Perfil</h1>
-          <button onClick={() => {
-            localStorage.removeItem('token');
-            router.push('/login');
-          }} className={styles.logoutButton}>
+          <button onClick={logout} className={styles.logoutButton}>
             Sair
           </button>
         </div>
@@ -98,15 +84,17 @@ export default function PerfilPage() {
                   </div>
                   <div className={styles.infoItem}>
                     <FaPhone />
-                    <span>{user.telefone || 'Não informado'}</span>
+                    <span>{user.telefone || "Não informado"}</span>
                   </div>
                 </div>
-                
+
                 <h3 className={styles.sectionTitle}>Localização</h3>
                 <div className={styles.infoGrid}>
                   <div className={styles.infoItem}>
                     <FaMapMarkerAlt />
-                    <span>{`${user.cidade || 'Não informada'}, ${user.estado || 'Não informado'}`}</span>
+                    <span>
+                      {`${user.cidade || "Não informada"}, ${user.estado || "Não informado"}`}
+                    </span>
                   </div>
                 </div>
               </div>

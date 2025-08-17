@@ -1,14 +1,14 @@
-import { Categoria } from "@/interfaces/CategoriaProps";
 import api from "./api";
+import { Categoria } from "@/interfaces/CategoriaProps";
 
 export async function getCategorias(): Promise<Categoria[]> {
-  const resp = await api.get<Categoria[]>("/categoria");
-  return resp.data;
+  const { data } = await api.get<Categoria[]>("/categoria");
+  return data;
 }
 
 export async function getCategoriaNome(id: number): Promise<string> {
-  const resp = await api.get<Categoria>(`/categoria/${id}`);
-  return resp.data.nomeServico;
+  const { data } = await api.get<Categoria>(`/categoria/${id}`);
+  return data.nomeServico;
 }
 
 export default { getCategorias, getCategoriaNome };
