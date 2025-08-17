@@ -70,9 +70,12 @@ export default function Home() {
                 <li>✔️ Prioridade em Indicações</li>
                 <li>✔️ Análise de Desempenho do Perfil</li>
               </ul>
-              <Link href="/assinatura" className={styles.botaoPlano}>
+              {/* <Link href="/assinatura" className={styles.botaoPlano}>
                 Assinar Premium
-              </Link>
+                </Link> */}
+              <div className={styles.botaoPlano}>
+                <h3 className={styles.breve}>em breve...</h3>
+                </div>
             </div>
           </div>
         </div>
