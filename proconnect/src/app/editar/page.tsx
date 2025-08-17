@@ -7,10 +7,46 @@ import styles from "./page.module.css";
 import { UpdateUserPayload, User } from "@/interfaces/UserProps";
 import { getUserById, updateUser } from "@/service/userService";
 
+type JwtPayload = { userId?: number | string; sub?: number | string; [k: string]: unknown };
+
+function decodeJwt<T = JwtPayload>(token: string): T | null {
+  const parts = token.split(".");
+  if (parts.length < 2) return null;
+  try {
+    let base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    while (base64.length % 4 !== 0) base64 += "="; // padding
+    const json = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join("")
+    );
+    return JSON.parse(json) as T;
+  } catch {
+    return null;
+  }
+}
+
+function extractUserIdFromToken(token: string): number | null {
+  const payload = decodeJwt<JwtPayload>(token);
+  if (!payload) return null;
+  const raw = payload.userId ?? payload.sub;
+  if (raw === undefined || raw === null) return null;
+  const num = Number(raw);
+  return Number.isNaN(num) ? null : num;
+}
+
+function getErrorMessage(err: unknown): string {
+  if (err && typeof err === "object") {
+    const anyErr = err as { message?: string; response?: { data?: { message?: string; error?: string } } };
+    return anyErr.response?.data?.message || anyErr.response?.data?.error || anyErr.message || "Erro desconhecido.";
+  }
+  return "Erro desconhecido.";
+}
+
 export default function EditarPage() {
   const router = useRouter();
 
-  // estados separados para carregar e salvar (evita confusão visual)
   const [isFetching, setIsFetching] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -26,39 +62,6 @@ export default function EditarPage() {
   const [userId, setUserId] = useState<number | null>(null);
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState(false);
-
-  // --- Utils: decodifica JWT sem dependência externa ---
-  type JwtPayload = { userId?: number | string; sub?: number | string; [k: string]: unknown };
-
-  function decodeJwt<T = JwtPayload>(token: string): T | null {
-    const parts = token.split(".");
-    if (parts.length < 2) return null;
-    try {
-      let base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
-      // padding
-      while (base64.length % 4 !== 0) base64 += "=";
-
-      const json = decodeURIComponent(
-        atob(base64)
-          .split("")
-          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-          .join("")
-      );
-      return JSON.parse(json) as T;
-    } catch {
-      return null;
-    }
-  }
-
-  function extractUserIdFromToken(token: string): number | null {
-    const payload = decodeJwt<JwtPayload>(token);
-    if (!payload) return null;
-    const raw = payload.userId ?? payload.sub;
-    if (raw === undefined || raw === null) return null;
-    const num = Number(raw);
-    return Number.isNaN(num) ? null : num;
-  }
-  // -----------------------------------------------------
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -112,8 +115,8 @@ export default function EditarPage() {
       await updateUser(userId, formData);
       setSuccess(true);
       setTimeout(() => router.replace("/perfil"), 1200);
-    } catch (err: any) {
-      setError(err?.message || "Erro ao atualizar perfil.");
+    } catch (err: unknown) {
+      setError(getErrorMessage(err) || "Erro ao atualizar perfil.");
     } finally {
       setIsSubmitting(false);
     }
