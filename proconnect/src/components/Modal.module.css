@@ -1,197 +1,252 @@
-.modalContainer {
+/* === ESTRUTURA DO MODAL ==================================== */
+.modalOverlay {
   position: fixed;
   inset: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 1rem;
-  background: rgba(0, 0, 0, 0.4);
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
   z-index: 1000;
+  animation: fadeIn 0.3s ease;
 }
 
-.modal {
-  background: #f2f2f2;
-  border-radius: 16px;
+.modalContent {
+  background: var(--cor-fundo);
+  border-radius: var(--raio-borda);
   padding: 2rem;
-  max-width: 500px;
+  max-width: 550px;
   width: 100%;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--sombra-profunda);
   overflow-y: auto;
-  max-height: 95vh;
+  max-height: 90vh;
+  position: relative;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* === BOTÃO DE FECHAR ======================================= */
+.closeButton {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--cor-texto-secundario);
+  cursor: pointer;
+  transition: color 0.2s, transform 0.2s;
+}
+
+.closeButton:hover {
+  color: var(--cor-primaria);
+  transform: rotate(90deg);
+}
+
+/* === CABEÇALHO ============================================ */
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--cor-borda);
 }
 
 .logo {
   border-radius: 50%;
-  display: block;
   margin: 0 auto 1rem;
-}
-
-.header {
-  text-align: center;
-  margin-bottom: 1rem;
+  border: 2px solid var(--cor-borda);
 }
 
 .header h2 {
-  font-size: 1.5rem;
-  margin: 0.5rem 0 0.2rem;
-}
-
-.category,
-.location {
-  font-size: 0.9rem;
-  color: #666;
+  font-size: 1.8rem;
+  font-weight: 700;
   margin: 0;
+  color: var(--cor-texto);
 }
 
+.category, .location {
+  font-size: 1rem;
+  color: var(--cor-texto-secundario);
+  margin-top: 0.25rem;
+}
+
+/* === SEÇÕES DE CONTEÚDO =================================== */
+.section {
+  margin-bottom: 2rem;
+}
+
+.section h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--cor-texto);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+.section p {
+  line-height: 1.6;
+  color: var(--cor-texto-secundario);
+}
+
+/* === LISTA DE PREÇOS ======================================= */
+.priceList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.priceList li {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+}
+
+.price {
+  font-weight: 600;
+  color: var(--cor-primaria);
+}
+
+/* === AVALIAÇÕES (RATING) ================================== */
 .rating {
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 5px;
-  margin: 0.6rem 0;
-  flex-wrap: wrap;
+  gap: 0.25rem;
 }
 
-.filledStar,
-.emptyStar {
-  font-size: 1.3rem;
+.filledStar, .emptyStar {
+  font-size: 1.25rem;
   color: #ffc107;
+  transition: transform 0.2s;
+}
+
+.emptyStar {
+  color: var(--cor-borda);
+}
+
+[role="button"].filledStar:hover, [role="button"].emptyStar:hover {
+  transform: scale(1.2);
   cursor: pointer;
 }
 
-.about,
-.specifications,
-.feedbackSection,
-.previousComments {
-  margin-top: 1.5rem;
-}
-
-.about p,
-.comment p {
-  font-size: 0.95rem;
-  color: #333;
-  line-height: 1.5;
-}
-
-.specifications ul {
-  list-style: none;
-  padding-left: 0;
-  color: #333;
-  font-size: 0.95rem;
-}
-
-.specifications ul li::before {
-  content: '✔';
-  color: #6a0dad;
-  font-weight: bold;
-  margin-right: 0.5rem;
-}
-
-.feedbackSection h3 {
-  font-size: 1rem;
-  color: #6a0dad;
-  margin-bottom: 0.5rem;
+/* === FORMULÁRIO DE FEEDBACK =============================== */
+.feedbackForm {
+  display: flex;
+  flex-direction: column;
+  /* Corrigido: Alinha o botão para a direita */
+  align-items: flex-end; 
+  gap: 1rem;
 }
 
 .feedbackInput {
   width: 100%;
-  min-height: 70px;
-  border: 1px solid #ccc;
+  min-height: 80px;
+  border: 1px solid var(--cor-borda);
   border-radius: 8px;
-  padding: 0.6rem;
-  font-size: 0.9rem;
-  resize: vertical;
-  margin-top: 0.4rem;
-}
-
-.submitFeedback {
-  background-color: #6a0dad;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-  margin-top: 0.7rem;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background 0.3s ease;
-}
-
-.submitFeedback:hover {
-  background-color: #580ca8;
-}
-
-.previousComments h3 {
+  padding: 0.8rem;
   font-size: 1rem;
-  margin-bottom: 0.7rem;
+  resize: vertical;
+}
+
+/* === LISTA DE COMENTÁRIOS ================================== */
+.commentsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .comment {
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  padding: 0.9rem;
-  margin-bottom: 1rem;
+  background-color: var(--cor-fundo-secao);
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.commentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
 }
 
 .commentAuthor {
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 0.3rem;
+  font-weight: 600;
 }
 
-.commentRating {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  margin-bottom: 0.4rem;
-}
-
-.contactButton {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: 1.5rem;
-}
-
-.contactButton button {
-  flex: 1;
-  padding: 0.6rem;
+.commentText {
   font-size: 0.95rem;
-  font-weight: 500;
-  border: none;
+}
+
+/* === RODAPÉ E BOTÕES DE AÇÃO ============================== */
+.footer {
+  display: flex;
+  /* Corrigido: Alinha os botões para a direita */
+  justify-content: flex-end; 
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--cor-borda);
+}
+
+.primaryButton, .secondaryButton {
+  /* Remove o flex: 1 para que os botões tenham largura automática */
+  padding: 0.8rem 1.5rem; /* Adiciona mais padding horizontal */
+  font-size: 1rem;
+  font-weight: 600;
   border-radius: 8px;
   cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.2s;
 }
 
-.contactButton button:first-child {
-  background-color: #8000ff;
+.primaryButton {
+  background-color: var(--cor-primaria);
   color: white;
+  border: 1px solid var(--cor-primaria);
 }
 
-.contactButton button:last-child {
-  background-color: #ddd;
-  color: #333;
+.primaryButton:hover:not(:disabled) {
+  background-color: var(--cor-primaria-hover);
+  transform: translateY(-2px);
 }
 
-/* Responsivo */
+.secondaryButton {
+  background-color: var(--cor-fundo);
+  color: var(--cor-texto-secundario);
+  border: 1px solid var(--cor-borda);
+}
+
+.secondaryButton:hover {
+  background-color: var(--cor-fundo-secao);
+  border-color: var(--cor-texto-secundario);
+}
+
+.primaryButton:disabled {
+  background-color: #ccc;
+  border-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* === RESPONSIVIDADE ======================================= */
 @media (max-width: 600px) {
-  .modal {
-    padding: 1.2rem;
+  .modalContent {
+    padding: 1.5rem;
   }
-
   .header h2 {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
   }
-
-  .feedbackInput {
-    min-height: 60px;
+  .footer {
+    flex-direction: column-reverse; /* Inverte a ordem e empilha */
   }
-
-  .submitFeedback,
-  .contactButton button {
-    font-size: 0.9rem;
-    padding: 0.5rem;
+  .primaryButton, .secondaryButton {
+    width: 100%; /* Faz os botões ocuparem a largura total */
   }
-  
 }

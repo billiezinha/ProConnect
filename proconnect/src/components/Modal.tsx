@@ -1,11 +1,36 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import styles from "./Modal.module.css";
 import Image from "next/image";
+import styles from "./Modal.module.css";
 import { getServicoById } from "@/service/servicoService";
 import { Servico } from "@/interfaces/ServicoProps";
+import { FaStar, FaTimes } from "react-icons/fa";
 
+// --- Componente de Estrelas Reutilizável ---
+interface StarRatingProps {
+  rating: number;
+  setRating?: (rating: number) => void;
+  interactive?: boolean;
+}
+
+const StarRating: React.FC<StarRatingProps> = ({ rating, setRating, interactive = false }) => (
+  <div className={styles.rating} aria-label={`Avaliação: ${rating} de 5 estrelas.`}>
+    {[1, 2, 3, 4, 5].map((star) => (
+      <FaStar
+        key={star}
+        className={star <= rating ? styles.filledStar : styles.emptyStar}
+        onClick={() => interactive && setRating?.(star)}
+        role={interactive ? "button" : "img"}
+        tabIndex={interactive ? 0 : -1}
+        onKeyDown={(e) => interactive && (e.key === "Enter" || e.key === " ") && setRating?.(star)}
+      />
+    ))}
+  </div>
+);
+
+
+// --- Componente Principal do Modal ---
 interface Comment {
   name: string;
   rating: number;
@@ -19,32 +44,22 @@ type Props = {
 
 const Modal: React.FC<Props> = ({ id, onClose }) => {
   const [servico, setServico] = useState<Servico | null>(null);
-  const [rating, setRating] = useState<number>(0);
+  const [userRating, setUserRating] = useState<number>(0);
   const [feedback, setFeedback] = useState<string>("");
   const [comments, setComments] = useState<Comment[]>([
-    {
-      name: "Maria",
-      rating: 5,
-      text: "Excelente atendimento! A Joana foi super atenciosa e meu cabelo ficou incrível. Recomendo demais!",
-    },
-    {
-      name: "Anonymous",
-      rating: 4,
-      text: "Fiz progressiva e achei que não durou tanto quanto esperava, mas o atendimento foi bom.",
-    },
+    { name: "Maria", rating: 5, text: "Excelente atendimento! A Joana foi super atenciosa e meu cabelo ficou incrível. Recomendo demais!" },
+    { name: "Anônimo", rating: 4, text: "Fiz progressiva e achei que não durou tanto quanto esperava, mas o atendimento foi bom." },
   ]);
 
   useEffect(() => {
-    if (!id || Number.isNaN(id)) return;
-    getServicoById(id).then(setServico).catch(console.error);
+    if (id) {
+      getServicoById(id).then(setServico).catch(console.error);
+    }
   }, [id]);
 
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    },
-    [onClose]
-  );
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key === "Escape") onClose();
+  }, [onClose]);
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
@@ -52,167 +67,106 @@ const Modal: React.FC<Props> = ({ id, onClose }) => {
   }, [handleKeyDown]);
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    // fecha ao clicar no overlay (fora do modal)
     if (e.target === e.currentTarget) onClose();
   };
 
-  const handleFeedbackChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setFeedback(e.target.value);
-  };
-
-  const handleRatingChange = (stars: number) => {
-    setRating(stars);
-  };
-
   const handleSubmitFeedback = () => {
-    if (feedback.trim()) {
-      setComments((prev) => [...prev, { name: "Você", rating, text: feedback.trim() }]);
+    if (feedback.trim() && userRating > 0) {
+      setComments((prev) => [...prev, { name: "Você", rating: userRating, text: feedback.trim() }]);
       setFeedback("");
-      setRating(0);
+      setUserRating(0);
+    } else {
+      alert("Por favor, selecione uma avaliação e escreva um comentário.");
     }
   };
 
   if (!servico) {
     return (
-      <div className={styles.modalContainer} onClick={handleOverlayClick} role="dialog" aria-modal="true">
-        <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+      <div className={styles.modalOverlay} onClick={handleOverlayClick}>
+        <div className={styles.modalContent} role="dialog">
           <p>Carregando...</p>
-          <div className={styles.contactButton}>
-            <button onClick={onClose}>Fechar</button>
-          </div>
         </div>
       </div>
     );
   }
 
-  const cidade = servico.usuario?.cidade ?? "";
-  const estado = servico.usuario?.estado ?? "";
+  const { nomeNegocio, categoria, descricao, usuario, preco } = servico;
 
   return (
-    <div
-      className={styles.modalContainer}
-      onClick={handleOverlayClick}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="modal-titulo-servico"
-      id="servico-detalhes"
-    >
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <div className={styles.header}>
-          <Image src="/Camera.jpg" alt="Logo" width={80} height={80} className={styles.logo} />
-          <h2 id="modal-titulo-servico">{servico.nomeNegocio}</h2>
-          <p className={styles.category}>{servico.categoria?.nomeServico ?? "Sem categoria"}</p>
-
-          {(cidade || estado) && (
+    <div className={styles.modalOverlay} onClick={handleOverlayClick} role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+        <button onClick={onClose} className={styles.closeButton} aria-label="Fechar modal"><FaTimes /></button>
+        
+        <header className={styles.header}>
+          <Image src="/Camera.jpg" alt="Logo do serviço" width={80} height={80} className={styles.logo} />
+          <h2 id="modal-title">{nomeNegocio}</h2>
+          <p className={styles.category}>{categoria?.nomeServico ?? "Sem categoria"}</p>
+          {usuario && (
             <p className={styles.location}>
-              {cidade}
-              {cidade && estado ? " - " : ""}
-              {estado}
+              {usuario.cidade}{usuario.cidade && usuario.estado ? " - " : ""}{usuario.estado}
             </p>
           )}
+        </header>
 
-          <div className={styles.rating} aria-label="Sua avaliação deste serviço">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <span
-                key={star}
-                className={star <= rating ? styles.filledStar : styles.emptyStar}
-                onClick={() => handleRatingChange(star)}
-                role="button"
-                tabIndex={0}
-                aria-label={`Definir avaliação ${star} de 5`}
-                onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleRatingChange(star)}
-              >
-                ★
-              </span>
-            ))}
-            <p>{rating} de 5</p>
-          </div>
-        </div>
+        <section className={styles.section}>
+          <h3>Sobre o Serviço</h3>
+          <p>{descricao}</p>
+        </section>
 
-        <div className={styles.about}>
-          <h3>Sobre</h3>
-          <p>{servico.descricao}</p>
-        </div>
-
-        <div className={styles.specifications}>
-          <h3>Especificação</h3>
-          <ul>
-            {(servico.preco ?? []).map((p) => (
+        <section className={styles.section}>
+          <h3>Serviços e Preços</h3>
+          <ul className={styles.priceList}>
+            {(preco ?? []).map((p) => (
               <li key={p.id}>
-                ✔ {p.nomeservico} – R{"$ "}
-                {Number(p.precificacao).toLocaleString("pt-BR", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
+                <span>{p.nomeservico}</span>
+                <span className={styles.price}>R$ {Number(p.precificacao).toFixed(2)}</span>
               </li>
             ))}
           </ul>
-        </div>
+        </section>
 
-        <div className={styles.feedbackSection}>
-          <h3>O QUE VOCÊ ACHOU DESSE SERVIÇO?</h3>
-          <div className={styles.rating}>
-            {[1, 2, 3, 4, 5].map((star) => (
-              <span
-                key={star}
-                className={star <= rating ? styles.filledStar : styles.emptyStar}
-                onClick={() => handleRatingChange(star)}
-                role="button"
-                tabIndex={0}
-                aria-label={`Definir avaliação ${star} de 5`}
-                onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleRatingChange(star)}
-              >
-                ★
-              </span>
+        <section className={styles.section}>
+          <h3>Deixe sua Avaliação</h3>
+          <div className={styles.feedbackForm}>
+            <StarRating rating={userRating} setRating={setUserRating} interactive />
+            <textarea
+              placeholder="Conte como foi sua experiência..."
+              value={feedback}
+              onChange={(e) => setFeedback(e.target.value)}
+              className={styles.feedbackInput}
+            />
+            <button onClick={handleSubmitFeedback} className={styles.primaryButton}>
+              Enviar Avaliação
+            </button>
+          </div>
+        </section>
+
+        <section className={styles.section}>
+          <h3>Avaliações de Clientes</h3>
+          <div className={styles.commentsList}>
+            {comments.map((comment, index) => (
+              <div key={index} className={styles.comment}>
+                <div className={styles.commentHeader}>
+                  <p className={styles.commentAuthor}>{comment.name}</p>
+                  <StarRating rating={comment.rating} />
+                </div>
+                <p className={styles.commentText}>{comment.text}</p>
+              </div>
             ))}
           </div>
-          <textarea
-            placeholder="Escreva sua avaliação ou feedback"
-            value={feedback}
-            onChange={handleFeedbackChange}
-            className={styles.feedbackInput}
-          />
-          <button onClick={handleSubmitFeedback} className={styles.submitFeedback}>
-            Enviar
-          </button>
-        </div>
+        </section>
 
-        <div className={styles.previousComments}>
-          <h3>Avaliações anteriores</h3>
-          {comments.map((comment, index) => (
-            <div key={index} className={styles.comment}>
-              <p className={styles.commentAuthor}>{comment.name}</p>
-              <div className={styles.commentRating}>
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <span
-                    key={star}
-                    className={star <= comment.rating ? styles.filledStar : styles.emptyStar}
-                  >
-                    ★
-                  </span>
-                ))}
-                <p>{comment.rating} de 5</p>
-              </div>
-              <p>{comment.text}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className={styles.contactButton}>
-          {/* Se tiver telefone, vira um link clicável */}
-          {servico.usuario?.telefone ? (
-            <a href={`tel:${servico.usuario.telefone}`} className={styles.primaryButton}>
-              Entre em contato
+        <footer className={styles.footer}>
+          {/* Ordem dos botões invertida */}
+          <button onClick={onClose} className={styles.secondaryButton}>Fechar</button>
+          {usuario?.telefone ? (
+            <a href={`https://wa.me/${usuario.telefone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className={styles.primaryButton}>
+              Entrar em contato
             </a>
           ) : (
-            <button className={styles.primaryButton} disabled title="Telefone não informado">
-              Entre em contato
-            </button>
+            <button className={styles.primaryButton} disabled>Contato indisponível</button>
           )}
-          <button onClick={onClose} className={styles.secondaryButton}>
-            Fechar
-          </button>
-        </div>
+        </footer>
       </div>
     </div>
   );
