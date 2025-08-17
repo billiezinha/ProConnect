@@ -57,7 +57,6 @@ export default function EditServicoModal({ servico, onClose, onSave }: Props) {
     try {
       await onSave(payload);
     } catch {
-      // <-- removido o parâmetro não usado (antes: catch (e))
       setError("Falha ao salvar alterações.");
     } finally {
       setSaving(false);
@@ -67,14 +66,14 @@ export default function EditServicoModal({ servico, onClose, onSave }: Props) {
   if (!servico) return null;
 
   return (
-    <div className={styles.backdrop} role="dialog" aria-modal="true" aria-labelledby="edit-title">
+    <div className={styles.overlay} role="dialog" aria-modal="true" aria-labelledby="edit-title">
       <div className={styles.modal}>
         <div className={styles.header}>
           <h2 id="edit-title">Editar Serviço</h2>
-          <button type="button" onClick={onClose} className={styles.closeBtn} aria-label="Fechar">×</button>
+          <button type="button" onClick={onClose} className={styles.closeButton} aria-label="Fechar">×</button>
         </div>
 
-        <form onSubmit={handleSubmit} className={styles.form} noValidate>
+        <form onSubmit={handleSubmit} noValidate>
           {error && <p className={styles.error}>{error}</p>}
 
           <div className={styles.formGroup}>
@@ -101,7 +100,7 @@ export default function EditServicoModal({ servico, onClose, onSave }: Props) {
           <div className={styles.formGroup}>
             <label htmlFor="categoriaId">Categoria</label>
             {loadingCats ? (
-              <div className={styles.hint}>Carregando categorias…</div>
+              <div>Carregando categorias…</div>
             ) : (
               <select
                 id="categoriaId"
@@ -117,9 +116,11 @@ export default function EditServicoModal({ servico, onClose, onSave }: Props) {
             )}
           </div>
 
-          <div className={styles.footer}>
-            <button type="button" onClick={onClose} className={styles.secondary}>Cancelar</button>
-            <button type="submit" className={styles.primary} disabled={saving}>
+          <div className={styles.actions}>
+            <button type="button" onClick={onClose} className={styles.cancelButton}>
+              Cancelar
+            </button>
+            <button type="submit" className={styles.saveButton} disabled={saving}>
               {saving ? "Salvando..." : "Salvar alterações"}
             </button>
           </div>
