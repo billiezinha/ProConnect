@@ -1,5 +1,5 @@
-import { CreateServicoPayload, Servico } from "@/interfaces/ServicoProps";
 import api from "./api";
+import type { CreateServicoPayload, Servico, UpdateServicoPayload } from "@/interfaces/ServicoProps";
 
 export async function createServico(data: CreateServicoPayload): Promise<Servico> {
   const resp = await api.post<Servico>("/servico", data);
@@ -21,3 +21,11 @@ export async function getMeusServicos(): Promise<Servico[]> {
   return resp.data;
 }
 
+export async function updateServico(id: number, data: UpdateServicoPayload): Promise<Servico> {
+  const resp = await api.put<Servico>(`/servico/${id}`, data);
+  return resp.data;
+}
+
+export async function deleteServico(id: number): Promise<void> {
+  await api.delete(`/servico/${id}`);
+}
