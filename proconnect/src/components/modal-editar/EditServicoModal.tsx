@@ -56,7 +56,8 @@ export default function EditServicoModal({ servico, onClose, onSave }: Props) {
 
     try {
       await onSave(payload);
-    } catch (e) {
+    } catch {
+      // <-- removido o parâmetro não usado (antes: catch (e))
       setError("Falha ao salvar alterações.");
     } finally {
       setSaving(false);
@@ -81,7 +82,7 @@ export default function EditServicoModal({ servico, onClose, onSave }: Props) {
             <input
               id="nomeNegocio"
               value={nomeNegocio}
-              onChange={(e) => setNomeNegocio(e.target.value)}
+              onChange={(ev) => setNomeNegocio(ev.target.value)}
               required
             />
           </div>
@@ -92,7 +93,7 @@ export default function EditServicoModal({ servico, onClose, onSave }: Props) {
               id="descricao"
               rows={4}
               value={descricao}
-              onChange={(e) => setDescricao(e.target.value)}
+              onChange={(ev) => setDescricao(ev.target.value)}
               required
             />
           </div>
@@ -105,11 +106,11 @@ export default function EditServicoModal({ servico, onClose, onSave }: Props) {
               <select
                 id="categoriaId"
                 value={categoriaId}
-                onChange={(e) => setCategoriaId(Number(e.target.value))}
+                onChange={(ev) => setCategoriaId(Number(ev.target.value))}
                 required
               >
                 <option value="" disabled>Selecione</option>
-                {categorias.map(c => (
+                {categorias.map((c) => (
                   <option key={c.id} value={c.id}>{c.nomeServico}</option>
                 ))}
               </select>
