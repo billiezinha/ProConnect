@@ -157,10 +157,10 @@ const Modal: React.FC<Props> = ({ id, onClose }) => {
         </section>
 
         <footer className={styles.footer}>
-          {/* Ordem dos botões invertida */}
           <button onClick={onClose} className={styles.secondaryButton}>Fechar</button>
           {usuario?.telefone ? (
-            <a href={`https://wa.me/${usuario.telefone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className={styles.primaryButton}>
+            // CORREÇÃO APLICADA AQUI
+            <a href={`https://wa.me/55${usuario.telefone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className={styles.primaryButton}>
               Entrar em contato
             </a>
           ) : (
