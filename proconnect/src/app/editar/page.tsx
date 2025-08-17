@@ -5,36 +5,9 @@ import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 
 import { UpdateUserPayload, User } from "@/interfaces/UserProps";
-import { getUserById, updateUser } from "@/service/userService";
-
-type JwtPayload = { userId?: number | string; sub?: number | string; [k: string]: unknown };
-
-function decodeJwt<T = JwtPayload>(token: string): T | null {
-  const parts = token.split(".");
-  if (parts.length < 2) return null;
-  try {
-    let base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
-    while (base64.length % 4 !== 0) base64 += "="; // padding
-    const json = decodeURIComponent(
-      atob(base64)
-        .split("")
-        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-        .join("")
-    );
-    return JSON.parse(json) as T;
-  } catch {
-    return null;
-  }
-}
-
-function extractUserIdFromToken(token: string): number | null {
-  const payload = decodeJwt<JwtPayload>(token);
-  if (!payload) return null;
-  const raw = payload.userId ?? payload.sub;
-  if (raw === undefined || raw === null) return null;
-  const num = Number(raw);
-  return Number.isNaN(num) ? null : num;
-}
+import { getMe, updateUser } from "@/service/userService";
+import { FaArrowLeft } from "react-icons/fa";
+import Link from "next/link";
 
 function getErrorMessage(err: unknown): string {
   if (err && typeof err === "object") {
@@ -69,19 +42,11 @@ export default function EditarPage() {
       router.replace("/login");
       return;
     }
-
-    const uid = extractUserIdFromToken(token);
-    if (!uid) {
-      localStorage.removeItem("token");
-      router.replace("/login");
-      return;
-    }
-
-    setUserId(uid);
-
+    
     (async () => {
       try {
-        const user: User = await getUserById(uid);
+        const user: User = await getMe();
+        setUserId(user.id);
         setFormData({
           nome: user.nome ?? "",
           email: user.email ?? "",
@@ -105,14 +70,17 @@ export default function EditarPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!userId) return;
+    if (!userId) {
+        setError("ID do usuário não encontrado. Por favor, faça login novamente.");
+        return;
+    }
 
     setError("");
     setSuccess(false);
     setIsSubmitting(true);
 
     try {
-      await updateUser(userId, formData);
+      await updateUser(userId, formData); 
       setSuccess(true);
       setTimeout(() => router.replace("/perfil"), 1200);
     } catch (err: unknown) {
@@ -132,6 +100,15 @@ export default function EditarPage() {
 
   return (
     <div className={styles.body}>
+       <header className={styles.header}>
+        <div className={styles.container}>
+          <Link href="/perfil" className={styles.backButton}>
+            <FaArrowLeft />
+          </Link>
+          <h1 className={styles.headerTitle}>Editar Perfil</h1>
+          <div style={{ width: "30px" }}></div>
+        </div>
+      </header>
       <div className={styles.container}>
         <div className={styles.formSection}>
           {success ? (
@@ -141,8 +118,6 @@ export default function EditarPage() {
             </div>
           ) : (
             <>
-              <h1 className={styles.title}>Editar Perfil</h1>
-
               <form onSubmit={handleSubmit} noValidate>
                 {error && <p className={styles.error}>{error}</p>}
 
@@ -221,15 +196,6 @@ export default function EditarPage() {
                 </div>
 
                 <div className={styles.buttonContainer}>
-                  <button
-                    type="button"
-                    onClick={() => router.push("/perfil")}
-                    className={`${styles.submitButton} ${styles.secondaryButton}`}
-                    disabled={isSubmitting}
-                  >
-                    Cancelar
-                  </button>
-
                   <button
                     type="submit"
                     className={styles.submitButton}

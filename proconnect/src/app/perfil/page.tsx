@@ -6,7 +6,14 @@ import Link from "next/link";
 import { getMe } from "@/service/userService";
 import type { User } from "@/interfaces/UserProps";
 import styles from "./page.module.css";
-import { FaUserCircle, FaEnvelope, FaPhone, FaMapMarkerAlt, FaEdit } from "react-icons/fa";
+import { 
+  FaUserCircle, 
+  FaEnvelope, 
+  FaPhone, 
+  FaMapMarkerAlt, 
+  FaEdit, 
+  FaArrowLeft 
+} from "react-icons/fa";
 
 export default function PerfilPage() {
   const router = useRouter();
@@ -30,7 +37,6 @@ export default function PerfilPage() {
         const userData = await getMe();
         setUser(userData);
       } catch {
-        // Sem variável no catch para não disparar no-unused-vars
         localStorage.removeItem("token");
         router.replace("/login");
       } finally {
@@ -47,6 +53,9 @@ export default function PerfilPage() {
     <div className={styles.body}>
       <header className={styles.header}>
         <div className={styles.container}>
+          <Link href="/Busca-profissionais" className={styles.backButton}>
+            <FaArrowLeft />
+          </Link>
           <h1 className={styles.headerTitle}>Meu Perfil</h1>
           <button onClick={logout} className={styles.logoutButton}>
             Sair

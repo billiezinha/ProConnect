@@ -1,7 +1,8 @@
-/* src/app/Busca-profissionais/page.module.css */
+/* === LAYOUT GERAL MINIMALISTA ============================ */
 .body {
-  background-color: var(--cor-fundo-secao);
+  background-color: var(--cor-fundo);
   min-height: 100vh;
+  font-family: var(--fonte-principal);
 }
 
 .container {
@@ -11,91 +12,163 @@
   padding: 0 1.5rem;
 }
 
-/* === HEADER ===================================== */
+/* === CABEÇALHO MINIMALISTA =============================== */
 .header {
-  background-color: var(--cor-fundo);
-  padding: 1rem 0;
+  background-color: transparent;
+  padding: 2rem 0;
   border-bottom: 1px solid var(--cor-borda);
-  position: sticky;
-  top: 0;
-  z-index: 100;
 }
 
 .header .container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 2rem;
 }
 
-.logo {
+.logo a {
   font-size: 1.5rem;
-  font-weight: 800;
-  color: var(--cor-primaria);
+  font-weight: 600;
+  color: var(--cor-primaria); /* Corrigido: Logo roxo */
+  text-decoration: none;
 }
 
-.searchBar {
-  flex-grow: 1;
-  position: relative;
-}
-
-.searchIcon {
-  position: absolute;
-  top: 50%;
-  left: 15px;
-  transform: translateY(-50%);
-  color: var(--cor-texto-secundario);
-}
-
-.searchBar input {
-  width: 100%;
-  padding: 0.8rem 1rem 0.8rem 2.5rem; /* Espaço para o ícone */
-  border-radius: 50px;
-  border: 1px solid var(--cor-borda);
-  background-color: var(--cor-fundo-input);
-  font-size: 1rem;
-  font-family: var(--fonte-principal);
-  transition: all 0.2s ease;
-}
-
-.searchBar input:focus {
-  outline: none;
-  border-color: var(--cor-primaria);
-  box-shadow: 0 0 0 3px rgba(139, 44, 245, 0.15);
-}
-
-.profileLink {
+.profileLink a {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   font-weight: 500;
   color: var(--cor-texto-secundario);
-  white-space: nowrap;
-  transition: color 0.2s ease;
+  text-decoration: none;
+  transition: color 0.2s;
 }
 
-.profileLink:hover {
+.profileLink a:hover {
   color: var(--cor-primaria);
 }
 
 .profileLink svg {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
 }
 
-/* === CONTEÚDO PRINCIPAL ============================ */
-.mainContent {
-  padding: 3rem 0;
+/* === SEÇÃO DE BUSCA MINIMALISTA ========================== */
+.searchSection {
+  text-align: center;
+  padding: 3rem 0; /* Corrigido: Diminuído o espaçamento vertical */
 }
 
-.pageTitle {
-  font-size: 2rem;
-  margin-bottom: 2rem;
+.title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--cor-texto);
+  margin-bottom: 0.5rem;
 }
 
-.loadingState, .errorState, .noResults {
+.subtitle {
+  font-size: 1.1rem;
+  color: var(--cor-texto-secundario);
+  margin-bottom: 2rem; /* Corrigido: Diminuído o espaçamento inferior */
+}
+
+.searchBar {
+  position: relative;
+  max-width: 550px;
+  margin: 0 auto;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 1rem 1rem 1rem 3rem;
+  font-size: 1rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  background-color: var(--cor-fundo-secao);
+  transition: all 0.2s;
+}
+
+.searchInput::placeholder {
+  color: var(--cor-texto-secundario);
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--cor-primaria);
+  background-color: var(--cor-fundo);
+  box-shadow: 0 0 0 3px rgba(139, 44, 245, 0.1);
+}
+
+.searchIcon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--cor-texto-secundario);
+}
+
+/* === RESULTADOS MINIMALISTAS ============================= */
+.resultsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  padding-bottom: 4rem;
+}
+
+.servicoCard {
+  background-color: transparent;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-borda);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  padding: 1.5rem;
+}
+
+.servicoCard:hover {
+  border-color: var(--cor-primaria);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.servicoTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--cor-texto);
+  margin-bottom: 0.25rem;
+}
+
+.servicoProvider {
+  font-size: 0.9rem;
+  color: var(--cor-texto-secundario);
+  margin-bottom: 1rem;
+}
+
+.servicoDescription {
+  color: var(--cor-texto-secundario);
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+}
+
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid var(--cor-borda);
+}
+
+.servicoCategory {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--cor-texto-secundario);
+}
+
+.servicoPrice {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--cor-primaria);
+}
+
+/* === ESTADOS ============================================== */
+.loadingState, .errorState, .emptyState {
   text-align: center;
   padding: 4rem 0;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: var(--cor-texto-secundario);
 }
 
@@ -103,86 +176,22 @@
   color: var(--cor-erro);
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1.5rem;
-}
-
-.card {
-  background-color: var(--cor-fundo);
-  border-radius: var(--raio-borda);
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-  display: flex;
-  flex-direction: column;
-  transition: all 0.2s ease;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--sombra-suave);
-}
-
-.cardHeader {
-  padding: 1.5rem;
-  border-bottom: 1px solid var(--cor-borda);
-}
-
-.cardTitle {
-  font-size: 1.3rem;
-  color: var(--cor-texto);
-  margin-bottom: 0.25rem;
-}
-
-.cardCategory {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--cor-primaria);
-}
-
-.cardDescription {
-  padding: 1.5rem;
-  color: var(--cor-texto-secundario);
-  flex-grow: 1;
-  line-height: 1.6;
-}
-
-.cardFooter {
-  padding: 1.5rem;
-  border-top: 1px solid var(--cor-borda);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: var(--cor-fundo-secao);
-}
-
-.userInfo {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-.detailsButton {
-  background-color: var(--cor-primaria);
-  color: var(--cor-texto-claro);
-  padding: 0.6rem 1.2rem;
-  border-radius: 8px;
-  font-weight: 500;
-  transition: background-color 0.2s ease;
-}
-
-.detailsButton:hover {
-  background-color: var(--cor-primaria-hover);
-}
-
+/* === RESPONSIVIDADE ===================================== */
 @media (max-width: 768px) {
   .header .container {
-    flex-direction: column;
+    flex-direction: row;
     gap: 1rem;
   }
-  .searchBar {
-    width: 100%;
+  .profileLink span {
+    display: none;
+  }
+  .title {
+    font-size: 1.8rem;
+  }
+  .subtitle {
+    font-size: 1rem;
+  }
+  .searchSection {
+    padding: 2.5rem 0; /* Espaçamento ainda menor para mobile */
   }
 }

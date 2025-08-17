@@ -4,7 +4,6 @@
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: var(--cor-fundo-secao);
 }
 
 .container {
@@ -15,20 +14,20 @@
 
 .logoSection {
   flex: 1;
+  background-color: var(--cor-primaria);
+  padding: 40px;
   display: grid;
   place-items: center;
-  background: var(--cor-primaria);
-  padding: 40px;
 }
 
 .logo {
-  width: 60%;
-  height: auto;
+  width: 110%;
   max-width: 250px;
+  height: auto;
 }
 
 .formSection {
-  flex: 1.2;
+  flex: 1.5;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -37,17 +36,24 @@
   background-color: var(--cor-fundo);
 }
 
-.title {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: var(--cor-primaria);
+.header {
   text-align: center;
   margin-bottom: 2rem;
 }
 
+.header h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--cor-primaria);
+}
+
+.header p {
+  color: var(--cor-texto-secundario);
+  margin-top: 0.5rem;
+}
+
 .formGroup {
-  width: 100%;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .formGroup label {
@@ -62,7 +68,6 @@
   width: 100%;
   padding: 12px 15px;
   font-size: 1rem;
-  font-family: var(--fonte-principal);
   border: 1px solid var(--cor-borda);
   border-radius: 8px;
   background-color: var(--cor-fundo-input);
@@ -73,6 +78,22 @@
   outline: none;
   border-color: var(--cor-primaria);
   box-shadow: 0 0 0 3px rgba(139, 44, 245, 0.15);
+}
+
+.passwordWrapper {
+  position: relative;
+}
+
+.showPasswordButton {
+  position: absolute;
+  right: 0.8rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--cor-texto-secundario);
+  font-size: 1.2rem;
 }
 
 .submitButton {
@@ -90,7 +111,6 @@
 }
 
 .submitButton:hover:not(:disabled) {
-  background-color: var(--cor-primaria-hover);
   transform: translateY(-2px);
 }
 
@@ -99,13 +119,13 @@
   cursor: not-allowed;
 }
 
-.register {
-  margin-top: 1.5rem;
+.footerLink {
+  margin-top: 2rem;
   text-align: center;
   font-size: 0.9rem;
 }
 
-.register a {
+.footerLink a {
   color: var(--cor-primaria);
   font-weight: 500;
 }
@@ -122,35 +142,29 @@
 }
 
 @media (max-width: 768px) {
+  .body {
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+  .container {
+    flex-direction: column;
+    height: auto;
+  }
   .logoSection {
     display: none;
   }
-}
-
-/* Adicione estas classes no final do arquivo */
-
-.successMessage {
-  text-align: center;
-  color: var(--cor-primaria);
-  animation: fadeInOut 1.5s ease-in-out forwards;
-}
-
-.successMessage p {
-  font-size: 1.2rem;
-  font-weight: 500;
-}
-
-@keyframes fadeInOut {
-  0% {
-    opacity: 0;
-    transform: scale(0.9);
+  .formSection {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: visible;
+    justify-content: flex-start;
+    min-height: 100vh;
   }
-  50% {
-    opacity: 1;
-    transform: scale(1.05);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
+}
+
+@media (min-width: 769px) {
+  .logo {
+    max-width: 350px;
   }
 }

@@ -1,284 +1,171 @@
+/* === LAYOUT GERAL ======================================== */
 .body {
   background-color: var(--cor-fundo-secao);
-  padding: 3rem 1rem;
   min-height: 100vh;
 }
 
 .container {
-  max-width: 800px;
+  width: 100%;
+  max-width: var(--largura-container-form); /* Um pouco mais estreito para formulários */
   margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* === CABEÇALHO (NOVO) ========================================== */
+.header {
+  background-color: var(--cor-fundo);
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--cor-borda);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-bottom: 3rem;
+}
+
+.header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.backButton {
+  font-size: 1.5rem;
+  color: var(--cor-texto);
+  transition: color 0.2s ease;
+}
+
+.backButton:hover {
+  color: var(--cor-primaria);
+}
+
+.headerTitle {
+  font-size: 1.8rem;
+  color: var(--cor-texto);
+  text-align: center;
+  flex-grow: 1;
+}
+
+/* === CONTEÚDO PRINCIPAL ================================== */
+.mainContent {
+  padding-bottom: 3rem;
+}
+
+.form {
   background-color: var(--cor-fundo);
   padding: 2.5rem;
   border-radius: var(--raio-borda);
   box-shadow: var(--sombra-suave);
-  --price-width: 120px;
-  --remove-width: 45px;
-  --grid-gap: 1rem;
 }
 
-.title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--cor-primaria);
-  text-align: center;
+.formGroup {
+  margin-bottom: 1.5rem;
 }
 
-.subtitle {
-  text-align: center;
-  color: var(--cor-texto-secundario);
-  margin-bottom: 2.5rem;
-}
-
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.formGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-}
-
-.formGroup label {
+.label {
   display: block;
-  font-size: 0.9rem;
   font-weight: 500;
   margin-bottom: 0.5rem;
-  color: var(--cor-texto-secundario);
+  color: var(--cor-texto);
 }
 
-.formGroup input,
-.formGroup select,
-.formGroup textarea {
+.input,
+.textarea,
+.select {
   width: 100%;
-  padding: 12px 15px;
-  font-size: 1rem;
-  font-family: var(--fonte-principal);
+  padding: 0.8rem 1rem;
   border: 1px solid var(--cor-borda);
   border-radius: 8px;
-  background-color: var(--cor-fundo-input);
-  transition: all 0.2s ease;
-  box-sizing: border-box;
-  min-height: 45px;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.formGroup input:focus,
-.formGroup select:focus,
-.formGroup textarea:focus,
-.servicoItem input[type="text"]:focus,
-.priceWrapper:focus-within {
+.input:focus,
+.textarea:focus,
+.select:focus {
   outline: none;
   border-color: var(--cor-primaria);
-  box-shadow: 0 0 0 3px rgba(139, 44, 245, 0.15);
+  box-shadow: 0 0 0 3px rgba(139, 44, 245, 0.1);
 }
 
-.sectionTitle {
-  font-size: 1.2rem;
-  font-weight: 700;
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
-  border-top: 1px solid var(--cor-borda);
-  padding-top: 1.5rem;
-}
-
-.servicoItemHeader,
-.servicoItem {
-  display: grid;
-  grid-template-columns: 1fr var(--price-width) var(--remove-width);
-  gap: var(--grid-gap);
-  align-items: center;
-  margin-bottom: 0.5rem;
-}
-
-.servicoNameHeader {
-  grid-column: 1;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--cor-texto-secundario);
-}
-
-.servicoPriceHeader {
-  grid-column: 2;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--cor-texto-secundario);
-}
-
-.servicoItem input[type="text"] {
-  grid-column: 1;
-  width: 100%;
-  padding: 12px 15px;
-  font-size: 1rem;
-  border: 1px solid var(--cor-borda);
-  border-radius: 8px;
-  background-color: var(--cor-fundo-input);
-  transition: all 0.2s ease;
-  min-height: 45px;
-}
-
-.priceWrapper {
-  grid-column: 2;
-  display: flex;
-  align-items: center;
-  height: 45px;
-  width: 100%;
-  border: 1px solid var(--cor-borda);
-  border-radius: 8px;
-  background-color: var(--cor-fundo-input);
-  transition: all 0.2s ease;
-  box-sizing: border-box;
-}
-
-.currencySymbol {
-  padding-left: 15px;
-  font-weight: 500;
-  color: var(--cor-texto-secundario);
-}
-
-.servicoItem input[type="number"] {
-  flex: 1;
-  width: 100%;
-  height: 100%;
-  border: none;
-  background-color: transparent;
-  padding: 0 8px 0 6px;
-  font-size: 1rem;
-}
-
-.servicoItem input[type="number"]:focus {
-  outline: none;
-  box-shadow: none;
-}
-
-.servicoItem input[type="number"]::-webkit-outer-spin-button,
-.servicoItem input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-.removeButton {
-  grid-column: 3;
-  width: var(--remove-width);
-  height: 45px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
-  color: var(--cor-erro);
-  border: 1px solid var(--cor-borda);
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.removeButton:hover {
-  background-color: var(--cor-fundo-erro);
-  border-color: var(--cor-borda-erro);
-}
-
-.actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 1rem;
-}
-
-.addButton {
-  border: none;
-  cursor: pointer;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  transition: background-color 0.2s ease;
-  font-weight: 500;
-  background-color: #e9ecef;
-  color: var(--cor-texto-secundario);
-}
-
-.addButton:hover {
-  background-color: #dee2e6;
-}
-
-.submitButton {
-  padding: 12px;
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--cor-texto-claro);
-  background-color: var(--cor-primaria);
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.submitButton:hover:not(:disabled) {
-  background-color: var(--cor-primaria-hover);
-  transform: translateY(-2px);
-}
-
-.submitButton:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
+.textarea {
+  min-height: 120px;
+  resize: vertical;
 }
 
 .error {
-  padding: 10px;
-  margin-top: 1rem;
-  text-align: center;
-  font-size: 0.9rem;
   color: var(--cor-erro);
-  background-color: var(--cor-fundo-erro);
-  border: 1px solid var(--cor-borda-erro);
+  background-color: #ffebee;
+  padding: 1rem;
   border-radius: 8px;
-}
-
-.successMessage {
+  margin-bottom: 1.5rem;
   text-align: center;
-  color: var(--cor-primaria);
-  padding: 3rem 1rem;
-  animation: fadeInOut 2s ease-in-out forwards;
 }
 
-.successMessage p {
-  font-size: 1.3rem;
+/* === BOTÕES DE AÇÃO ====================================== */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+  flex-wrap: wrap; /* Permite que os botões quebrem a linha em telas pequenas */
+}
+
+.submitButton,
+.cancelButton {
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
   font-weight: 500;
-  margin: 0.5rem 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  font-size: 1rem;
 }
 
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: scale(0.9); }
-  50% { opacity: 1; transform: scale(1.05); }
-  100% { opacity: 1; transform: scale(1); }
+.submitButton {
+  background-color: var(--cor-primaria);
+  color: var(--cor-texto-claro);
 }
 
-@media (max-width: 600px) {
-  .formGrid {
-    grid-template-columns: 1fr;
-  }
+.submitButton:hover {
+  opacity: 0.9;
+}
 
-  .servicoItemHeader {
-    display: none;
-  }
+.submitButton:disabled {
+  background-color: var(--cor-texto-secundario);
+  cursor: not-allowed;
+}
 
-  .servicoItem {
-    grid-template-columns: 1fr var(--remove-width);
-    row-gap: 0.75rem;
-  }
+.cancelButton {
+  background-color: transparent;
+  color: var(--cor-texto-secundario);
+  border: 1px solid var(--cor-borda);
+}
 
-  .servicoItem input[type="text"] {
+.cancelButton:hover {
+  background-color: var(--cor-fundo-secao);
+  border-color: var(--cor-texto-secundario);
+}
 
-    grid-column: 1 / 2;
-    grid-row: 1;
+/* === RESPONSIVIDADE ===================================== */
+@media (max-width: 768px) {
+  .header {
+    padding: 1rem 0;
+    margin-bottom: 2rem;
   }
-  
-  .priceWrapper {
-    grid-column: 1 / 2;
-    grid-row: 2;
+  .headerTitle {
+    font-size: 1.5rem;
   }
-
-  .removeButton {
-    grid-column: 2 / 3;
-    grid-row: 1 / 3;
+  .backButton {
+    font-size: 1.3rem;
+  }
+  .form {
+    padding: 1.5rem;
+  }
+  .actions {
+    flex-direction: column-reverse; /* Empilha os botões verticalmente */
+    gap: 0.8rem;
+  }
+  .submitButton,
+  .cancelButton {
+    width: 100%;
+    text-align: center;
   }
 }

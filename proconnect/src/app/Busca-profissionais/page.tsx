@@ -1,22 +1,16 @@
 "use client";
-
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { getServicos } from "@/service/servicoService";
-import { Servico } from "@/interfaces/ServicoProps";
+import type { Servico } from "@/interfaces/ServicoProps";
 import styles from "./page.module.css";
-import { FaSearch, FaUserCircle } from "react-icons/fa";
-import Modal from "@/components/Modal";
+import { FaUserCircle, FaSearch } from "react-icons/fa";
 
 export default function BuscaProfissionaisPage() {
   const [servicos, setServicos] = useState<Servico[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>("");
-  const [searchTerm, setSearchTerm] = useState<string>("");
-
-  // modal
-  const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [showModal, setShowModal] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchServicos = async () => {
@@ -24,143 +18,92 @@ export default function BuscaProfissionaisPage() {
         const data = await getServicos();
         setServicos(data);
       } catch (err) {
-        console.error("Erro ao ir buscar serviços:", err);
-        setError("Não foi possível carregar os serviços. Tente novamente mais tarde.");
+        setError("Não foi possível carregar os serviços.");
       } finally {
         setLoading(false);
       }
     };
-
     fetchServicos();
   }, []);
 
-  // evita scroll do fundo quando o modal está aberto
-  useEffect(() => {
-    if (showModal) {
-      const prev = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-      return () => {
-        document.body.style.overflow = prev;
-      };
-    }
-  }, [showModal]);
-
-  const openModal = (id: number) => {
-    setSelectedId(id);
-    setShowModal(true);
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
-    setSelectedId(null);
-  };
-
-  // filtro (ignora acentos e case) e lida com campos opcionais
-  const norm = (s?: string) =>
-    (s ?? "")
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase();
-
-  const filteredServicos = useMemo(() => {
-    if (!searchTerm) return servicos;
-    const t = norm(searchTerm);
-
-    return servicos.filter((servico) => {
-      const nomeNegocio = norm(servico.nomeNegocio);
-      const descricao = norm(servico.descricao);
-      const categoria = norm(servico.categoria?.nomeServico);
-      const usuario = norm(servico.usuario?.nome);
-      const temPrecoMatch = (servico.preco ?? []).some((p) => norm(p.nomeservico).includes(t));
-
-      return (
-        nomeNegocio.includes(t) ||
-        descricao.includes(t) ||
-        categoria.includes(t) ||
-        usuario.includes(t) ||
-        temPrecoMatch
-      );
-    });
-  }, [searchTerm, servicos]);
+  const filteredServicos = searchTerm
+    ? servicos.filter(
+        (servico) =>
+          servico.nomeNegocio.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          servico.descricao.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          servico.categoria?.nomeServico.toLowerCase().includes(searchTerm.toLowerCase()),
+      )
+    : servicos;
 
   return (
     <div className={styles.body}>
       <header className={styles.header}>
         <div className={styles.container}>
-          <Link href="/" className={styles.logo}>
-            ProConnect
-          </Link>
-          <div className={styles.searchBar}>
-            <FaSearch className={styles.searchIcon} />
-            <input
-              type="text"
-              placeholder="Pesquisar por serviço, categoria ou profissional..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              aria-label="Pesquisar serviços"
-            />
+          <div className={styles.logo}>
+            <Link href="/">ProConnect</Link>
           </div>
-          <nav>
-            <Link href="/perfil" className={styles.profileLink}>
+          <div className={styles.profileLink}>
+            <Link href="/perfil">
               <FaUserCircle />
               <span>Meu Perfil</span>
             </Link>
-          </nav>
+          </div>
         </div>
       </header>
 
       <main className={styles.mainContent}>
         <div className={styles.container}>
-          {loading && <p className={styles.loadingState}>A carregar profissionais...</p>}
+          <div className={styles.searchSection}>
+            <h1 className={styles.title}>Encontre o profissional certo</h1>
+            <p className={styles.subtitle}>
+              Busque por serviço, categoria ou nome do profissional.
+            </p>
+            <div className={styles.searchBar}>
+              <FaSearch className={styles.searchIcon} />
+              <input
+                type="text"
+                placeholder="Digite sua busca aqui..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className={styles.searchInput}
+              />
+            </div>
+          </div>
+
+          {loading && <p className={styles.loadingState}>Carregando serviços...</p>}
           {error && <p className={styles.errorState}>{error}</p>}
 
           {!loading && !error && (
-            <>
-              <h1 className={styles.pageTitle}>Profissionais Disponíveis</h1>
+            <div className={styles.resultsGrid}>
               {filteredServicos.length > 0 ? (
-                <div className={styles.grid}>
-                  {filteredServicos.map((servico) => (
-                    <div key={servico.id} className={styles.card}>
-                      <div className={styles.cardHeader}>
-                        <h2 className={styles.cardTitle}>{servico.nomeNegocio}</h2>
-                        <span className={styles.cardCategory}>
-                          {servico.categoria?.nomeServico ?? "Sem categoria"}
-                        </span>
-                      </div>
-
-                      <p className={styles.cardDescription}>{servico.descricao}</p>
-
-                      <div className={styles.cardFooter}>
-                        <div className={styles.userInfo}>
-                          <FaUserCircle />
-                          <span>{servico.usuario?.nome ?? "Profissional"}</span>
-                        </div>
-
-                        {/* Abrir modal em vez de navegar */}
-                        <button
-                          type="button"
-                          className={styles.detailsButton}
-                          onClick={() => openModal(servico.id)}
-                          aria-haspopup="dialog"
-                          aria-controls="servico-detalhes"
-                        >
-                          Ver Detalhes
-                        </button>
-                      </div>
+                filteredServicos.map((servico) => (
+                  <div key={servico.id} className={styles.servicoCard}>
+                    <div className={styles.cardContent}>
+                      <h3 className={styles.servicoTitle}>{servico.nomeNegocio}</h3>
+                      <p className={styles.servicoProvider}>
+                        {servico.usuario?.nome || "Profissional"}
+                      </p>
+                      <p className={styles.servicoDescription}>{servico.descricao}</p>
                     </div>
-                  ))}
-                </div>
+                    <div className={styles.cardFooter}>
+                      <span className={styles.servicoCategory}>
+                        {servico.categoria?.nomeServico || "Sem Categoria"}
+                      </span>
+                      {servico.preco && servico.preco.length > 0 && (
+                         <span className={styles.servicoPrice}>
+                           R$ {servico.preco[0].precificacao.toFixed(2)}
+                         </span>
+                      )}
+                    </div>
+                  </div>
+                ))
               ) : (
-                <p className={styles.noResults}>Nenhum serviço encontrado para a sua pesquisa.</p>
+                <p className={styles.emptyState}>Nenhum serviço encontrado.</p>
               )}
-            </>
+            </div>
           )}
         </div>
       </main>
-
-      {showModal && selectedId !== null && (
-        <Modal id={selectedId} onClose={closeModal} />
-      )}
     </div>
   );
 }
