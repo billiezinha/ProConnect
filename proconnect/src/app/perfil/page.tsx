@@ -29,7 +29,8 @@ export default function PerfilPage() {
       try {
         const userData = await getMe();
         setUser(userData);
-      } catch (_err: unknown) {
+      } catch {
+        // Sem variável no catch para não disparar no-unused-vars
         localStorage.removeItem("token");
         router.replace("/login");
       } finally {
