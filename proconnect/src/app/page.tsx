@@ -5,22 +5,7 @@ import { FaUserCircle } from 'react-icons/fa';
 export default function Home() {
   return (
     <div className={styles.body}>
-      {/* Cabeçalho Fixo */}
-      <header className={styles.header}>
-        <div className={styles.container}>
-          <div className={styles.headerContent}>
-            <Link href="/" className={styles.logo}>
-              ProConnect
-            </Link>
-            <nav className={styles.nav}>
-              <Link href="/login" className={styles.loginLink}>
-                <FaUserCircle className={styles.loginIcon} />
-                <span>Login</span>
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+     
 
       {/* Seção Principal (Hero) */}
       <main className={styles.mainContent}>

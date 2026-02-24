@@ -193,7 +193,16 @@
 .errorState {
   color: var(--cor-erro);
 }
+@keyframes shine {
+  to {
+    background-position-x: -200%;
+  }
+}
 
+.skeletonCard {
+  /* ... outros estilos */
+  animation: shine 1.5s linear infinite; /* Isso é o que faz o efeito de "luz" */
+}
 /* === RESPONSIVIDADE ===================================== */
 @media (max-width: 768px) {
   .header .container {

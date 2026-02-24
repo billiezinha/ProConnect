@@ -1,0 +1,33 @@
+@keyframes shine {
+  to { background-position-x: -200%; }
+}
+
+.loadingGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem 0;
+}
+
+.skeletonCard {
+  background-color: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skeletonTitle, .skeletonText, .skeletonTextSmall, .skeletonFooter {
+  background: #eee;
+  background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+  background-size: 200% 100%;
+  animation: shine 1.5s linear infinite;
+  border-radius: 4px;
+}
+
+.skeletonTitle { height: 24px; width: 70%; }
+.skeletonText { height: 16px; width: 100%; }
+.skeletonTextSmall { height: 16px; width: 40%; }
+.skeletonFooter { height: 40px; width: 100%; margin-top: 10px; }

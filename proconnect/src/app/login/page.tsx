@@ -6,29 +6,33 @@ import Image from "next/image";
 import styles from "./Login.module.css";
 import { loginUser } from "@/service/authService";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import toast from "react-hot-toast"; // Feedback moderno
+import Cookies from 'js-cookie'; // Necessário para o Middleware funcionar
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
+
     try {
       const token = await loginUser({ email, senha: password });
+      
+      // Salva no LocalStorage (para uso no Front-end/Client Components)
+      localStorage.setItem("token", token);
+      
+      // Salva nos Cookies (para que o Middleware/Servidor consiga ler e proteger rotas)
+      Cookies.set("token", token, { expires: 7 }); 
 
-      if (typeof window !== "undefined") {
-        localStorage.setItem("token", token);
-      }
-
+      toast.success("Bem-vindo de volta!");
       router.push("/Busca-profissionais");
-    } catch { // 'err' removido daqui
-      setError("E-mail ou senha inválidos. Por favor, tente novamente.");
+    } catch (err) {
+      toast.error("E-mail ou senha inválidos. Tente novamente.");
     } finally {
       setLoading(false);
     }
@@ -57,7 +61,6 @@ export default function LoginPage() {
           </div>
 
           <form onSubmit={handleSubmit}>
-            {error && <p className={styles.error}>{error}</p>}
             <div className={styles.formGroup}>
               <label htmlFor="email">E-mail</label>
               <input
@@ -67,6 +70,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="seuemail@exemplo.com"
                 required
+                disabled={loading}
               />
             </div>
             <div className={styles.formGroup}>
@@ -79,11 +83,13 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Sua senha"
                   required
+                  disabled={loading}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className={styles.showPasswordButton}
+                  disabled={loading}
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>

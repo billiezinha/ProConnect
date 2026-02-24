@@ -8,7 +8,7 @@ import type { Servico, UpdateServicoPayload } from "@/interfaces/ServicoProps";
 import styles from "./page.module.css";
 import EditServicoModal from "@/components/modal-editar/EditServicoModal";
 import { FaArrowLeft, FaEdit, FaTrash } from "react-icons/fa";
-
+import toast from "react-hot-toast";
 export default function MeusServicosPage() {
   const router = useRouter();
   const [servicos, setServicos] = useState<Servico[]>([]);
@@ -45,15 +45,13 @@ export default function MeusServicosPage() {
   }, [router]);
 
   const handleDelete = async (id: number) => {
-    const confirmDelete = window.confirm("Tem certeza que deseja excluir este serviço?");
-    if (confirmDelete) {
-      try {
-        await deleteServico(id);
-        setServicos(servicos.filter((s: Servico) => s.id !== id));
-      } catch { // 'err' removido daqui
-        setError("Falha ao excluir o serviço. Tente novamente.");
-      }
-    }
+    try {
+    await deleteServico(id);
+    setServicos(servicos.filter((s: Servico) => s.id !== id));
+    toast.success("Serviço removido com sucesso!");
+  } catch {
+    toast.error("Erro ao excluir o serviço.");
+  }
   };
 
   const openModal = (servico: Servico) => {
