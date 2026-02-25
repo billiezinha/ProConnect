@@ -1,56 +1,52 @@
-/* === LAYOUT GERAL ===================================== */
+/* === LAYOUT E FORMATOS =============================== */
 .body {
   width: 100%;
+  background-color: var(--cor-fundo);
 }
 
 .container {
-  width: 100%;
   max-width: var(--largura-container);
   margin: 0 auto;
   padding: 0 1.5rem;
 }
 
-/* === CABEÇALHO ======================================= */
-.header {
-  background-color: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  padding: 1rem 0;
-  border-bottom: 1px solid #eee;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+/* === BOTOES (Restaurando o formato de botão) ========= */
+.butaoPrimary, .butaoOutline, .butaoSecondary, .botaoPlano {
+  padding: 0.9rem 2rem;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
 }
 
-.headerContent {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.butaoPrimary {
+  background-color: var(--cor-primaria);
+  color: var(--cor-texto-claro) !important;
 }
 
-.logo {
-  font-size: 1.5rem;
-  font-weight: 800;
+.butaoPrimary:hover {
+  background-color: var(--cor-primaria-hover);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(139, 44, 245, 0.3);
+}
+
+.butaoOutline {
+  background-color: transparent;
+  border: 2px solid var(--cor-primaria);
   color: var(--cor-primaria);
 }
 
-.loginLink {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 500;
-  color: var(--cor-texto-secundario);
-  transition: color 0.2s ease;
+.butaoOutline:hover {
+  background-color: var(--cor-primaria);
+  color: var(--cor-texto-claro) !important;
 }
 
-.loginLink:hover {
-  color: var(--cor-primaria);
-}
-
-.loginIcon {
-  font-size: 1.5rem;
-}
-
-/* === CONTEÚDO PRINCIPAL (HERO) ======================= */
+/* === SEÇÃO HERO (PROFISSIONAIS E CLIENTES) =========== */
 .mainContent {
   text-align: center;
   padding: 6rem 0;
@@ -63,10 +59,8 @@
   line-height: 1.2;
 }
 
-.titulo2 {
-  color: var(--cor-primaria);
-  margin-bottom: 1rem;
-}
+.titulo { color: var(--cor-texto); }
+.titulo2 { color: var(--cor-primaria); margin-bottom: 1rem; }
 
 .textoPrincipal {
   max-width: 650px;
@@ -76,49 +70,46 @@
   color: var(--cor-texto-secundario);
 }
 
-.botoesWrapper {
+/* === CARDS DE PLANOS (ARREDONDADOS) =================== */
+.planosWrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.cardPlano {
+  background-color: var(--cor-fundo-card);
+  padding: 2.5rem;
+  border-radius: 30px; /* Bordas bem arredondadas */
+  border: 1px solid var(--cor-borda);
   display: flex;
-  justify-content: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-/* === BOTÕES PADRONIZADOS ============================== */
-.butaoPrimary, .butaoOutline, .butaoSecondary {
-  padding: 0.9rem 2rem;
-  font-size: 1rem;
-  font-weight: 700;
-  border-radius: var(--raio-borda);
-  border: 2px solid transparent;
-  cursor: pointer;
+  flex-direction: column;
   transition: all 0.3s ease;
-  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  color: var(--cor-texto);
 }
 
-.butaoPrimary {
+.cardPlanoPremium {
+  border: 2px solid var(--cor-primaria);
+}
+
+.planoBadge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
   background-color: var(--cor-primaria);
-  color: var(--cor-texto-claro);
+  color: white;
+  padding: 0.4rem 1rem;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 700;
 }
 
-.butaoPrimary:hover {
-  background-color: var(--cor-primaria-hover);
-  transform: translateY(-3px);
-  box-shadow: 0 4px 15px rgba(139, 44, 245, 0.3);
-}
-
-.butaoOutline {
-  background-color: transparent;
-  border-color: var(--cor-primaria);
-  color: var(--cor-primaria);
-}
-
-.butaoOutline:hover {
-  background-color: var(--cor-primaria);
-  color: var(--cor-texto-claro);
-}
-
-/* === SEÇÕES PADRONIZADAS =============================== */
-.section {
+/* === SEÇÃO DE RECURSOS (ORGANIZAÇÃO 3x3) =========== */
+.recursos {
+  background-color: var(--cor-fundo-secao);
   padding: 5rem 0;
 }
 
@@ -130,160 +121,79 @@
   color: var(--cor-texto);
 }
 
-/* === SEÇÃO DE PLANOS ================================== */
-.planosWrapper {
+.gridRecursos {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr); /* 3 em cima, 3 embaixo */
   gap: 2rem;
-  align-items: stretch;
+  margin-top: 3rem;
 }
 
-.cardPlano {
-  background-color: var(--cor-fundo);
-  padding: 2.5rem;
-  border-radius: var(--raio-borda);
+.cardRecurso {
+  background-color: var(--cor-fundo-card);
+  padding: 3rem 2rem;
+  border-radius: 30px; /* Arredondamento igual aos planos */
   border: 1px solid var(--cor-borda);
+  text-align: center;
+  transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
-  transition: all 0.3s ease;
-  position: relative;
+  align-items: center;
 }
 
-.cardPlano:hover {
+.cardRecurso:hover {
   transform: translateY(-10px);
+  border-color: var(--cor-primaria);
   box-shadow: var(--sombra-suave);
 }
 
-.cardPlanoPremium {
-  border-color: var(--cor-primaria);
-  border-width: 2px;
+.iconRecurso {
+  font-size: 3rem;
+  color: var(--cor-primaria);
+  margin-bottom: 1.5rem;
 }
 
-.planoBadge {
-  position: absolute;
-  top: -15px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: var(--cor-primaria);
-  color: var(--cor-texto-claro);
-  padding: 0.3rem 1rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
+.cardRecurso h3 {
+  font-size: 1.2rem;
   font-weight: 700;
-}
-
-.planoTitulo {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  text-align: center;
-}
-
-.planoDescricao {
-  color: var(--cor-texto-secundario);
-  text-align: center;
-  margin-bottom: 2rem;
-  min-height: 40px;
-}
-
-.planoLista {
-  list-style: none;
-  margin-bottom: 2rem;
-  flex-grow: 1;
-}
-
-.planoLista li {
+  color: var(--cor-texto);
   margin-bottom: 0.8rem;
 }
 
-.botaoPlano {
-  text-align: center;
-  width: 100%;
-  margin-top: auto;
+.cardRecurso p {
+  font-size: 0.95rem;
+  color: var(--cor-texto-secundario);
+  line-height: 1.6;
 }
 
-/* === SEÇÃO DE RECURSOS ================================= */
-.recursos {
-  background-color: var(--cor-fundo-secao);
-}
-
-.listaWrapper {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.itemLista {
-  background-color: var(--cor-fundo);
-  padding: 0.8rem 1.5rem;
-  border-radius: 50px;
-  font-weight: 500;
-  color: var(--cor-primaria-hover);
-  border: 1px solid #e0d5f9;
-}
-
-/* === RODAPÉ (FOOTER) ===================================== */
+/* === FOOTER ROXO (Sempre Roxo) ======================= */
 .footer {
-  background-color: var(--cor-texto);
-  color: #a0a0a0;
+  background-color: var(--cor-primaria) !important;
+  color: white !important;
   padding: 4rem 0;
   text-align: center;
+  margin-top: 0;
 }
 
-.titulo4 {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  color: var(--cor-texto-claro);
-}
-
-.textoFooterH2 {
-  font-size: 1.1rem;
-  margin-bottom: 2rem;
-  font-weight: 400;
-  max-width: 500px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.buttonWrapper {
-  margin-bottom: 3rem;
-}
-
-.butaoSecondary {
-  background-color: var(--cor-primaria);
-  color: var(--cor-texto-claro);
+.titulo4, .textoFooter, .textoFooterDireitos, .textoFooterH2 {
+  color: white !important;
 }
 
 .rodapeInfo {
-  border-top: 1px solid #333;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
   padding-top: 2rem;
   margin-top: 2rem;
 }
 
-.textoFooter, .textoFooterDireitos {
-  font-size: 0.9rem;
-  margin: 0.25rem 0;
+/* === RESPONSIVIDADE ====================================== */
+@media (max-width: 1024px) {
+  .gridRecursos {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
-/* === RESPONSIVIDADE ====================================== */
 @media (max-width: 768px) {
-  .loginLink span {
-    display: none;
-  }
-  .mainContent {
-    padding: 4rem 0;
-  }
-  .tituloSecao {
-    font-size: 1.8rem;
-  }
-  .planosWrapper {
+  .planosWrapper, .gridRecursos {
     grid-template-columns: 1fr;
-  }
-  .botoesWrapper {
-    flex-direction: column;
-    align-items: center;
   }
   .butaoPrimary, .butaoOutline {
     width: 100%;

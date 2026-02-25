@@ -1,11 +1,17 @@
 import Link from 'next/link';
 import styles from './page.module.css';
-import { FaUserCircle } from 'react-icons/fa';
+import { 
+  FaRocket, 
+  FaComments, 
+  FaRegHandshake, 
+  FaStar, 
+  FaChartLine, 
+  FaTools 
+} from 'react-icons/fa';
 
 export default function Home() {
   return (
     <div className={styles.body}>
-     
 
       {/* Seção Principal (Hero) */}
       <main className={styles.mainContent}>
@@ -44,6 +50,7 @@ export default function Home() {
                 Começar Agora
               </Link>
             </div>
+            
             {/* Card Premium */}
             <div className={`${styles.cardPlano} ${styles.cardPlanoPremium}`}>
               <div className={styles.planoBadge}>Mais Popular</div>
@@ -55,12 +62,9 @@ export default function Home() {
                 <li>✔️ Prioridade em Indicações</li>
                 <li>✔️ Análise de Desempenho do Perfil</li>
               </ul>
-              {/* <Link href="/assinatura" className={styles.botaoPlano}>
-                Assinar Premium
-                </Link> */}
-              <div className={styles.botaoPlano}>
-                <h3 className={styles.breve}>em breve...</h3>
-                </div>
+              <div className={styles.botaoPlano}>
+                <h3 className={styles.breve}>em breve...</h3>
+              </div>
             </div>
           </div>
         </div>
@@ -70,13 +74,43 @@ export default function Home() {
       <section className={`${styles.section} ${styles.recursos}`}>
         <div className={styles.container}>
           <h2 className={styles.tituloSecao}>Por que escolher a ProConnect?</h2>
-          <div className={styles.listaWrapper}>
-            <div className={styles.itemLista}>Sem burocracias</div>
-            <div className={styles.itemLista}>Contato direto com profissionais</div>
-            <div className={styles.itemLista}>Planos acessíveis</div>
-            <div className={styles.itemLista}>Sistema de avaliações confiável</div>
-            <div className={styles.itemLista}>Maior visibilidade</div>
-            <div className={styles.itemLista}>Controle total sobre serviços</div>
+          
+          <div className={styles.gridRecursos}>
+            <div className={styles.cardRecurso}>
+              <FaRocket className={styles.iconRecurso} />
+              <h3>Sem burocracias</h3>
+              <p>Conecte-se rapidamente e sem intermediários desnecessários.</p>
+            </div>
+
+            <div className={styles.cardRecurso}>
+              <FaComments className={styles.iconRecurso} />
+              <h3>Contato direto</h3>
+              <p>Fale diretamente com profissionais e clientes pelo WhatsApp.</p>
+            </div>
+
+            <div className={styles.cardRecurso}>
+              <FaRegHandshake className={styles.iconRecurso} />
+              <h3>Planos acessíveis</h3>
+              <p>Opções que cabem no seu bolso para impulsionar sua carreira.</p>
+            </div>
+
+            <div className={styles.cardRecurso}>
+              <FaStar className={styles.iconRecurso} />
+              <h3>Avaliações</h3>
+              <p>Sistema confiável para construir sua reputação no mercado.</p>
+            </div>
+
+            <div className={styles.cardRecurso}>
+              <FaChartLine className={styles.iconRecurso} />
+              <h3>Maior visibilidade</h3>
+              <p>Apareça para quem realmente precisa do seu serviço na sua região.</p>
+            </div>
+
+            <div className={styles.cardRecurso}>
+              <FaTools className={styles.iconRecurso} />
+              <h3>Controle total</h3>
+              <p>Gerencie seus anúncios e informações de forma simples e intuitiva.</p>
+            </div>
           </div>
         </div>
       </section>

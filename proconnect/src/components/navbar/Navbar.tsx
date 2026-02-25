@@ -3,27 +3,34 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { FaUserCircle, FaSignOutAlt } from "react-icons/fa";
+import { FaUserCircle, FaSignOutAlt, FaHeart, FaSun, FaMoon, FaBullseye } from "react-icons/fa"; 
 import styles from "./Navbar.module.css";
+import Cookies from "js-cookie";
+import { useTheme } from "@/context/ThemeContext"; // Importação do Hook de Tema
 
 export default function Navbar() {
   const [isLogged, setIsLogged] = useState(false);
+  const { isDark, toggleTheme } = useTheme(); // Usando o tema
+  const [favCount, setFavCount] = useState(0); // Contador de favoritos
   const router = useRouter();
   const pathname = usePathname();
 
-  // Verifica se há um token sempre que a rota mudar ou o componente montar
   useEffect(() => {
     const token = localStorage.getItem("token");
     setIsLogged(!!token);
+
+    // Atualiza o contador de favoritos do localStorage
+    const salvos = JSON.parse(localStorage.getItem("@ProConnect:favoritos") || "[]");
+    setFavCount(salvos.length);
   }, [pathname]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    Cookies.remove("token");
     setIsLogged(false);
     router.replace("/login");
   };
 
-  // Se estivermos na página de login ou cadastro, talvez você queira esconder a Navbar
   const hideNavbar = ["/login", "/cadastro-usuario"].includes(pathname);
   if (hideNavbar) return null;
 
@@ -38,6 +45,23 @@ export default function Navbar() {
           <Link href="/Busca-profissionais" className={styles.navLink}>
             Explorar
           </Link>
+
+          <Link href="/favoritos" className={styles.navLink}>
+            <div className={styles.favBadgeWrapper}>
+              <FaHeart style={{ marginRight: '5px', fontSize: '0.9rem' }} />
+              {favCount > 0 && <span className={styles.badge}>{favCount}</span>}
+            </div>
+            Favoritos
+          </Link>
+
+          {/* BOTÃO MODO DARK: Colocado estrategicamente antes do Login/Perfil */}
+          <button 
+            onClick={toggleTheme} 
+            className={styles.themeToggle}
+            title={isDark ? "Modo Claro" : "Modo Escuro"}
+          >
+            {isDark ? <FaSun className={styles.sunIcon} /> : <FaMoon className={styles.moonIcon} />}
+          </button>
 
           {isLogged ? (
             <div className={styles.userMenu}>

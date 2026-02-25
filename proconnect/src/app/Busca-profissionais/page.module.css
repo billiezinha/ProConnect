@@ -1,224 +1,198 @@
-/* === LAYOUT GERAL MINIMALISTA ============================ */
+/* === LAYOUT E CONTAINER === */
 .body {
-  background-color: var(--cor-fundo);
+  background-color: #f9f9fb;
   min-height: 100vh;
-  font-family: var(--fonte-principal);
 }
 
 .container {
-  width: 100%;
-  max-width: var(--largura-container);
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 2rem 1.5rem;
 }
 
-/* === CABEÇALHO MINIMALISTA =============================== */
-.header {
-  background-color: transparent;
-  padding: 2rem 0;
-  border-bottom: 1px solid var(--cor-borda);
-}
-
-.header .container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.logo a {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--cor-primaria);
-  text-decoration: none;
-}
-
-.profileLink a {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 500;
-  color: var(--cor-texto-secundario);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.profileLink a:hover {
-  color: var(--cor-primaria);
-}
-
-.profileLink svg {
-  font-size: 1.4rem;
-}
-
-/* === SEÇÃO DE BUSCA MINIMALISTA ========================== */
+/* === SEÇÃO DE BUSCA E CATEGORIAS === */
 .searchSection {
   text-align: center;
-  padding: 3rem 0;
+  margin-bottom: 2rem;
 }
 
 .title {
-  font-size: 2.2rem;
-  font-weight: 700;
-  color: var(--cor-texto);
-  margin-bottom: 0.5rem;
-}
-
-.subtitle {
-  font-size: 1.1rem;
-  color: var(--cor-texto-secundario);
-  margin-bottom: 2rem;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin-bottom: 1.5rem;
 }
 
 .searchBar {
   position: relative;
-  max-width: 550px;
-  margin: 0 auto;
-}
-
-.searchInput {
-  width: 100%;
-  padding: 1rem 1rem 1rem 3rem;
-  font-size: 1rem;
-  border: 1px solid var(--cor-borda);
-  border-radius: 8px;
-  background-color: var(--cor-fundo-secao);
-  transition: all 0.2s;
-}
-
-.searchInput::placeholder {
-  color: var(--cor-texto-secundario);
-}
-
-.searchInput:focus {
-  outline: none;
-  border-color: var(--cor-primaria);
-  background-color: var(--cor-fundo);
-  box-shadow: 0 0 0 3px rgba(139, 44, 245, 0.1);
+  max-width: 600px;
+  margin: 0 auto 1.5rem;
 }
 
 .searchIcon {
   position: absolute;
-  left: 1rem;
+  left: 1.2rem;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--cor-texto-secundario);
+  color: #8B2CF5;
 }
 
-/* === RESULTADOS MINIMALISTAS ============================= */
+.searchInput {
+  width: 100%;
+  padding: 1rem 1rem 1rem 3.5rem;
+  border: 2px solid #eee;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+/* === ESTEIRA DE CATEGORIAS (ESTADO INICIAL) === */
+.categoriesRow {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+  min-height: 50px; /* Mantém consistência visual */
+}
+
+.catBtn, .catBtnActive {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  border: 2px solid #eee;
+  padding: 0.8rem;
+  border-radius: 16px;
+  cursor: pointer;
+  min-width: 90px;
+  transition: all 0.2s ease;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #666;
+}
+
+.catBtnActive {
+  border-color: #8B2CF5;
+  background-color: rgba(139, 44, 245, 0.05);
+  color: #8B2CF5;
+}
+
+/* === NOVO: FILTRO COMPACTO (ESTADO SELECIONADO NO CANTO) === */
+.compactFilterWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Alinha no canto esquerdo */
+  gap: 1rem;
+  width: 100%;
+  padding: 0.5rem 0;
+  animation: slideIn 0.3s ease;
+}
+
+.activeCategoryChip {
+  display: flex;
+  align-items: center;
+  background-color: rgba(139, 44, 245, 0.1);
+  border: 1px solid #8B2CF5;
+  padding: 8px 16px;
+  border-radius: 50px; /* Formato de pílula/chip */
+  gap: 10px;
+}
+
+.chipIcon {
+  font-size: 1.1rem;
+  color: #8B2CF5;
+  display: flex;
+}
+
+.chipText {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.closeChipBtn {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  color: #8B2CF5;
+  cursor: pointer;
+  padding: 0 0 0 5px;
+  line-height: 1;
+}
+
+.resultsCount {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* === GRID DE RESULTADOS === */
 .resultsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-  padding-bottom: 4rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-top: 1rem;
 }
 
 .servicoCard {
-  background-color: var(--cor-fundo);
-  border: 1px solid var(--cor-borda);
-  border-radius: var(--raio-borda);
-  transition: border-color 0.2s, box-shadow 0.2s;
+  background: white;
+  border-radius: 20px;
+  border: 1px solid #eee;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
+  position: relative;
+  transition: all 0.3s ease;
 }
 
-.servicoCard:hover {
-  border-color: var(--cor-primaria);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.cardContent {
-    padding: 1.5rem;
-    flex-grow: 1;
-}
-
-.servicoTitle {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--cor-texto);
-  margin-bottom: 0.25rem;
-}
-
-.servicoProvider {
-  font-size: 0.9rem;
-  color: var(--cor-texto-secundario);
-  margin-bottom: 1rem;
-}
-
-.servicoDescription {
-  color: var(--cor-texto-secundario);
-  font-size: 0.95rem;
-  line-height: 1.5;
-}
-
-.cardFooter {
+.cardCategoryIcon {
+  background: rgba(139, 44, 245, 0.1);
+  color: #8B2CF5;
+  width: 45px;
+  height: 45px;
+  border-radius: 12px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.5rem;
-  border-top: 1px solid var(--cor-borda);
+  justify-content: center;
+  font-size: 1.2rem;
 }
 
-.servicoCategory {
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--cor-texto-secundario);
-}
-
-/* === BOTÃO DE DETALHES (ADICIONADO) ===================== */
-.detailsButton {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--cor-primaria);
-  background-color: transparent;
-  border: 1px solid var(--cor-primaria);
-  padding: 0.4rem 0.8rem;
-  border-radius: 6px;
+.favButton {
+  background: transparent;
+  border: none;
+  font-size: 1.4rem;
   cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
+  color: #ccc;
 }
 
-.detailsButton:hover {
-  background-color: var(--cor-primaria);
-  color: var(--cor-texto-claro);
+.iconFill { color: #ff4b5c; }
+
+.detailsButton {
+  margin-top: auto;
+  background: #1a1a1a;
+  color: white;
+  border: none;
+  padding: 0.8rem;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
 }
 
-/* === ESTADOS ============================================== */
-.loadingState, .errorState, .emptyState {
-  text-align: center;
-  padding: 4rem 0;
-  font-size: 1.1rem;
-  color: var(--cor-texto-secundario);
+/* === ANIMAÇÕES === */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-15px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
-.errorState {
-  color: var(--cor-erro);
-}
-@keyframes shine {
-  to {
-    background-position-x: -200%;
+/* === RESPONSIVIDADE === */
+@media (max-width: 600px) {
+  .categoriesRow {
+    justify-content: flex-start;
+    overflow-x: auto;
   }
-}
-
-.skeletonCard {
-  /* ... outros estilos */
-  animation: shine 1.5s linear infinite; /* Isso é o que faz o efeito de "luz" */
-}
-/* === RESPONSIVIDADE ===================================== */
-@media (max-width: 768px) {
-  .header .container {
-    flex-direction: row;
-    gap: 1rem;
-  }
-  .profileLink span {
-    display: none;
-  }
-  .title {
-    font-size: 1.8rem;
-  }
-  .subtitle {
-    font-size: 1rem;
-  }
-  .searchSection {
-    padding: 2.5rem 0;
+  .compactFilterWrapper {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
