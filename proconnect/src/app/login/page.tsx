@@ -6,8 +6,8 @@ import Image from "next/image";
 import styles from "./Login.module.css";
 import { loginUser } from "@/service/authService";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import toast from "react-hot-toast"; // Feedback moderno
-import Cookies from 'js-cookie'; // Necessário para o Middleware funcionar
+import toast from "react-hot-toast"; 
+import Cookies from 'js-cookie'; 
 
 export default function LoginPage() {
   const router = useRouter();
@@ -23,15 +23,13 @@ export default function LoginPage() {
     try {
       const token = await loginUser({ email, senha: password });
       
-      // Salva no LocalStorage (para uso no Front-end/Client Components)
       localStorage.setItem("token", token);
-      
-      // Salva nos Cookies (para que o Middleware/Servidor consiga ler e proteger rotas)
       Cookies.set("token", token, { expires: 7 }); 
 
       toast.success("Bem-vindo de volta!");
       router.push("/Busca-profissionais");
-    } catch (err) {
+    } catch {
+      // O 'err' foi removido daqui para evitar erro de build no Vercel
       toast.error("E-mail ou senha inválidos. Tente novamente.");
     } finally {
       setLoading(false);
