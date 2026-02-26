@@ -7,6 +7,8 @@ export async function loginUser(payload: LoginPayload): Promise<string> {
 }
 
 export async function forgotPassword(email: string): Promise<{ message: string }> {
+  // Tente remover o primeiro "/usuario" se o seu baseURL já apontar para a rota base
+  // Ou adicione o prefixo correto da sua API (ex: /api/usuario/forgot-password)
   const { data } = await api.post<{ message: string }>("/usuario/forgot-password", { email });
   return data;
 }

@@ -1,83 +1,68 @@
 .overlay {
-  position: fixed;
+  position: fixed; /* Essencial para flutuar sobre a tela */
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.75); /* Fundo escuro semi-transparente */
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
-  backdrop-filter: blur(4px);
+  z-index: 9999;
+  backdrop-filter: blur(8px); /* Efeito de vidro fosco moderno */
 }
 
 .modalContent {
   background: white;
-  padding: 2rem;
-  border-radius: 20px;
+  padding: 2.5rem;
+  border-radius: 24px;
   width: 90%;
   max-width: 450px;
   position: relative;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-  animation: scaleUp 0.3s ease-out;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  animation: modalShow 0.3s ease-out; /* Animação de entrada */
 }
 
-@keyframes scaleUp {
-  from { transform: scale(0.8); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+@keyframes modalShow {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .closeBtn {
   position: absolute;
-  top: 15px;
-  right: 15px;
-  background: #f0f0f0;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: #f3f4f6;
   border: none;
   border-radius: 50%;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   cursor: pointer;
-  font-size: 1.2rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background 0.2s;
 }
 
-.categoria {
-  color: var(--cor-primaria);
-  font-weight: 700;
-  font-size: 0.9rem;
-  margin-top: 5px;
-}
-
-.info {
-  margin: 1.5rem 0;
-}
-
-.descricao {
-  color: #555;
-  line-height: 1.5;
-  margin-bottom: 1rem;
-}
-
-.nota {
-  font-weight: 700;
-  color: #f1c40f;
+.closeBtn:hover {
+  background: #e5e7eb;
 }
 
 .btnWhats {
   width: 100%;
-  padding: 14px;
+  margin-top: 2rem;
+  padding: 1rem;
   background: #25d366;
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-weight: 700;
+  font-size: 1rem;
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: transform 0.2s, filter 0.2s;
 }
 
 .btnWhats:hover {
   transform: translateY(-2px);
+  filter: brightness(1.1);
 }
