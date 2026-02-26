@@ -3,15 +3,23 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { FaUserCircle, FaSignOutAlt, FaHeart, FaSun, FaMoon, FaBullseye } from "react-icons/fa"; 
+import { 
+  FaUserCircle, 
+  FaSignOutAlt, 
+  FaHeart, 
+  FaSun, 
+  FaMoon, 
+  FaSearch, 
+  FaSignInAlt 
+} from "react-icons/fa"; 
 import styles from "./Navbar.module.css";
 import Cookies from "js-cookie";
-import { useTheme } from "@/context/ThemeContext"; // Importação do Hook de Tema
+import { useTheme } from "@/context/ThemeContext";
 
 export default function Navbar() {
   const [isLogged, setIsLogged] = useState(false);
-  const { isDark, toggleTheme } = useTheme(); // Usando o tema
-  const [favCount, setFavCount] = useState(0); // Contador de favoritos
+  const { isDark, toggleTheme } = useTheme();
+  const [favCount, setFavCount] = useState(0);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -19,7 +27,6 @@ export default function Navbar() {
     const token = localStorage.getItem("token");
     setIsLogged(!!token);
 
-    // Atualiza o contador de favoritos do localStorage
     const salvos = JSON.parse(localStorage.getItem("@ProConnect:favoritos") || "[]");
     setFavCount(salvos.length);
   }, [pathname]);
@@ -43,18 +50,18 @@ export default function Navbar() {
 
         <nav className={styles.nav}>
           <Link href="/Busca-profissionais" className={styles.navLink}>
-            Explorar
+            <FaSearch className={styles.mobileOnlyIcon} />
+            <span className={styles.desktopText}>Explorar</span>
           </Link>
 
           <Link href="/favoritos" className={styles.navLink}>
             <div className={styles.favBadgeWrapper}>
-              <FaHeart style={{ marginRight: '5px', fontSize: '0.9rem' }} />
+              <FaHeart className={styles.alwaysIcon} />
               {favCount > 0 && <span className={styles.badge}>{favCount}</span>}
             </div>
-            Favoritos
+            <span className={styles.desktopText}>Favoritos</span>
           </Link>
 
-          {/* BOTÃO MODO DARK: Colocado estrategicamente antes do Login/Perfil */}
           <button 
             onClick={toggleTheme} 
             className={styles.themeToggle}
@@ -66,16 +73,17 @@ export default function Navbar() {
           {isLogged ? (
             <div className={styles.userMenu}>
               <Link href="/perfil" className={styles.profileLink}>
-                <FaUserCircle />
-                <span>Meu Perfil</span>
+                <FaUserCircle className={styles.alwaysIcon} />
+                <span className={styles.desktopText}>Meu Perfil</span>
               </Link>
               <button onClick={handleLogout} className={styles.logoutBtn} aria-label="Sair">
-                <FaSignOutAlt />
+                <FaSignOutAlt className={styles.alwaysIcon} />
               </button>
             </div>
           ) : (
             <Link href="/login" className={styles.loginBtn}>
-              Entrar
+              <FaSignInAlt className={styles.mobileOnlyIcon} />
+              <span className={styles.desktopText}>Entrar</span>
             </Link>
           )}
         </nav>

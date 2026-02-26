@@ -5,12 +5,26 @@
 }
 
 .container {
-  max-width: var(--largura-container);
+  max-width: var(--largura-container, 1200px); 
   margin: 0 auto;
   padding: 0 1.5rem;
 }
 
-/* === BOTOES (Restaurando o formato de botão) ========= */
+/* === BOTOES ========================================== */
+.botoesWrapper {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+.buttonWrapper {
+  margin: 2rem 0;
+  display: flex;
+  justify-content: center;
+}
+
 .butaoPrimary, .butaoOutline, .butaoSecondary, .botaoPlano {
   padding: 0.9rem 2rem;
   font-size: 1rem;
@@ -19,8 +33,9 @@
   border: 2px solid transparent;
   cursor: pointer;
   transition: all 0.3s ease;
-  display: inline-block;
-  text-align: center;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
   text-decoration: none;
 }
 
@@ -46,6 +61,20 @@
   color: var(--cor-texto-claro) !important;
 }
 
+/* === BOTÃO SECUNDÁRIO (CADASTRE-SE NO FOOTER) === */
+.butaoSecondary {
+  background-color: white;
+  color: var(--cor-primaria) !important;
+  border: 2px solid white;
+}
+
+.butaoSecondary:hover {
+  background-color: transparent;
+  color: white !important;
+  border-color: white;
+  transform: translateY(-3px);
+}
+
 /* === SEÇÃO HERO (PROFISSIONAIS E CLIENTES) =========== */
 .mainContent {
   text-align: center;
@@ -55,7 +84,7 @@
 
 .titulo, .titulo2 {
   font-weight: 800;
-  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  font-size: clamp(2rem, 5vw, 3.5rem); 
   line-height: 1.2;
 }
 
@@ -64,13 +93,17 @@
 
 .textoPrincipal {
   max-width: 650px;
-  margin: 0 auto 2.5rem;
+  margin: 0 auto;
   font-size: 1.1rem;
   line-height: 1.7;
   color: var(--cor-texto-secundario);
 }
 
-/* === CARDS DE PLANOS (ARREDONDADOS) =================== */
+/* === CARDS DE PLANOS ================================= */
+.section {
+  padding: 4rem 0; 
+}
+
 .planosWrapper {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -81,7 +114,7 @@
 .cardPlano {
   background-color: var(--cor-fundo-card);
   padding: 2.5rem;
-  border-radius: 30px; /* Bordas bem arredondadas */
+  border-radius: 30px;
   border: 1px solid var(--cor-borda);
   display: flex;
   flex-direction: column;
@@ -107,7 +140,23 @@
   font-weight: 700;
 }
 
-/* === SEÇÃO DE RECURSOS (ORGANIZAÇÃO 3x3) =========== */
+/* === LISTA DE PLANOS (SEM PONTOS PRETOS) ============= */
+.planoLista {
+  list-style: none; /* Remove os pontos */
+  padding: 0;
+  margin: 1.5rem 0 2rem 0;
+}
+
+.planoLista li {
+  margin-bottom: 0.8rem;
+  font-size: 0.95rem;
+  color: var(--cor-texto-secundario);
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Espaço entre o ✔️ e a palavra */
+}
+
+/* === SEÇÃO DE RECURSOS =============================== */
 .recursos {
   background-color: var(--cor-fundo-secao);
   padding: 5rem 0;
@@ -117,13 +166,13 @@
   font-size: 2.2rem;
   font-weight: 700;
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 1rem;
   color: var(--cor-texto);
 }
 
 .gridRecursos {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 em cima, 3 embaixo */
+  grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
   margin-top: 3rem;
 }
@@ -131,7 +180,7 @@
 .cardRecurso {
   background-color: var(--cor-fundo-card);
   padding: 3rem 2rem;
-  border-radius: 30px; /* Arredondamento igual aos planos */
+  border-radius: 30px;
   border: 1px solid var(--cor-borda);
   text-align: center;
   transition: all 0.3s ease;
@@ -143,7 +192,7 @@
 .cardRecurso:hover {
   transform: translateY(-10px);
   border-color: var(--cor-primaria);
-  box-shadow: var(--sombra-suave);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05); 
 }
 
 .iconRecurso {
@@ -165,7 +214,7 @@
   line-height: 1.6;
 }
 
-/* === FOOTER ROXO (Sempre Roxo) ======================= */
+/* === FOOTER ========================================== */
 .footer {
   background-color: var(--cor-primaria) !important;
   color: white !important;
@@ -185,6 +234,7 @@
 }
 
 /* === RESPONSIVIDADE ====================================== */
+
 @media (max-width: 1024px) {
   .gridRecursos {
     grid-template-columns: repeat(2, 1fr);
@@ -192,11 +242,53 @@
 }
 
 @media (max-width: 768px) {
-  .planosWrapper, .gridRecursos {
-    grid-template-columns: 1fr;
+  .mainContent {
+    padding: 4rem 0; 
   }
-  .butaoPrimary, .butaoOutline {
+
+  .tituloSecao {
+    font-size: 1.8rem;
+  }
+
+  .botoesWrapper {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .butaoPrimary, .butaoOutline, .butaoSecondary {
     width: 100%;
     max-width: 350px;
+  }
+
+  .planosWrapper, .gridRecursos {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .cardPlano, .cardRecurso {
+    padding: 2rem 1.5rem; 
+  }
+  
+  .recursos {
+    padding: 3rem 0;
+  }
+  
+  .footer {
+    padding: 3rem 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .mainContent {
+    padding: 3rem 0;
+  }
+  
+  .titulo, .titulo2 {
+    font-size: 1.8rem; 
+  }
+
+  .textoPrincipal {
+    font-size: 1rem;
+    padding: 0 0.5rem;
   }
 }
