@@ -4,7 +4,7 @@ import { getServicos } from "@/service/servicoService";
 import { Servico } from "@/interfaces/ServicoProps";
 import styles from "./page.module.css";
 import { FaSearch, FaHeart, FaRegHeart, FaTimes } from "react-icons/fa";
-import Modal from "@/components/Modal";
+import Modal from "@/components/modal/Modal";
 import { LoadingGrid } from "@/components/loading/Loading";
 import toast from "react-hot-toast";
 import { categoryIcons, defaultIcon } from "../utils/categoryIcons";

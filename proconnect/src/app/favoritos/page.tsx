@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { getServicos } from "@/service/servicoService";
 import { Servico } from "@/interfaces/ServicoProps";
 import styles from "../Busca-profissionais/page.module.css";
-import Modal from "@/components/Modal";
+import Modal from "@/components/modal/Modal";
 import { LoadingGrid } from "@/components/loading/Loading";
 import { FaHeart } from "react-icons/fa";
 
