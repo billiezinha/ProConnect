@@ -13,7 +13,7 @@ const BASE_URL = (
 const api = axios.create({
   baseURL: BASE_URL,
   headers: { "Content-Type": "application/json" },
-  timeout: 15000,
+  timeout: 60000,
 });
 
 /** --- Helpers de type guard (sem AxiosError) --- */
@@ -79,6 +79,6 @@ export function makeServerApi(token?: string) {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
-    timeout: 15000,
+    timeout: 60000,
   });
 }
