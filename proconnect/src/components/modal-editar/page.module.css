@@ -9,15 +9,23 @@
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  backdrop-filter: blur(5px);
 }
 
 .modal {
-  background: var(--cor-fundo);
-  padding: 2rem;
-  border-radius: var(--raio-borda);
+  background: var(--cor-fundo-card); /* Mudado para fundo-card */
+  color: var(--cor-texto);
+  padding: 2.5rem;
+  border-radius: 24px;
   width: 90%;
   max-width: 500px;
-  box-shadow: var(--sombra-forte);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  animation: modalShow 0.3s ease-out;
+}
+
+@keyframes modalShow {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .header {
@@ -28,57 +36,95 @@
 }
 
 .closeButton {
-  background: none;
-  border: none;
-  font-size: 2rem;
-  cursor: pointer;
+  background: var(--cor-fundo-input);
   color: var(--cor-texto-secundario);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.closeButton:hover {
+  background: var(--cor-borda);
+  color: var(--cor-texto);
 }
 
 .formGroup {
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem;
 }
 
 .formGroup label {
   display: block;
   margin-bottom: 0.5rem;
-  font-weight: 500;
+  font-weight: 600;
+  color: var(--cor-texto);
 }
 
 .formGroup input,
 .formGroup textarea {
   width: 100%;
-  padding: 0.7rem;
+  padding: 0.9rem;
+  background-color: var(--cor-fundo-input);
+  color: var(--cor-texto);
   border: 1px solid var(--cor-borda);
-  border-radius: 8px;
+  border-radius: 10px;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.formGroup input:focus,
+.formGroup textarea:focus {
+  outline: none;
+  border-color: var(--cor-primaria);
 }
 
 .actions {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
-  margin-top: 2rem;
+  margin-top: 2.5rem;
 }
 
 .saveButton,
 .cancelButton {
-  padding: 0.7rem 1.5rem;
+  padding: 0.8rem 1.5rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
+  font-weight: 600;
   cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
 }
 
 .saveButton {
   background-color: var(--cor-primaria);
-  color: white;
+  color: white !important;
+}
+
+.saveButton:hover {
+  background-color: var(--cor-primaria-hover);
+  transform: translateY(-2px);
 }
 
 .cancelButton {
+  background-color: var(--cor-fundo-input);
+  color: var(--cor-texto);
+  border: 1px solid var(--cor-borda);
+}
+
+.cancelButton:hover {
   background-color: var(--cor-borda);
+  transform: translateY(-2px);
 }
 
 .error {
-  color: var(--cor-erro);
+  color: #ef4444; /* Vermelho padrão para erro */
   font-size: 0.9rem;
-  margin-top: 0.25rem;
+  margin-top: 0.4rem;
+  font-weight: 500;
 }
