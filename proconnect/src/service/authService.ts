@@ -8,7 +8,7 @@ export async function loginUser(payload: LoginPayload): Promise<string> {
 
 export async function forgotPassword(email: string): Promise<{ message: string }> {
   try {
-    const { data } = await api.post<{ message: string }>("/forgot-password", { email });
+    const { data } = await api.post<{ message: string }>("/usuario/forgot-password", { email });
     return data;
   } catch (error: any) {
     throw new Error(error.message || "Erro ao processar solicitação.");
@@ -17,7 +17,7 @@ export async function forgotPassword(email: string): Promise<{ message: string }
 
 export async function resetPassword(payload: { token: string; novaSenha: string }): Promise<{ message: string }> {
   try {
-    const { data } = await api.post<{ message: string }>("/reset-password", payload);
+    const { data } = await api.post<{ message: string >>("/usuario/reset-password", payload);
     return data;
   } catch (error: any) {
     throw new Error(error.message || "Erro ao redefinir senha.");
