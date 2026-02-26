@@ -16,14 +16,14 @@ export default function FavoritosPage() {
   useEffect(() => {
     const carregarFavoritos = async () => {
       try {
-        // 1. Vai buscar os IDs do localStorage
+        // 1. Busca os IDs salvos no localStorage
         const salvos = localStorage.getItem("@ProConnect:favoritos");
         const idsFavoritos = salvos ? JSON.parse(salvos) : [];
 
         if (idsFavoritos.length > 0) {
-          // 2. Vai buscar todos os serviços da API
+          // 2. Busca todos os serviços da API
           const todos = await getServicos();
-          // 3. Filtra apenas os que estão nos favoritos
+          // 3. Filtra apenas os que o usuário favoritou
           const filtrados = todos.filter((s: Servico) => idsFavoritos.includes(s.id));
           setServicosFavoritos(filtrados);
         }
@@ -37,14 +37,25 @@ export default function FavoritosPage() {
     carregarFavoritos();
   }, []);
 
-  if (loading) return <div className={styles.container}><LoadingGrid /></div>;
+  if (loading) {
+    return (
+      <div className={styles.container}>
+        <LoadingGrid />
+      </div>
+    );
+  }
 
   return (
     <div className={styles.body}>
       <main className={styles.container}>
         <div className={styles.searchSection}>
-          <h1 className={styles.title}>Meus Profissionais Salvos</h1>
-          <p className={styles.subtitle}>Consulte aqui os profissionais que guardou para contacto posterior.</p>
+          <h1 className={styles.title}>
+            <FaHeart style={{ color: 'var(--cor-primaria)', marginRight: '10px' }} />
+            Meus Profissionais Salvos
+          </h1>
+          <p className={styles.subtitle}>
+            Consulte aqui os profissionais que guardou para contato posterior.
+          </p>
         </div>
 
         <div className={styles.resultsGrid}>
@@ -56,9 +67,12 @@ export default function FavoritosPage() {
                   <p className={styles.servicoDescription}>{s.descricao}</p>
                 </div>
                 <div className={styles.cardFooter}>
-                   <button 
+                  <button 
                     className={styles.detailsButton}
-                    onClick={() => { setSelectedId(s.id); setShowModal(true); }}
+                    onClick={() => { 
+                      setSelectedId(s.id); 
+                      setShowModal(true); 
+                    }}
                   >
                     Ver Detalhes
                   </button>
@@ -71,8 +85,12 @@ export default function FavoritosPage() {
         </div>
       </main>
 
+      {/* CORREÇÃO DO ERRO DE TIPAGEM */}
       {showModal && selectedId && (
-        <Modal id={selectedId} onClose={() => setShowModal(false)} />
+        <Modal 
+          profissional={{ id: selectedId }} 
+          onClose={() => setShowModal(false)} 
+        />
       )}
     </div>
   );

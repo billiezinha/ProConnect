@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import { getServicos } from "@/service/servicoService";
 import { Servico } from "@/interfaces/ServicoProps";
 import styles from "./page.module.css";
-import { FaSearch, FaHeart, FaRegHeart, FaTimes } from "react-icons/fa"; // Trocado Arrow por Times (X)
+import { FaSearch, FaHeart, FaRegHeart, FaTimes } from "react-icons/fa";
 import Modal from "@/components/Modal";
 import { LoadingGrid } from "@/components/loading/Loading";
 import toast from "react-hot-toast";
@@ -79,7 +79,6 @@ export default function BuscaProfissionaisPage() {
             />
           </div>
 
-          {/* LÓGICA DE CATEGORIAS COMPACTA */}
           <div className={styles.categoriesRow}>
             {!selectedCategory ? (
               <>
@@ -95,16 +94,17 @@ export default function BuscaProfissionaisPage() {
                     onClick={() => setSelectedCategory(cat)}
                     className={styles.catBtn}
                   >
-                    <span className={styles.btnIcon}>{categoryIcons[cat]}</span>
+                    <span className={styles.btnIcon}>{categoryIcons[cat as keyof typeof categoryIcons]}</span>
                     {cat}
                   </button>
                 ))}
               </>
             ) : (
-              /* FILTRO ATIVO: Estilo 'Chip' no canto esquerdo */
               <div className={styles.compactFilterWrapper}>
                 <div className={styles.activeCategoryChip}>
-                  <span className={styles.chipIcon}>{categoryIcons[selectedCategory]}</span>
+                  <span className={styles.chipIcon}>
+                    {categoryIcons[selectedCategory as keyof typeof categoryIcons]}
+                  </span>
                   <span className={styles.chipText}>{selectedCategory}</span>
                   <button 
                     onClick={() => setSelectedCategory(null)}
@@ -129,36 +129,47 @@ export default function BuscaProfissionaisPage() {
         ) : (
           <div className={styles.resultsGrid}>
             {filteredServicos.length > 0 ? (
-              filteredServicos.map((s) => (
-                <div key={s.id} className={styles.servicoCard}>
-                  <div className={styles.cardHeader}>
-                    <span className={styles.cardCategoryIcon}>
-                      {categoryIcons[s.categoria?.nomeServico] || defaultIcon}
-                    </span>
-                    
-                    <button 
-                      className={styles.favButton}
-                      onClick={() => toggleFavorito(s.id, s.nomeNegocio)}
-                    >
-                      {favoritos.includes(s.id) ? <FaHeart className={styles.iconFill} /> : <FaRegHeart className={styles.iconOutline} />}
-                    </button>
-                  </div>
+              filteredServicos.map((s) => {
+                const catName = s.categoria?.nomeServico;
+                const iconToRender = (catName && catName in categoryIcons) 
+                  ? categoryIcons[catName as keyof typeof categoryIcons] 
+                  : defaultIcon;
 
-                  <div className={styles.cardContent}>
-                    <h3 className={styles.servicoTitle}>{s.nomeNegocio}</h3>
-                    <p className={styles.servicoDescription}>{s.descricao}</p>
-                  </div>
+                return (
+                  <div key={s.id} className={styles.servicoCard}>
+                    <div className={styles.cardHeader}>
+                      <span className={styles.cardCategoryIcon}>
+                        {iconToRender}
+                      </span>
+                      
+                      <button 
+                        className={styles.favButton}
+                        onClick={() => toggleFavorito(s.id, s.nomeNegocio)}
+                      >
+                        {favoritos.includes(s.id) ? (
+                          <FaHeart className={styles.iconFill} />
+                        ) : (
+                          <FaRegHeart className={styles.iconOutline} />
+                        )}
+                      </button>
+                    </div>
 
-                  <div className={styles.cardFooter}>
-                    <button 
-                      className={styles.detailsButton}
-                      onClick={() => { setSelectedId(s.id); setShowModal(true); }}
-                    >
-                      Ver Detalhes
-                    </button>
+                    <div className={styles.cardContent}>
+                      <h3 className={styles.servicoTitle}>{s.nomeNegocio}</h3>
+                      <p className={styles.servicoDescription}>{s.descricao}</p>
+                    </div>
+
+                    <div className={styles.cardFooter}>
+                      <button 
+                        className={styles.detailsButton}
+                        onClick={() => { setSelectedId(s.id); setShowModal(true); }}
+                      >
+                        Ver Detalhes
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             ) : (
               <p className={styles.emptyState}>Nenhum profissional encontrado.</p>
             )}
@@ -166,8 +177,12 @@ export default function BuscaProfissionaisPage() {
         )}
       </main>
 
+      {/* AJUSTE AQUI: Enviando como 'profissional' para bater com a interface do seu Modal */}
       {showModal && selectedId && (
-        <Modal id={selectedId} onClose={() => setShowModal(false)} />
+        <Modal 
+          profissional={{ id: selectedId }} 
+          onClose={() => setShowModal(false)} 
+        />
       )}
     </div>
   );
