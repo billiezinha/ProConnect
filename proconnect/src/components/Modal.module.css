@@ -1,252 +1,83 @@
-/* === ESTRUTURA DO MODAL ==================================== */
-.modalOverlay {
+.overlay {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
-  justify-content: center;
   align-items: center;
-  padding: 1.5rem;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
+  justify-content: center;
   z-index: 1000;
-  animation: fadeIn 0.3s ease;
+  backdrop-filter: blur(4px);
 }
 
 .modalContent {
-  background: var(--cor-fundo);
-  border-radius: var(--raio-borda);
+  background: white;
   padding: 2rem;
-  max-width: 550px;
-  width: 100%;
-  box-shadow: var(--sombra-profunda);
-  overflow-y: auto;
-  max-height: 90vh;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 450px;
   position: relative;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  animation: scaleUp 0.3s ease-out;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+@keyframes scaleUp {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
-/* === BOTÃO DE FECHAR ======================================= */
-.closeButton {
+.closeBtn {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: transparent;
+  top: 15px;
+  right: 15px;
+  background: #f0f0f0;
   border: none;
-  font-size: 1.5rem;
-  color: var(--cor-texto-secundario);
-  cursor: pointer;
-  transition: color 0.2s, transform 0.2s;
-}
-
-.closeButton:hover {
-  color: var(--cor-primaria);
-  transform: rotate(90deg);
-}
-
-/* === CABEÇALHO ============================================ */
-.header {
-  text-align: center;
-  margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--cor-borda);
-}
-
-.logo {
   border-radius: 50%;
-  margin: 0 auto 1rem;
-  border: 2px solid var(--cor-borda);
-}
-
-.header h2 {
-  font-size: 1.8rem;
-  font-weight: 700;
-  margin: 0;
-  color: var(--cor-texto);
-}
-
-.category, .location {
-  font-size: 1rem;
-  color: var(--cor-texto-secundario);
-  margin-top: 0.25rem;
-}
-
-/* === SEÇÕES DE CONTEÚDO =================================== */
-.section {
-  margin-bottom: 2rem;
-}
-
-.section h3 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--cor-texto);
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--cor-borda);
-}
-
-.section p {
-  line-height: 1.6;
-  color: var(--cor-texto-secundario);
-}
-
-/* === LISTA DE PREÇOS ======================================= */
-.priceList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.priceList li {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.5rem 0;
-}
-
-.price {
-  font-weight: 600;
-  color: var(--cor-primaria);
-}
-
-/* === AVALIAÇÕES (RATING) ================================== */
-.rating {
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  font-size: 1.2rem;
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  justify-content: center;
 }
 
-.filledStar, .emptyStar {
-  font-size: 1.25rem;
-  color: #ffc107;
+.categoria {
+  color: var(--cor-primaria);
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+
+.info {
+  margin: 1.5rem 0;
+}
+
+.descricao {
+  color: #555;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.nota {
+  font-weight: 700;
+  color: #f1c40f;
+}
+
+.btnWhats {
+  width: 100%;
+  padding: 14px;
+  background: #25d366;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
   transition: transform 0.2s;
 }
 
-.emptyStar {
-  color: var(--cor-borda);
-}
-
-[role="button"].filledStar:hover, [role="button"].emptyStar:hover {
-  transform: scale(1.2);
-  cursor: pointer;
-}
-
-/* === FORMULÁRIO DE FEEDBACK =============================== */
-.feedbackForm {
-  display: flex;
-  flex-direction: column;
-  /* Corrigido: Alinha o botão para a direita */
-  align-items: flex-end; 
-  gap: 1rem;
-}
-
-.feedbackInput {
-  width: 100%;
-  min-height: 80px;
-  border: 1px solid var(--cor-borda);
-  border-radius: 8px;
-  padding: 0.8rem;
-  font-size: 1rem;
-  resize: vertical;
-}
-
-/* === LISTA DE COMENTÁRIOS ================================== */
-.commentsList {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.comment {
-  background-color: var(--cor-fundo-secao);
-  border: 1px solid var(--cor-borda);
-  border-radius: 8px;
-  padding: 1rem;
-}
-
-.commentHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.5rem;
-}
-
-.commentAuthor {
-  font-weight: 600;
-}
-
-.commentText {
-  font-size: 0.95rem;
-}
-
-/* === RODAPÉ E BOTÕES DE AÇÃO ============================== */
-.footer {
-  display: flex;
-  /* Corrigido: Alinha os botões para a direita */
-  justify-content: flex-end; 
-  gap: 1rem;
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--cor-borda);
-}
-
-.primaryButton, .secondaryButton {
-  /* Remove o flex: 1 para que os botões tenham largura automática */
-  padding: 0.8rem 1.5rem; /* Adiciona mais padding horizontal */
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: 8px;
-  cursor: pointer;
-  text-align: center;
-  text-decoration: none;
-  transition: all 0.2s;
-}
-
-.primaryButton {
-  background-color: var(--cor-primaria);
-  color: white;
-  border: 1px solid var(--cor-primaria);
-}
-
-.primaryButton:hover:not(:disabled) {
-  background-color: var(--cor-primaria-hover);
+.btnWhats:hover {
   transform: translateY(-2px);
-}
-
-.secondaryButton {
-  background-color: var(--cor-fundo);
-  color: var(--cor-texto-secundario);
-  border: 1px solid var(--cor-borda);
-}
-
-.secondaryButton:hover {
-  background-color: var(--cor-fundo-secao);
-  border-color: var(--cor-texto-secundario);
-}
-
-.primaryButton:disabled {
-  background-color: #ccc;
-  border-color: #ccc;
-  cursor: not-allowed;
-}
-
-/* === RESPONSIVIDADE ======================================= */
-@media (max-width: 600px) {
-  .modalContent {
-    padding: 1.5rem;
-  }
-  .header h2 {
-    font-size: 1.5rem;
-  }
-  .footer {
-    flex-direction: column-reverse; /* Inverte a ordem e empilha */
-  }
-  .primaryButton, .secondaryButton {
-    width: 100%; /* Faz os botões ocuparem a largura total */
-  }
 }

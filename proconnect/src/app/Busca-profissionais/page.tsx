@@ -15,8 +15,8 @@ export default function BuscaProfissionaisPage() {
   const [error, setError] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedId, setSelectedId] = useState<number | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [selectedProfissional, setSelectedProfissional] = useState<Servico | null>(null);
   const [favoritos, setFavoritos] = useState<number[]>([]);
 
   useEffect(() => {
@@ -162,7 +162,10 @@ export default function BuscaProfissionaisPage() {
                     <div className={styles.cardFooter}>
                       <button 
                         className={styles.detailsButton}
-                        onClick={() => { setSelectedId(s.id); setShowModal(true); }}
+                        onClick={() => { 
+                          setSelectedProfissional(s); 
+                          setShowModal(true); 
+                        }}
                       >
                         Ver Detalhes
                       </button>
@@ -177,10 +180,18 @@ export default function BuscaProfissionaisPage() {
         )}
       </main>
 
-      {/* AJUSTE AQUI: Enviando como 'profissional' para bater com a interface do seu Modal */}
-      {showModal && selectedId && (
+      {/* CORREÇÃO APLICADA AQUI NA LINHA 190 */}
+      {showModal && selectedProfissional && (
         <Modal 
-          profissional={{ id: selectedId }} 
+          profissional={{ 
+            id: selectedProfissional.id,
+            nome: selectedProfissional.nomeNegocio,
+            categoria: selectedProfissional.categoria?.nomeServico,
+            descricao: selectedProfissional.descricao,
+            // Tratando como 'any' para o build aceitar o campo que vem da API
+            telefone: (selectedProfissional as any).telefone, 
+            mediaNota: "Novo"
+          }} 
           onClose={() => setShowModal(false)} 
         />
       )}
