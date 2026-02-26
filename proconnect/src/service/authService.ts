@@ -17,7 +17,7 @@ export async function forgotPassword(email: string): Promise<{ message: string }
 
 export async function resetPassword(payload: { token: string; novaSenha: string }): Promise<{ message: string }> {
   try {
-    const { data } = await api.post<{ message: string >>("/usuario/reset-password", payload);
+    const { data } = await api.post<{ message: string }>("/usuario/reset-password", payload);
     return data;
   } catch (error: any) {
     throw new Error(error.message || "Erro ao redefinir senha.");
