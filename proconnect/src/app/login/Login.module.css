@@ -1,6 +1,10 @@
 .body {
   width: 100vw;
   height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f4f7f6;
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -10,161 +14,221 @@
   display: flex;
   width: 100%;
   height: 100%;
+  background: #fff;
 }
 
-.logoSection {
+/* --- SEÇÃO VISUAL (ESQUERDA) --- */
+.visualSection {
   flex: 1;
   background-color: var(--cor-primaria);
-  padding: 40px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  color: white;
+  overflow: hidden;
+}
+
+/* Ícones de Profissionais Flutuantes */
+.floatingIcons svg {
+  position: absolute;
+  color: rgba(255, 255, 255, 0.08); /* Suave no fundo */
+  font-size: 6rem;
+  animation: float 6s ease-in-out infinite;
+}
+
+.icon1 { top: 10%; left: 10%; animation-delay: 0s; }
+.icon2 { bottom: 15%; left: 15%; animation-delay: 2s; }
+.icon3 { top: 20%; right: 10%; animation-delay: 4s; }
+.icon4 { bottom: 10%; right: 20%; animation-delay: 1s; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-30px) rotate(5deg); }
+}
+
+.visualContent {
+  text-align: center;
+  z-index: 2;
+}
+
+.logoVisual {
+  margin-bottom: 2.5rem;
+  filter: drop-shadow(0 15px 30px rgba(0,0,0,0.3));
+  transition: transform 0.3s ease;
+}
+
+.logoVisual:hover {
+  transform: scale(1.05);
+}
+
+.visualContent h1 {
+  font-size: 2.8rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+}
+
+.visualContent p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* --- SEÇÃO DO FORMULÁRIO (DIREITA) --- */
+.formSection {
+  flex: 1.2;
   display: grid;
   place-items: center;
-}
-
-.logo {
-  width: 110%;
-  max-width: 250px;
-  height: auto;
-}
-
-.formSection {
-  flex: 1.5;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 2rem 5rem;
-  overflow-y: auto;
   background-color: var(--cor-fundo);
+  padding: 2rem;
+}
+
+.loginCard {
+  width: 100%;
+  max-width: 420px;
 }
 
 .header {
-  text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .header h1 {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: var(--cor-primaria);
+  font-size: 2.2rem;
+  color: #1a1a1a;
+  margin-bottom: 0.5rem;
 }
 
 .header p {
   color: var(--cor-texto-secundario);
-  margin-top: 0.5rem;
+}
+
+/* Botão de Voltar para Modo Recuperação */
+.backBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: var(--cor-primaria);
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  padding: 0;
 }
 
 .formGroup {
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
 }
 
 .formGroup label {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 0.9rem;
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-  color: var(--cor-texto-secundario);
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 0.6rem;
+}
+
+.labelRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.forgotBtn {
+  background: none;
+  border: none;
+  color: var(--cor-primaria);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.forgotBtn:hover {
+  text-decoration: underline;
 }
 
 .formGroup input {
   width: 100%;
-  padding: 12px 15px;
-  font-size: 1rem;
+  padding: 14px 16px;
   border: 1px solid var(--cor-borda);
-  border-radius: 8px;
-  background-color: var(--cor-fundo-input);
+  border-radius: 12px;
+  background-color: #f9f9f9;
+  font-size: 1rem;
   transition: all 0.2s ease;
 }
 
 .formGroup input:focus {
   outline: none;
   border-color: var(--cor-primaria);
-  box-shadow: 0 0 0 3px rgba(139, 44, 245, 0.15);
+  background-color: #fff;
+  box-shadow: 0 0 0 4px rgba(139, 44, 245, 0.1);
 }
 
 .passwordWrapper {
   position: relative;
 }
 
-.showPasswordButton {
+.toggleBtn {
   position: absolute;
-  right: 0.8rem;
+  right: 12px;
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
+  color: #888;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
   cursor: pointer;
-  color: var(--cor-texto-secundario);
-  font-size: 1.2rem;
+  padding: 5px;
 }
 
 .submitButton {
   width: 100%;
-  padding: 12px;
-  margin-top: 1rem;
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--cor-texto-claro);
+  padding: 16px;
   background-color: var(--cor-primaria);
+  color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
+  margin-top: 1rem;
+  transition: transform 0.2s, background 0.2s;
 }
 
 .submitButton:hover:not(:disabled) {
+  background-color: #7a22d8;
   transform: translateY(-2px);
 }
 
 .submitButton:disabled {
-  background-color: #ccc;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
-.footerLink {
+.registerText {
+  text-align: center;
   margin-top: 2rem;
-  text-align: center;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  color: var(--cor-texto-secundario);
 }
 
-.footerLink a {
+.registerText a {
   color: var(--cor-primaria);
-  font-weight: 500;
+  font-weight: 700;
+  text-decoration: none;
 }
 
-.error {
-  padding: 10px;
-  margin-bottom: 1rem;
-  text-align: center;
-  font-size: 0.9rem;
-  color: var(--cor-erro);
-  background-color: var(--cor-fundo-erro);
-  border: 1px solid var(--cor-borda-erro);
-  border-radius: 8px;
-}
-
-@media (max-width: 768px) {
-  .body {
-    height: auto;
-    min-height: 100vh;
-    overflow-y: auto;
-  }
-  .container {
-    flex-direction: column;
-    height: auto;
-  }
-  .logoSection {
-    display: none;
-  }
-  .formSection {
-    flex: 1;
-    padding: 2rem;
-    overflow-y: visible;
-    justify-content: flex-start;
-    min-height: 100vh;
-  }
-}
-
-@media (min-width: 769px) {
-  .logo {
-    max-width: 350px;
+/* --- RESPONSIVIDADE --- */
+@media (max-width: 1024px) {
+  .visualSection {
+    display: none; /* Em telas menores, foca no formulário */
   }
 }
