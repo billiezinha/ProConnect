@@ -7,39 +7,33 @@ import styles from "./Login.module.css";
 import { loginUser, forgotPassword } from "@/service/authService";
 import { HiOutlineMail, HiOutlineLockClosed, HiOutlineEye, HiOutlineEyeOff, HiArrowLeft } from "react-icons/hi";
 import { FaUserTie, FaHandshake, FaBriefcase, FaNetworkWired } from "react-icons/fa";
-import toast from "react-hot-toast"; 
-import Cookies from 'js-cookie'; 
+import toast from "react-hot-toast";
+import Cookies from 'js-cookie';
 
 export default function LoginPage() {
   const router = useRouter();
-  
-  // Estados do Formulário
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  
-  // Estado para trocar entre "Login" e "Recuperar Senha"
   const [isForgotMode, setIsForgotMode] = useState(false);
 
-  // Lógica de Login
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
       const token = await loginUser({ email, senha: password });
-      localStorage.setItem("token", token);
-      Cookies.set("token", token, { expires: 7 }); 
+      Cookies.set("token", token, { expires: 7 }); // ✅ apenas o cookie, removido o localStorage duplicado
       toast.success("Bem-vindo de volta!");
       router.push("/Busca-profissionais");
-    } catch {
-      toast.error("E-mail ou senha inválidos.");
+    } catch (error: any) {
+      toast.error(error.message || "E-mail ou senha inválidos.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Lógica de Recuperação (Sincronizada com seu Back-end)
   const handleRecovery = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) {
@@ -50,9 +44,9 @@ export default function LoginPage() {
     try {
       await forgotPassword(email);
       toast.success("E-mail de recuperação enviado!");
-      setIsForgotMode(false); // Volta para o login após enviar
-    } catch {
-      toast.error("Erro ao processar solicitação. Tente novamente.");
+      setIsForgotMode(false);
+    } catch (error: any) {
+      toast.error(error.message || "Erro ao processar solicitação."); // ✅ exibe a mensagem real do back-end
     } finally {
       setLoading(false);
     }
@@ -61,8 +55,8 @@ export default function LoginPage() {
   return (
     <div className={styles.body}>
       <div className={styles.container}>
-        
-        {/* LADO ESQUERDO: VISUAL COM ÍCONES DE CONEXÃO */}
+
+        {/* LADO ESQUERDO */}
         <div className={styles.visualSection}>
           <div className={styles.floatingIcons}>
             <FaUserTie className={styles.icon1} />
@@ -77,12 +71,11 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* LADO DIREITO: FORMULÁRIO DINÂMICO */}
+        {/* LADO DIREITO */}
         <div className={styles.formSection}>
           <div className={styles.loginCard}>
-            
+
             {!isForgotMode ? (
-              /* MODO LOGIN */
               <>
                 <div className={styles.header}>
                   <h1>Entrar</h1>
@@ -92,12 +85,12 @@ export default function LoginPage() {
                 <form onSubmit={handleLogin}>
                   <div className={styles.formGroup}>
                     <label><HiOutlineMail /> E-mail</label>
-                    <input 
-                      type="email" 
-                      value={email} 
-                      onChange={(e) => setEmail(e.target.value)} 
-                      placeholder="seuemail@exemplo.com" 
-                      required 
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="seuemail@exemplo.com"
+                      required
                     />
                   </div>
 
@@ -128,7 +121,6 @@ export default function LoginPage() {
                 </form>
               </>
             ) : (
-              /* MODO RECUPERAÇÃO DE SENHA */
               <>
                 <div className={styles.header}>
                   <button onClick={() => setIsForgotMode(false)} className={styles.backBtn}>
@@ -141,12 +133,12 @@ export default function LoginPage() {
                 <form onSubmit={handleRecovery}>
                   <div className={styles.formGroup}>
                     <label><HiOutlineMail /> E-mail de cadastro</label>
-                    <input 
-                      type="email" 
-                      value={email} 
-                      onChange={(e) => setEmail(e.target.value)} 
-                      placeholder="seuemail@exemplo.com" 
-                      required 
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="seuemail@exemplo.com"
+                      required
                     />
                   </div>
 
