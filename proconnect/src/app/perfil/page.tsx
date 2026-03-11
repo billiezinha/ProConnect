@@ -1,118 +1,90 @@
 "use client";
-
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { getMe } from "@/service/userService";
 import type { User } from "@/interfaces/UserProps";
 import styles from "./page.module.css";
 import { 
-  FaUserCircle, 
-  FaEnvelope, 
-  FaPhone, 
-  FaMapMarkerAlt, 
-  FaEdit, 
-  FaArrowLeft 
+  FaUserCircle, FaEnvelope, FaPhone, FaMapMarkerAlt, 
+  FaEdit, FaSignOutAlt, FaBriefcase, FaPlusCircle 
 } from "react-icons/fa";
+import Cookies from "js-cookie";
 
 export default function PerfilPage() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
 
-  const logout = useCallback(() => {
+  const handleLogout = () => {
     localStorage.removeItem("token");
+    Cookies.remove("token");
     router.replace("/login");
-  }, [router]);
+  };
 
   useEffect(() => {
     (async () => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        router.replace("/login");
-        return;
-      }
-
       try {
         const userData = await getMe();
         setUser(userData);
       } catch {
-        localStorage.removeItem("token");
-        router.replace("/login");
+        handleLogout();
       } finally {
         setLoading(false);
       }
     })();
-  }, [router]);
+  }, []);
 
-  if (loading) {
-    return <div className={styles.loadingState}>Carregando seu perfil…</div>;
-  }
+  if (loading) return <div className={styles.loadingState}>Carregando seu painel...</div>;
 
   return (
-    <div className={styles.body}>
-      <header className={styles.header}>
-        <div className={styles.container}>
-          <Link href="/Busca-profissionais" className={styles.backButton}>
-            <FaArrowLeft />
-          </Link>
-          <h1 className={styles.headerTitle}>Meu Perfil</h1>
-          <button onClick={logout} className={styles.logoutButton}>
-            Sair
+    <div className={styles.wrapper}>
+      <div className={styles.container}>
+        {/* Sidebar do Perfil */}
+        <aside className={styles.sidebar}>
+          <div className={styles.userCore}>
+            <FaUserCircle className={styles.avatar} />
+            <h2>{user?.nome}</h2>
+            <p className={styles.userEmail}>{user?.email}</p>
+          </div>
+          <button onClick={handleLogout} className={styles.logoutBtn}>
+            <FaSignOutAlt /> Sair da conta
           </button>
-        </div>
-      </header>
+        </aside>
 
-      <main className={styles.mainContent}>
-        <div className={styles.container}>
-          {user && (
-            <div className={styles.profileCard}>
-              <div className={styles.profileHeader}>
-                <FaUserCircle className={styles.profileIcon} />
-                <h2 className={styles.profileName}>{user.nome}</h2>
-                <Link href="../editar" className={styles.editButton}>
-                  <FaEdit /> Editar Perfil
-                </Link>
+        {/* Conteúdo Principal */}
+        <main className={styles.content}>
+          <section className={styles.card}>
+            <div className={styles.cardHeader}>
+              <h3><FaUserCircle /> Dados Pessoais</h3>
+              <button className={styles.editBtn}><FaEdit /> Editar Perfil</button>
+            </div>
+            <div className={styles.infoGrid}>
+              <div className={styles.infoBox}>
+                <label><FaPhone /> Telefone</label>
+                <span>{user?.telefone || "Não cadastrado"}</span>
               </div>
-
-              <div className={styles.profileDetails}>
-                <h3 className={styles.sectionTitle}>Informações de Contato</h3>
-                <div className={styles.infoGrid}>
-                  <div className={styles.infoItem}>
-                    <FaEnvelope />
-                    <span>{user.email}</span>
-                  </div>
-                  <div className={styles.infoItem}>
-                    <FaPhone />
-                    <span>{user.telefone || "Não informado"}</span>
-                  </div>
-                </div>
-
-                <h3 className={styles.sectionTitle}>Localização</h3>
-                <div className={styles.infoGrid}>
-                  <div className={styles.infoItem}>
-                    <FaMapMarkerAlt />
-                    <span>
-                      {`${user.cidade || "Não informada"}, ${user.estado || "Não informado"}`}
-                    </span>
-                  </div>
-                </div>
+              <div className={styles.infoBox}>
+                <label><FaMapMarkerAlt /> Localização</label>
+                <span>{user?.cidade || "Picos"}, {user?.estado || "PI"}</span>
               </div>
             </div>
-          )}
+          </section>
 
-          <div className={styles.actionsGrid}>
-            <Link href="/meus-servicos" className={styles.actionCard}>
-              <h3>Meus Serviços</h3>
-              <p>Ver e gerir os seus serviços anunciados</p>
-            </Link>
-            <Link href="/cadastro-servico" className={styles.actionCard}>
-              <h3>Anunciar Novo Serviço</h3>
-              <p>Crie um novo anúncio para atrair clientes</p>
-            </Link>
+          {/* Cards de Ação Profissional */}
+          <div className={styles.quickActions}>
+            <div onClick={() => router.push("/meus-servicos")} className={styles.actionCard}>
+              <FaBriefcase />
+              <h4>Meus Serviços</h4>
+              <p>Gerencie seus anúncios em Picos.</p>
+            </div>
+            <div onClick={() => router.push("/cadastro-servico")} className={styles.actionCard}>
+              <FaPlusCircle />
+              <h4>Novo Anúncio</h4>
+              <p>Atraia mais clientes agora.</p>
+            </div>
           </div>
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }
