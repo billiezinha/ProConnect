@@ -4,7 +4,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f4f7f6;
+  background-color: var(--cor-fundo-secao);
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -14,7 +14,7 @@
   display: flex;
   width: 100%;
   height: 100%;
-  background: #fff;
+  background: var(--cor-fundo);
 }
 
 /* --- SEÇÃO VISUAL (ESQUERDA) --- */
@@ -30,10 +30,9 @@
   overflow: hidden;
 }
 
-/* Ícones de Profissionais Flutuantes */
 .floatingIcons svg {
   position: absolute;
-  color: rgba(255, 255, 255, 0.08); /* Suave no fundo */
+  color: rgba(255, 255, 255, 0.08); 
   font-size: 6rem;
   animation: float 6s ease-in-out infinite;
 }
@@ -97,7 +96,7 @@
 
 .header h1 {
   font-size: 2.2rem;
-  color: #1a1a1a;
+  color: var(--cor-texto);
   margin-bottom: 0.5rem;
 }
 
@@ -105,7 +104,6 @@
   color: var(--cor-texto-secundario);
 }
 
-/* Botão de Voltar para Modo Recuperação */
 .backBtn {
   display: flex;
   align-items: center;
@@ -129,7 +127,7 @@
   gap: 8px;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #444;
+  color: var(--cor-texto);
   margin-bottom: 0.6rem;
 }
 
@@ -158,7 +156,8 @@
   padding: 14px 16px;
   border: 1px solid var(--cor-borda);
   border-radius: 12px;
-  background-color: #f9f9f9;
+  background-color: var(--cor-fundo-input);
+  color: var(--cor-texto);
   font-size: 1rem;
   transition: all 0.2s ease;
 }
@@ -166,8 +165,7 @@
 .formGroup input:focus {
   outline: none;
   border-color: var(--cor-primaria);
-  background-color: #fff;
-  box-shadow: 0 0 0 4px rgba(139, 44, 245, 0.1);
+  background-color: var(--cor-fundo);
 }
 
 .passwordWrapper {
@@ -181,7 +179,7 @@
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: #888;
+  color: var(--cor-texto-secundario);
   font-size: 1.4rem;
   display: flex;
   align-items: center;
@@ -204,7 +202,7 @@
 }
 
 .submitButton:hover:not(:disabled) {
-  background-color: #7a22d8;
+  background-color: var(--cor-primaria-hover);
   transform: translateY(-2px);
 }
 
@@ -226,9 +224,6 @@
   text-decoration: none;
 }
 
-/* --- RESPONSIVIDADE --- */
 @media (max-width: 1024px) {
-  .visualSection {
-    display: none; /* Em telas menores, foca no formulário */
-  }
+  .visualSection { display: none; }
 }

@@ -5,17 +5,15 @@ const ThemeContext = createContext({ isDark: false, toggleTheme: () => {} });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [isDark, setIsDark] = useState(false);
+  const [mounted, setMounted] = useState(false); // Proteção contra erros do Next.js
 
-  // 1. Ao carregar, verifica o LocalStorage
   useEffect(() => {
-    const savedTheme = localStorage.getItem("@ProConnect:theme");
-    if (savedTheme === "dark") {
-      setIsDark(true);
-      document.documentElement.setAttribute("data-theme", "dark");
-    }
+    setMounted(true);
+    // Verifica qual é a cor atual que o nosso script do layout (abaixo) aplicou
+    const currentTheme = document.documentElement.getAttribute("data-theme");
+    setIsDark(currentTheme === "dark");
   }, []);
 
-  // 2. Função que alterna o tema
   const toggleTheme = () => {
     const newTheme = !isDark;
     setIsDark(newTheme);
@@ -23,6 +21,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("@ProConnect:theme", themeString);
     document.documentElement.setAttribute("data-theme", themeString);
   };
+
+  // Evita que o React tente renderizar o tema errado na primeira fração de segundo
+  if (!mounted) {
+    return (
+      <ThemeContext.Provider value={{ isDark: false, toggleTheme }}>
+        {children}
+      </ThemeContext.Provider>
+    );
+  }
 
   return (
     <ThemeContext.Provider value={{ isDark, toggleTheme }}>

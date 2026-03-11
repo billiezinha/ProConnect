@@ -1,7 +1,8 @@
 /* === LAYOUT E CONTAINER === */
 .body {
-  background-color: #f9f9fb;
+  background-color: var(--cor-fundo);
   min-height: 100vh;
+  transition: background-color 0.3s ease;
 }
 
 .container {
@@ -19,7 +20,7 @@
 .title {
   font-size: 2rem;
   font-weight: 800;
-  color: #1a1a1a;
+  color: var(--cor-texto);
   margin-bottom: 1.5rem;
 }
 
@@ -34,15 +35,17 @@
   left: 1.2rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #8B2CF5;
+  color: var(--cor-primaria);
 }
 
 .searchInput {
   width: 100%;
   padding: 1rem 1rem 1rem 3.5rem;
-  border: 2px solid #eee;
+  border: 2px solid var(--cor-borda);
   border-radius: 12px;
   font-size: 1rem;
+  background-color: var(--cor-fundo-input);
+  color: var(--cor-texto);
   transition: all 0.3s ease;
 }
 
@@ -53,7 +56,7 @@
   gap: 1rem;
   flex-wrap: wrap;
   margin-top: 1rem;
-  min-height: 50px; /* Mantém consistência visual */
+  min-height: 50px;
 }
 
 .catBtn, .catBtnActive {
@@ -61,8 +64,8 @@
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  background: white;
-  border: 2px solid #eee;
+  background: var(--cor-fundo-card);
+  border: 2px solid var(--cor-borda);
   padding: 0.8rem;
   border-radius: 16px;
   cursor: pointer;
@@ -70,20 +73,20 @@
   transition: all 0.2s ease;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #666;
+  color: var(--cor-texto-secundario);
 }
 
 .catBtnActive {
-  border-color: #8B2CF5;
-  background-color: rgba(139, 44, 245, 0.05);
-  color: #8B2CF5;
+  border-color: var(--cor-primaria);
+  background-color: rgba(139, 44, 245, 0.1);
+  color: var(--cor-primaria);
 }
 
 /* === NOVO: FILTRO COMPACTO (ESTADO SELECIONADO NO CANTO) === */
 .compactFilterWrapper {
   display: flex;
   align-items: center;
-  justify-content: flex-start; /* Alinha no canto esquerdo */
+  justify-content: flex-start;
   gap: 1rem;
   width: 100%;
   padding: 0.5rem 0;
@@ -94,29 +97,29 @@
   display: flex;
   align-items: center;
   background-color: rgba(139, 44, 245, 0.1);
-  border: 1px solid #8B2CF5;
+  border: 1px solid var(--cor-primaria);
   padding: 8px 16px;
-  border-radius: 50px; /* Formato de pílula/chip */
+  border-radius: 50px;
   gap: 10px;
 }
 
 .chipIcon {
   font-size: 1.1rem;
-  color: #8B2CF5;
+  color: var(--cor-primaria);
   display: flex;
 }
 
 .chipText {
   font-size: 0.9rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--cor-texto);
 }
 
 .closeChipBtn {
   background: none;
   border: none;
   font-size: 1.4rem;
-  color: #8B2CF5;
+  color: var(--cor-primaria);
   cursor: pointer;
   padding: 0 0 0 5px;
   line-height: 1;
@@ -124,7 +127,7 @@
 
 .resultsCount {
   font-size: 0.9rem;
-  color: #666;
+  color: var(--cor-texto-secundario);
 }
 
 /* === GRID DE RESULTADOS === */
@@ -136,9 +139,9 @@
 }
 
 .servicoCard {
-  background: white;
+  background: var(--cor-fundo-card);
   border-radius: 20px;
-  border: 1px solid #eee;
+  border: 1px solid var(--cor-borda);
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
@@ -148,7 +151,7 @@
 
 .cardCategoryIcon {
   background: rgba(139, 44, 245, 0.1);
-  color: #8B2CF5;
+  color: var(--cor-primaria);
   width: 45px;
   height: 45px;
   border-radius: 12px;
@@ -163,14 +166,14 @@
   border: none;
   font-size: 1.4rem;
   cursor: pointer;
-  color: #ccc;
+  color: var(--cor-borda);
 }
 
 .iconFill { color: #ff4b5c; }
 
 .detailsButton {
   margin-top: auto;
-  background: #1a1a1a;
+  background: var(--cor-primaria);
   color: white;
   border: none;
   padding: 0.8rem;

@@ -18,7 +18,29 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   }, []);
 
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" suppressHydrationWarning>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <title>ProConnect</title>
+        
+        {/* SCRIPT QUE EVITA A TELA PISCAR BRANCO NO MODO ESCURO */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var savedTheme = localStorage.getItem("@ProConnect:theme");
+                  if (savedTheme === "dark" || (!savedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+                    document.documentElement.setAttribute("data-theme", "dark");
+                  } else {
+                    document.documentElement.setAttribute("data-theme", "light");
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
       <body>
         <ThemeProvider>
           <SplashScreen isVisible={showSplash} />
