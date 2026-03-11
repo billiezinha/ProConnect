@@ -24,9 +24,19 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const token = await loginUser({ email, senha: password });
-      Cookies.set("token", token, { expires: 7 }); // ✅ apenas o cookie, removido o localStorage duplicado
+      
+      // ✅ ESSENCIAL: Salva no Cookie para o Middleware ler no servidor
+      Cookies.set("token", token, { expires: 7, path: '/' }); 
+      
+      // ✅ ESSENCIAL: Salva no LocalStorage para os serviços (userService, api.ts) lerem no cliente
+      localStorage.setItem("token", token); 
+
       toast.success("Bem-vindo de volta!");
+      
+      // ✅ IHC: Força o Next.js a revalidar os componentes (como a Navbar)
       router.push("/Busca-profissionais");
+      router.refresh(); 
+
     } catch (error: any) {
       toast.error(error.message || "E-mail ou senha inválidos.");
     } finally {
@@ -46,7 +56,7 @@ export default function LoginPage() {
       toast.success("E-mail de recuperação enviado!");
       setIsForgotMode(false);
     } catch (error: any) {
-      toast.error(error.message || "Erro ao processar solicitação."); // ✅ exibe a mensagem real do back-end
+      toast.error(error.message || "Erro ao processar solicitação.");
     } finally {
       setLoading(false);
     }
@@ -56,7 +66,7 @@ export default function LoginPage() {
     <div className={styles.body}>
       <div className={styles.container}>
 
-        {/* LADO ESQUERDO */}
+        {/* LADO ESQUERDO: Visual da marca */}
         <div className={styles.visualSection}>
           <div className={styles.floatingIcons}>
             <FaUserTie className={styles.icon1} />
@@ -71,7 +81,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* LADO DIREITO */}
+        {/* LADO DIREITO: Card de Login */}
         <div className={styles.formSection}>
           <div className={styles.loginCard}>
 
