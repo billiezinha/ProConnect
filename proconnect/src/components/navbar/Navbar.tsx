@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { 
@@ -23,13 +23,26 @@ export default function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
+  // Função memorizada para checar o estado de login
+  const checkAuthState = useCallback(() => {
+    const token = localStorage.getItem("token") || Cookies.get("token");
     setIsLogged(!!token);
 
     const salvos = JSON.parse(localStorage.getItem("@ProConnect:favoritos") || "[]");
     setFavCount(salvos.length);
-  }, [pathname]);
+  }, []);
+
+  useEffect(() => {
+    // Checa o login sempre que a rota mudar
+    checkAuthState();
+
+    // Listener para detectar mudanças no localStorage vindas de outras abas ou componentes
+    window.addEventListener("storage", checkAuthState);
+    
+    return () => {
+      window.removeEventListener("storage", checkAuthState);
+    };
+  }, [pathname, checkAuthState]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
