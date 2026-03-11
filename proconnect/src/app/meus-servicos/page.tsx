@@ -9,6 +9,7 @@ import styles from "./page.module.css";
 import EditServicoModal from "@/components/modal-editar/EditServicoModal";
 import { FaArrowLeft, FaEdit, FaTrash } from "react-icons/fa";
 import toast from "react-hot-toast";
+
 export default function MeusServicosPage() {
   const router = useRouter();
   const [servicos, setServicos] = useState<Servico[]>([]);
@@ -17,6 +18,7 @@ export default function MeusServicosPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedServico, setSelectedServico] = useState<Servico | null>(null);
 
+  // Busca inicial dos serviços do usuário logado
   useEffect(() => {
     const fetchMeusServicos = async () => {
       const token = localStorage.getItem("token");
@@ -29,12 +31,13 @@ export default function MeusServicosPage() {
         const currentUser = await getMe();
         const todosServicos = await getServicos();
 
+        // Filtra para exibir apenas o que pertence ao ID do usuário logado
         const meusServicos = todosServicos.filter(
           (servico) => servico.usuario?.id === currentUser.id
         );
         
         setServicos(meusServicos);
-      } catch { // 'err' removido daqui
+      } catch {
         setError("Não foi possível carregar os serviços. Tente novamente mais tarde.");
       } finally {
         setLoading(false);
@@ -44,14 +47,18 @@ export default function MeusServicosPage() {
     fetchMeusServicos();
   }, [router]);
 
+  // Função para deletar serviço com feedback visual
   const handleDelete = async (id: number) => {
+    if (!confirm("Tem certeza que deseja excluir este serviço?")) return;
+
     try {
-    await deleteServico(id);
-    setServicos(servicos.filter((s: Servico) => s.id !== id));
-    toast.success("Serviço removido com sucesso!");
-  } catch {
-    toast.error("Erro ao excluir o serviço.");
-  }
+      await deleteServico(id);
+      // Atualiza o estado local removendo o item deletado
+      setServicos(servicos.filter((s: Servico) => s.id !== id));
+      toast.success("Serviço removido com sucesso!");
+    } catch {
+      toast.error("Erro ao excluir o serviço.");
+    }
   };
 
   const openModal = (servico: Servico) => {
@@ -64,17 +71,22 @@ export default function MeusServicosPage() {
     setSelectedServico(null);
   };
 
+  // Função para salvar as alterações vindas do Modal de Edição
   const handleSave = async (data: UpdateServicoPayload) => {
     if (!selectedServico) return;
 
     try {
       const updatedServico = await updateServico(selectedServico.id, data);
+      
+      // Mapeia o array local para substituir apenas o serviço que foi editado
       setServicos(
-        servicos.map((s: Servico) => (s.id === updatedServico.id ? updatedServico : s)),
+        servicos.map((s: Servico) => (s.id === updatedServico.id ? updatedServico : s))
       );
+      
+      toast.success("Serviço atualizado com sucesso!");
       closeModal();
-    } catch { // 'err' removido daqui
-      setError("Falha ao atualizar o serviço.");
+    } catch {
+      toast.error("Falha ao atualizar o serviço.");
     }
   };
 
@@ -86,7 +98,7 @@ export default function MeusServicosPage() {
     <div className={styles.body}>
       <header className={styles.header}>
         <div className={styles.container}>
-          <Link href="/perfil" className={styles.backButton}>
+          <Link href="/perfil" className={styles.backButton} aria-label="Voltar ao perfil">
             <FaArrowLeft />
           </Link>
           <h1 className={styles.headerTitle}>Meus Serviços</h1>
@@ -99,6 +111,7 @@ export default function MeusServicosPage() {
       <main className={styles.mainContent}>
         <div className={styles.container}>
           {error && <p className={styles.errorState}>{error}</p>}
+          
           {servicos.length > 0 ? (
             <div className={styles.servicosGrid}>
               {servicos.map((servico: Servico) => (
@@ -109,18 +122,22 @@ export default function MeusServicosPage() {
                       <button
                         onClick={() => openModal(servico)}
                         className={`${styles.actionButton} ${styles.editButton}`}
+                        title="Editar serviço"
                       >
                         <FaEdit />
                       </button>
                       <button
                         onClick={() => handleDelete(servico.id)}
                         className={`${styles.actionButton} ${styles.deleteButton}`}
+                        title="Excluir serviço"
                       >
                         <FaTrash />
                       </button>
                     </div>
                   </div>
+                  
                   <p className={styles.servicoDescription}>{servico.descricao}</p>
+                  
                   <div className={styles.servicoFooter}>
                     <span className={styles.servicoCategory}>
                       {servico.categoria ? servico.categoria.nomeServico : "Sem categoria"}
@@ -148,6 +165,7 @@ export default function MeusServicosPage() {
         </div>
       </main>
 
+      {/* Modal de Edição que criamos anteriormente */}
       {isModalOpen && selectedServico && (
         <EditServicoModal
           servico={selectedServico}
