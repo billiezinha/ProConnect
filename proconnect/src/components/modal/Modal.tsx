@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { getPortfolioByServico } from "@/service/portfolioService";
-import styles from "./Modal.module.css";
+import styles from "./Modal.module.css"
 import Image from "next/image";
 
 interface ModalProps {
