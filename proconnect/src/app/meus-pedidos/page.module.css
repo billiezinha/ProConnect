@@ -1,0 +1,22 @@
+.container { max-width: 800px; margin: 40px auto; padding: 20px; }
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border: 1px solid #eee;
+}
+.btnAvaliar {
+  background: #8b2cf5;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.badgeConcluido { color: #25d366; font-weight: 700; font-size: 0.9rem; }
