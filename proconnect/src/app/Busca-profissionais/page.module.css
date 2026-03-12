@@ -49,7 +49,7 @@
   transition: all 0.3s ease;
 }
 
-/* === ESTEIRA DE CATEGORIAS (ESTADO INICIAL) === */
+/* === CATEGORIAS === */
 .categoriesRow {
   display: flex;
   justify-content: center;
@@ -82,7 +82,7 @@
   color: var(--cor-primaria);
 }
 
-/* === NOVO: FILTRO COMPACTO (ESTADO SELECIONADO NO CANTO) === */
+/* === FILTRO COMPACTO === */
 .compactFilterWrapper {
   display: flex;
   align-items: center;
@@ -130,12 +130,13 @@
   color: var(--cor-texto-secundario);
 }
 
-/* === GRID DE RESULTADOS === */
+/* === GRID DE RESULTADOS (O CORAÇÃO DO AJUSTE) === */
 .resultsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 2rem;
   margin-top: 1rem;
+  align-items: stretch; /* Faz todos os cards da linha terem a mesma altura */
 }
 
 .servicoCard {
@@ -144,9 +145,17 @@
   border: 1px solid var(--cor-borda);
   padding: 1.5rem;
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* Essencial para alinhar o botão ao fundo */
   position: relative;
   transition: all 0.3s ease;
+  min-height: 380px; /* Define um tamanho mínimo padronizado */
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.2rem;
 }
 
 .cardCategoryIcon {
@@ -171,15 +180,56 @@
 
 .iconFill { color: #ff4b5c; }
 
+/* CONTEÚDO DO CARD */
+.cardContent {
+  flex-grow: 1; /* Empurra o que está abaixo (footer) para o final do card */
+  display: flex;
+  flex-direction: column;
+}
+
+.servicoTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--cor-texto);
+  margin-bottom: 0.8rem;
+  /* Limita título a 2 linhas se for muito longo */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.servicoDescription {
+  font-size: 0.9rem;
+  color: var(--cor-texto-secundario);
+  line-height: 1.6;
+  /* MÁGICA DO TRUNCAMENTO: Limita a descrição a 4 linhas */
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* RODAPÉ DO CARD */
+.cardFooter {
+  margin-top: 1.5rem; /* Garante espaço mínimo entre texto e botão */
+}
+
 .detailsButton {
-  margin-top: auto;
+  width: 100%;
   background: var(--cor-primaria);
   color: white;
   border: none;
-  padding: 0.8rem;
-  border-radius: 10px;
-  font-weight: 600;
+  padding: 0.9rem;
+  border-radius: 12px;
+  font-weight: 700;
   cursor: pointer;
+  transition: filter 0.2s;
+}
+
+.detailsButton:hover {
+  filter: brightness(1.1);
 }
 
 /* === ANIMAÇÕES === */
@@ -193,9 +243,13 @@
   .categoriesRow {
     justify-content: flex-start;
     overflow-x: auto;
+    padding-bottom: 10px;
   }
   .compactFilterWrapper {
     flex-direction: column;
     align-items: flex-start;
+  }
+  .servicoCard {
+    min-height: auto; /* No mobile, deixamos o tamanho fluir naturalmente se preferir */
   }
 }
