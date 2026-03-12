@@ -6,7 +6,7 @@ import { getMe } from "@/service/userService";
 import { getServicos, deleteServico, updateServico } from "@/service/servicoService";
 import type { Servico, UpdateServicoPayload } from "@/interfaces/ServicoProps";
 import styles from "./page.module.css";
-import EditServicoModal from "@/components/modal-editar/EditServicoModal";
+import EditServicoModal from "../editar/page";
 import { FaArrowLeft, FaEdit, FaTrash } from "react-icons/fa";
 import toast from "react-hot-toast";
 
