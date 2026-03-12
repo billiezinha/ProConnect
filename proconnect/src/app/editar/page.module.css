@@ -1,193 +1,146 @@
-.loadingState {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
   height: 100vh;
-  font-size: 1.2rem;
-  font-weight: 500;
-  color: var(--cor-texto-secundario);
+  background-color: rgba(0, 0, 0, 0.5); /* Fundo escuro suave */
+  backdrop-filter: blur(8px); /* Efeito de vidro fosco moderno */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999; /* Garante que fique por cima de tudo */
+  padding: 20px;
 }
 
-.body {
-  background-color: var(--cor-fundo-secao);
-  min-height: 100vh;
-}
-
-.container {
+.modalContent {
+  background-color: #fff;
   width: 100%;
-  max-width: var(--largura-container-form);
-  margin: 0 auto;
-  padding: 0 1.5rem;
+  max-width: 500px;
+  border-radius: 24px;
+  padding: 2.5rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  position: relative;
+  animation: modalAppear 0.3s ease-out;
 }
 
-.header {
-  background-color: var(--cor-fundo);
-  padding: 1.5rem 0;
-  border-bottom: 1px solid var(--cor-borda);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  margin-bottom: 3rem;
+@keyframes modalAppear {
+  from { opacity: 0; transform: scale(0.9) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-.header .container {
+.modalHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
-.backButton {
+.modalHeader h2 {
   font-size: 1.5rem;
-  color: var(--cor-texto);
-  transition: color 0.2s ease, transform 0.2s ease;
+  font-weight: 800;
+  color: #333;
 }
 
-.backButton:hover {
-  color: var(--cor-primaria);
-  transform: translateX(-2px);
+.closeBtn {
+  background: #f5f5f5;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
 }
 
-.headerTitle {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: var(--cor-texto);
-  text-align: center;
-  flex-grow: 1;
+.closeBtn:hover {
+  background: #eee;
 }
 
-.formSection {
-  background-color: var(--cor-fundo);
-  padding: 2.5rem;
-  border-radius: var(--raio-borda);
-  box-shadow: var(--sombra-suave);
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
 }
 
 .formGroup {
-  margin-bottom: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .formGroup label {
-  display: block;
-  font-weight: 500;
-  margin-bottom: 0.6rem;
-  color: var(--cor-texto);
-  font-size: 0.95rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #444;
 }
 
-.formGroup input {
-  width: 100%;
-  padding: 0.85rem 1rem;
-  border: 1px solid var(--cor-borda);
-  border-radius: 8px;
+.formGroup input,
+.formGroup textarea,
+.formGroup select {
+  padding: 12px 16px;
+  border: 1.5px solid #eee;
+  border-radius: 12px;
   font-size: 1rem;
-  background-color: var(--cor-fundo-secao);
-  transition: border-color 0.2s, box-shadow 0.2s;
+  background-color: #fafafa;
+  transition: border-color 0.2s, background 0.2s;
 }
 
-.formGroup input:focus {
+.formGroup input:focus,
+.formGroup textarea:focus,
+.formGroup select:focus {
   outline: none;
-  border-color: var(--cor-primaria);
-  box-shadow: 0 0 0 3px rgba(139, 44, 245, 0.15);
+  border-color: #8b2cf5; /* Cor primária do ProConnect */
+  background-color: #fff;
 }
 
-.formGroup input:disabled {
-  background-color: #e9ecef;
-  color: #6c757d;
-  cursor: not-allowed;
+.formGroup textarea {
+  min-height: 100px;
+  resize: vertical;
 }
 
-.grid {
+.modalActions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-}
-
-.error {
-  color: var(--cor-erro);
-  background-color: #ffebee;
-  padding: 1rem;
-  border-radius: 8px;
-  margin-bottom: 1.5rem;
-  text-align: center;
-  font-weight: 500;
-  border: 1px solid var(--cor-erro);
-}
-
-.successMessage {
-  text-align: center;
-  padding: 2rem;
-  animation: fadeIn 0.5s ease-in-out;
-}
-
-.successMessage p:first-child {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: var(--cor-primaria);
-  margin-bottom: 0.5rem;
-}
-
-.successMessage p:last-child {
-  font-size: 1rem;
-  color: var(--cor-texto-secundario);
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.buttonContainer {
+  gap: 1rem;
   margin-top: 2rem;
-  border-top: 1px solid var(--cor-borda);
-  padding-top: 2rem;
-  display: flex;
-  justify-content: flex-end;
 }
 
-.submitButton {
-  padding: 0.8rem 2rem;
+.cancelBtn {
+  padding: 14px;
+  background: #f5f5f5;
   border: none;
-  border-radius: 8px;
-  background-color: var(--cor-primaria);
-  color: white;
-  font-size: 1rem;
-  font-weight: 600;
+  border-radius: 12px;
+  font-weight: 700;
+  color: #666;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
+  transition: background 0.2s;
 }
 
-.submitButton:hover:not(:disabled) {
-  background-color: var(--cor-primaria-hover);
+.cancelBtn:hover {
+  background: #e0e0e0;
+}
+
+.saveBtn {
+  padding: 14px;
+  background: #8b2cf5; /* Roxo ProConnect */
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.2s, filter 0.2s;
+}
+
+.saveBtn:hover {
   transform: translateY(-2px);
+  filter: brightness(1.1);
 }
 
-.submitButton:disabled {
-  background-color: #ccc;
+.saveBtn:disabled {
+  background: #ccc;
   cursor: not-allowed;
-  opacity: 0.7;
-}
-
-@media (max-width: 768px) {
-  .header {
-    padding: 1rem 0;
-    margin-bottom: 2rem;
-  }
-  .headerTitle {
-    font-size: 1.5rem;
-  }
-  .backButton {
-    font-size: 1.3rem;
-  }
-  .formSection {
-    padding: 1.5rem;
-  }
-  .grid {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-  .buttonContainer {
-    justify-content: center;
-  }
-  .submitButton {
-    width: 100%;
-  }
+  transform: none;
 }
