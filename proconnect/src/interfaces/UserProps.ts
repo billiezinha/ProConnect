@@ -28,6 +28,7 @@ export interface User {
   estado?: string;
   cidade?: string;
   endereco?: string;
+  imagem?: string; // NOVO: Campo para a foto de perfil
 }
 
 // Token pode trazer userId como string/number, ou até em "sub"

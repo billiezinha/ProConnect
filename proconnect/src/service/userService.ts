@@ -20,3 +20,16 @@ export async function updateUser(id: number | string, payload: UpdateUserPayload
   const resp = await api.put<User>(`/usuario/${id}`, payload);
   return resp.data;
 }
+
+// Envia a imagem como multipart/form-data
+export async function uploadFotoPerfil(formData: FormData): Promise<User> {
+  const resp = await api.patch<User>("/usuario/me/imagem", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return resp.data;
+}
+
+// Remove a imagem de perfil
+export async function removerFotoPerfil(): Promise<void> {
+  await api.delete("/usuario/me/imagem");
+}
