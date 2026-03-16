@@ -1,22 +1,108 @@
-.container { max-width: 800px; margin: 40px auto; padding: 20px; }
-.card {
-  background: white;
-  padding: 20px;
-  border-radius: 16px;
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  font-family: var(--fonte-principal);
+}
+
+.container h2 {
+  font-size: 2rem;
+  color: var(--cor-texto);
+  margin-bottom: 8px;
+}
+
+.container > p {
+  color: var(--cor-texto-secundario);
+  margin-bottom: 32px;
+  font-size: 1.1rem;
+}
+
+.loading {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  margin-bottom: 15px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  border: 1px solid #eee;
+  height: 60vh;
+  font-size: 1.2rem;
+  color: var(--cor-texto-secundario);
 }
-.btnAvaliar {
-  background: #8b2cf5;
-  color: white;
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  background-color: var(--cor-fundo-secao);
+  border-radius: 12px;
+  border: 1px dashed var(--cor-borda);
+  text-align: center;
+}
+
+.empty p {
+  font-size: 1.2rem;
+  color: var(--cor-texto-secundario);
+  margin-bottom: 20px;
+}
+
+.empty button {
+  padding: 12px 24px;
+  background-color: var(--cor-primaria);
+  color: var(--cor-texto-claro);
   border: none;
-  padding: 10px 20px;
   border-radius: 8px;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: bold;
   cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
 }
-.badgeConcluido { color: #25d366; font-weight: 700; font-size: 0.9rem; }
+
+.empty button:hover {
+  background-color: var(--cor-primaria-hover);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  background-color: var(--cor-fundo-card);
+  border: 1px solid var(--cor-borda);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--sombra-suave);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.card h3 {
+  font-size: 1.25rem;
+  color: var(--cor-texto);
+  margin: 0;
+}
+
+.card p {
+  margin: 0;
+  color: var(--cor-texto-secundario);
+  font-size: 0.95rem;
+}
+
+/* O status agora se adapta, usando bordas e a cor principal */
+.card strong {
+  color: var(--cor-primaria);
+  background-color: var(--cor-fundo-input);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  border: 1px solid var(--cor-borda);
+  display: inline-block;
+  width: fit-content;
+}

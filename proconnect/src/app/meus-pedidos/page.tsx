@@ -1,45 +1,52 @@
 "use client";
 import { useEffect, useState } from "react";
-import api from "@/service/api";
-import styles from "./page.module.css";
-import toast from "react-hot-toast";
+import { buscarMeusPedidosWhatsapp, ContatoWhatsappProps } from "@/service/contatoWhatsappService";
+import { useRouter } from "next/navigation";
+import styles from "./page.module.css"; 
 
-export default function MeusPedidosPage() {
-  const [pedidos, setPedidos] = useState([]);
+export default function MeusPedidos() {
+  const [pedidos, setPedidos] = useState<ContatoWhatsappProps[]>([]);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
-    async function loadPedidos() {
-      const { data } = await api.get("/usuario/meus-pedidos");
-      setPedidos(data);
+    async function carregarPedidos() {
+      try {
+        const dados = await buscarMeusPedidosWhatsapp();
+        setPedidos(dados);
+      } catch (error) {
+        console.error("Erro ao buscar pedidos:", error);
+      } finally {
+        setLoading(false);
+      }
     }
-    loadPedidos();
+    carregarPedidos();
   }, []);
+
+  if (loading) return <div className={styles.loading}>Carregando seus pedidos...</div>;
 
   return (
     <div className={styles.container}>
-      <h1>Meus Contatos e Pedidos</h1>
-      <div className={styles.list}>
-        {pedidos.map((pedido: any) => (
-          <div key={pedido.id} className={styles.card}>
-            <div>
-              <h3>{pedido.servico.nomeNegocio}</h3>
-              <p>Contatado em: {new Date(pedido.criadoEm).toLocaleDateString()}</p>
+      <h2>Meus Pedidos de Contacto</h2>
+      <p>Acompanhe os serviços para os quais solicitou contacto via WhatsApp.</p>
+
+      {pedidos.length === 0 ? (
+        <div className={styles.empty}>
+          <p>Ainda não entrou em contacto com nenhum profissional.</p>
+          <button onClick={() => router.push("/")}>Procurar Serviços</button>
+        </div>
+      ) : (
+        <div className={styles.grid}>
+          {pedidos.map((pedido) => (
+            <div key={pedido.id} className={styles.card}>
+              {/* Ajusta a exibição consoante o que o teu back-end envia de volta */}
+              <h3>Serviço ID: {pedido.servicoId}</h3> 
+              <p>Status: <strong>{pedido.status}</strong></p>
+              <p>Data: {new Date(pedido.criadoEm).toLocaleDateString("pt-BR")}</p>
             </div>
-            
-            {/* O BOTÃO SÓ APARECE SE ELE NÃO AVALIOU AINDA */}
-            {!pedido.avaliado ? (
-              <button 
-                onClick={() => handleAbrirAvaliacao(pedido)}
-                className={styles.btnAvaliar}
-              >
-                Avaliar Serviço
-              </button>
-            ) : (
-              <span className={styles.badgeConcluido}>Avaliado ✅</span>
-            )}
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

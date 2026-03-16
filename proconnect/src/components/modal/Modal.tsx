@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { getPortfolioByServico } from "@/service/portfolioService";
 import { getAvaliacoesByServico, ResumoAvaliacao } from "@/service/avaliacaoService";
-import api from "@/service/api"; // Importe sua instância do Axios
+import api from "@/service/api";
 import styles from "./Modal.module.css";
 
 interface ModalProps {
@@ -28,7 +28,6 @@ export default function Modal({ profissional, onClose }: ModalProps) {
   useEffect(() => {
     async function loadData() {
       try {
-        // Busca portfólio e avaliações simultaneamente (ADS Performance)
         const [portfolioData, avaliacaoData] = await Promise.all([
           getPortfolioByServico(profissional.id),
           getAvaliacoesByServico(profissional.id)
@@ -54,13 +53,10 @@ export default function Modal({ profissional, onClose }: ModalProps) {
     }
 
     try {
-      // 1. Registra a intenção de serviço no seu Back-end
-      // Isso permite que o usuário possa avaliar este profissional depois na página de "Meus Pedidos"
       await api.post("/servico-realizado", { 
         servicoId: profissional.id 
       });
 
-      // 2. Formata o link do WhatsApp
       const numeroLimpo = profissional.telefone?.replace(/\D/g, "");
       const mensagem = encodeURIComponent(
         `Olá ${profissional.nome}, vi seu perfil no ProConnect e gostaria de um orçamento para ${profissional.categoria}.`
@@ -73,7 +69,6 @@ export default function Modal({ profissional, onClose }: ModalProps) {
       }
     } catch (error) {
       console.error("Erro ao registrar contato no banco de dados");
-      // Mesmo se falhar o registro, abrimos o Zap para não perder a conversão (IHC)
       const numeroLimpo = profissional.telefone?.replace(/\D/g, "");
       window.open(`https://wa.me/55${numeroLimpo}`, "_blank");
     }
@@ -105,7 +100,7 @@ export default function Modal({ profissional, onClose }: ModalProps) {
         <div className={styles.section}>
           <h3>Portfólio de Trabalhos</h3>
           {loading ? (
-            <p className={styles.loadingText}>Carregando galeria...</p>
+            <p className={styles.loadingText}>A carregar galeria...</p>
           ) : fotos.length > 0 ? (
             <div className={styles.gridPortfolio}>
               {fotos.map(f => (
@@ -134,7 +129,7 @@ export default function Modal({ profissional, onClose }: ModalProps) {
                 </div>
               ))
             ) : (
-              <p className={styles.noData}>Seja o primeiro a avaliar este serviço!</p>
+              <p className={styles.noData}>Sê o primeiro a avaliar este serviço!</p>
             )}
           </div>
         </div>

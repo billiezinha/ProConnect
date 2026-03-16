@@ -5,7 +5,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.7); /* O fundo overlay continua escuro */
   backdrop-filter: blur(5px);
   display: flex;
   align-items: center;
@@ -15,19 +15,20 @@
 }
 
 .modalContent {
-  background: white;
+  background: var(--cor-fundo-card); /* ADAPTÁVEL AO MODO DARK */
+  color: var(--cor-texto);
+  border: 1px solid var(--cor-borda);
   width: 100%;
   max-width: 550px;
   border-radius: 24px;
   padding: 30px;
   position: relative;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  max-height: 90vh; /* Impede que o modal saia da tela */
-  overflow-y: auto; /* Adiciona scroll interno se o conteúdo crescer */
+  box-shadow: var(--sombra-suave);
+  max-height: 90vh;
+  overflow-y: auto;
   animation: modalEnter 0.3s ease-out;
-  /* Melhora o scroll em dispositivos móveis */
   scrollbar-width: thin;
-  scrollbar-color: #8b2cf5 #f0f0f0;
+  scrollbar-color: var(--cor-primaria) transparent;
 }
 
 @keyframes modalEnter {
@@ -39,8 +40,9 @@
   position: absolute;
   top: 20px;
   right: 20px;
-  background: #f0f0f0;
-  border: none;
+  background: var(--cor-fundo-input);
+  color: var(--cor-texto);
+  border: 1px solid var(--cor-borda);
   border-radius: 50%;
   width: 32px;
   height: 32px;
@@ -54,21 +56,22 @@
 }
 
 .closeBtn:hover {
-  background: #e0e0e0;
+  background: var(--cor-borda);
 }
 
 /* === CABEÇALHO E INFO === */
 .header h2 { 
   font-size: 1.8rem; 
   margin-bottom: 8px; 
-  color: #222; 
-  padding-right: 40px; /* Evita que o título bata no botão fechar */
+  color: var(--cor-texto); 
+  padding-right: 40px; 
 }
 
 .badgeCategoria {
   display: inline-block;
-  background: #f3e8ff;
-  color: #8b2cf5;
+  background: var(--cor-fundo-secao);
+  color: var(--cor-primaria);
+  border: 1px solid var(--cor-primaria);
   padding: 4px 12px;
   border-radius: 20px;
   font-size: 0.85rem;
@@ -77,7 +80,7 @@
 
 .descricao { 
   margin: 20px 0; 
-  color: #555; 
+  color: var(--cor-texto-secundario); 
   line-height: 1.6; 
   font-size: 1rem;
 }
@@ -85,14 +88,14 @@
 /* === SEÇÕES (PORTFÓLIO E AVALIAÇÕES) === */
 .section {
   margin-top: 25px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--cor-borda);
   padding-top: 20px;
 }
 
 .section h3 { 
   font-size: 1.1rem; 
   margin-bottom: 15px; 
-  color: #333; 
+  color: var(--cor-texto); 
   font-weight: 700; 
 }
 
@@ -107,7 +110,8 @@
   aspect-ratio: 1/1;
   border-radius: 12px;
   overflow: hidden;
-  background: #eee;
+  background: var(--cor-fundo-input);
+  border: 1px solid var(--cor-borda);
 }
 
 .foto {
@@ -129,8 +133,8 @@
   margin-top: 10px;
 }
 
-.starMain { font-weight: 800; color: #333; font-size: 1.3rem; }
-.totalAvaliacoes { color: #888; font-size: 0.9rem; }
+.starMain { font-weight: 800; color: var(--cor-texto); font-size: 1.3rem; }
+.totalAvaliacoes { color: var(--cor-texto-secundario); font-size: 0.9rem; }
 
 .listaAvaliacoes {
   display: flex;
@@ -139,10 +143,10 @@
 }
 
 .cardAvaliacao {
-  background: #f8f9fa;
+  background: var(--cor-fundo-input);
   padding: 16px;
   border-radius: 16px;
-  border: 1px solid #eee;
+  border: 1px solid var(--cor-borda);
 }
 
 .avHeader {
@@ -152,12 +156,12 @@
   margin-bottom: 8px;
 }
 
-.avHeader strong { color: #333; font-size: 0.95rem; }
+.avHeader strong { color: var(--cor-texto); font-size: 0.95rem; }
 .stars { color: #ffb800; }
 
 .cardAvaliacao p { 
   font-size: 0.9rem; 
-  color: #555; 
+  color: var(--cor-texto-secundario); 
   margin: 0; 
   line-height: 1.4;
 }
@@ -167,8 +171,8 @@
   width: 100%;
   margin-top: 30px;
   padding: 16px;
-  background: #8b2cf5;
-  color: white;
+  background: var(--cor-primaria);
+  color: var(--cor-texto-claro);
   border: none;
   border-radius: 16px;
   font-weight: 700;
@@ -182,14 +186,14 @@
 }
 
 .btnWhats:hover { 
-  filter: brightness(1.1); 
+  background: var(--cor-primaria-hover);
   transform: translateY(-2px); 
   box-shadow: 0 8px 20px rgba(139, 44, 245, 0.3);
 }
 
 .noData { 
   font-style: italic; 
-  color: #999; 
+  color: var(--cor-texto-secundario); 
   font-size: 0.85rem; 
   text-align: center; 
   padding: 15px 0; 

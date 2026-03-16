@@ -6,6 +6,10 @@ import type { Servico, UpdateServicoPayload } from "@/interfaces/ServicoProps";
 import styles from "./page.module.css";
 import { HiOutlineX } from "react-icons/hi";
 
+// Importações dos novos componentes de Portfólio
+import UploadPortfolio from "@/components/UploadPortfolio/UploadPortfolio";
+import GaleriaPortfolio from "@/components/GaleriaPortfolio/GaleriaPortfolio";
+
 interface EditServicoModalProps {
   servico: Servico;
   onClose: () => void;
@@ -16,7 +20,6 @@ export default function EditServicoModal({ servico, onClose, onSave }: EditServi
   const [nomeNegocio, setNomeNegocio] = useState(servico.nomeNegocio);
   const [descricao, setDescricao] = useState(servico.descricao);
   
-  // SOLUÇÃO DO ERRO: Acessamos apenas 'servico.categoria.id' que é o que existe na interface
   const [categoriaId, setCategoriaId] = useState<number>(
     servico.categoria?.id || 0
   );
@@ -26,6 +29,9 @@ export default function EditServicoModal({ servico, onClose, onSave }: EditServi
   const [valorPreco, setValorPreco] = useState<number>(
     servico.preco && servico.preco.length > 0 ? servico.preco[0].precificacao : 0
   );
+
+  // Estado para forçar a atualização da galeria quando uma nova foto é enviada
+  const [atualizador, setAtualizador] = useState(0);
 
   useEffect(() => {
     const fetchCategorias = async () => {
@@ -57,6 +63,11 @@ export default function EditServicoModal({ servico, onClose, onSave }: EditServi
     onSave(payload);
   };
 
+  // Função chamada após o upload bem-sucedido
+  const handleUploadSuccess = () => {
+    setAtualizador(prev => prev + 1); 
+  };
+
   return (
     <div className={styles.overlay}>
       <div className={styles.modalContent}>
@@ -67,6 +78,7 @@ export default function EditServicoModal({ servico, onClose, onSave }: EditServi
           </button>
         </div>
 
+        {/* Formulário Principal (Texto e Preço) */}
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.formGroup}>
             <label htmlFor="nomeNegocio">Nome do Negócio</label>
@@ -126,6 +138,28 @@ export default function EditServicoModal({ servico, onClose, onSave }: EditServi
             </button>
           </div>
         </form>
+
+        {/* Secção do Portfólio (Fora do formulário para evitar submissões acidentais) */}
+        <div className={styles.portfolioSection}>
+          <hr className={styles.divisor} />
+          <h3 className={styles.portfolioTitulo}>Gerir Imagens do Portfólio</h3>
+          <p className={styles.portfolioDescricao}>
+            Adiciona fotografias dos teus trabalhos para atrair mais clientes.
+          </p>
+
+          <UploadPortfolio 
+            servicoId={servico.id} 
+            onUploadSuccess={handleUploadSuccess} 
+          />
+
+          <div className={styles.galeriaWrapper}>
+            <GaleriaPortfolio 
+              key={atualizador} 
+              servicoId={servico.id} 
+            />
+          </div>
+        </div>
+
       </div>
     </div>
   );

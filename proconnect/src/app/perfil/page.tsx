@@ -5,8 +5,8 @@ import { getMe } from "@/service/userService";
 import type { User } from "@/interfaces/UserProps";
 import styles from "./page.module.css";
 import { 
-  FaUserCircle, FaEnvelope, FaPhone, FaMapMarkerAlt, 
-  FaEdit, FaSignOutAlt, FaBriefcase, FaPlusCircle 
+  FaUserCircle, FaPhone, FaMapMarkerAlt, 
+  FaEdit, FaSignOutAlt, FaBriefcase, FaPlusCircle, FaClipboardList 
 } from "react-icons/fa";
 import Cookies from "js-cookie";
 
@@ -70,7 +70,7 @@ export default function PerfilPage() {
             </div>
           </section>
 
-          {/* Cards de Ação Profissional */}
+          {/* Cards de Ação Profissional e Cliente */}
           <div className={styles.quickActions}>
             <div onClick={() => router.push("/meus-servicos")} className={styles.actionCard}>
               <FaBriefcase />
@@ -81,6 +81,12 @@ export default function PerfilPage() {
               <FaPlusCircle />
               <h4>Novo Anúncio</h4>
               <p>Atraia mais clientes agora.</p>
+            </div>
+            {/* NOVO CARTÃO: MEUS PEDIDOS */}
+            <div onClick={() => router.push("/meus-pedidos")} className={styles.actionCard}>
+              <FaClipboardList />
+              <h4>Meus Pedidos</h4>
+              <p>Profissionais que você contatou.</p>
             </div>
           </div>
         </main>

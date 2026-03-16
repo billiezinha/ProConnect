@@ -4,24 +4,30 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5); /* Fundo escuro suave */
-  backdrop-filter: blur(8px); /* Efeito de vidro fosco moderno */
+  background-color: rgba(0, 0, 0, 0.7); /* Fundo escuro um pouco mais forte */
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999; /* Garante que fique por cima de tudo */
+  z-index: 9999;
   padding: 20px;
 }
 
 .modalContent {
-  background-color: #fff;
+  background-color: var(--cor-fundo-card); /* Adaptável ao Modo Dark */
   width: 100%;
-  max-width: 500px;
+  max-width: 550px;
   border-radius: 24px;
   padding: 2.5rem;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--sombra-suave);
   position: relative;
   animation: modalAppear 0.3s ease-out;
+  
+  /* Permite fazer scroll dentro do modal se o conteúdo for muito longo */
+  max-height: 90vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--cor-primaria) transparent;
 }
 
 @keyframes modalAppear {
@@ -39,12 +45,13 @@
 .modalHeader h2 {
   font-size: 1.5rem;
   font-weight: 800;
-  color: #333;
+  color: var(--cor-texto);
 }
 
 .closeBtn {
-  background: #f5f5f5;
-  border: none;
+  background: var(--cor-fundo-input);
+  color: var(--cor-texto);
+  border: 1px solid var(--cor-borda);
   border-radius: 50%;
   width: 36px;
   height: 36px;
@@ -56,7 +63,7 @@
 }
 
 .closeBtn:hover {
-  background: #eee;
+  background: var(--cor-borda);
 }
 
 .form {
@@ -74,17 +81,18 @@
 .formGroup label {
   font-weight: 700;
   font-size: 0.9rem;
-  color: #444;
+  color: var(--cor-texto);
 }
 
 .formGroup input,
 .formGroup textarea,
 .formGroup select {
   padding: 12px 16px;
-  border: 1.5px solid #eee;
+  border: 1.5px solid var(--cor-borda);
   border-radius: 12px;
   font-size: 1rem;
-  background-color: #fafafa;
+  background-color: var(--cor-fundo-input);
+  color: var(--cor-texto); /* Garante que o texto digitado fica visível no dark mode */
   transition: border-color 0.2s, background 0.2s;
 }
 
@@ -92,8 +100,8 @@
 .formGroup textarea:focus,
 .formGroup select:focus {
   outline: none;
-  border-color: #8b2cf5; /* Cor primária do ProConnect */
-  background-color: #fff;
+  border-color: var(--cor-primaria);
+  background-color: var(--cor-fundo);
 }
 
 .formGroup textarea {
@@ -110,26 +118,27 @@
 
 .cancelBtn {
   padding: 14px;
-  background: #f5f5f5;
-  border: none;
+  background: var(--cor-fundo-input);
+  border: 1px solid var(--cor-borda);
   border-radius: 12px;
   font-weight: 700;
-  color: #666;
+  color: var(--cor-texto-secundario);
   cursor: pointer;
   transition: background 0.2s;
 }
 
 .cancelBtn:hover {
-  background: #e0e0e0;
+  background: var(--cor-borda);
+  color: var(--cor-texto);
 }
 
 .saveBtn {
   padding: 14px;
-  background: #8b2cf5; /* Roxo ProConnect */
+  background: var(--cor-primaria);
   border: none;
   border-radius: 12px;
   font-weight: 700;
-  color: #fff;
+  color: var(--cor-texto-claro);
   cursor: pointer;
   transition: transform 0.2s, filter 0.2s;
 }
@@ -140,7 +149,42 @@
 }
 
 .saveBtn:disabled {
-  background: #ccc;
+  background: var(--cor-borda);
+  color: var(--cor-texto-secundario);
   cursor: not-allowed;
   transform: none;
+}
+
+/* === SECÇÃO DO PORTFÓLIO === */
+.portfolioSection {
+  margin-top: 32px;
+  padding-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.divisor {
+  border: none;
+  height: 1px;
+  background-color: var(--cor-borda);
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+.portfolioTitulo {
+  font-size: 1.25rem;
+  color: var(--cor-texto);
+  font-weight: 600;
+  margin: 0;
+}
+
+.portfolioDescricao {
+  font-size: 0.9rem;
+  color: var(--cor-texto-secundario);
+  margin: 0 0 16px 0;
+}
+
+.galeriaWrapper {
+  margin-top: 24px;
 }
