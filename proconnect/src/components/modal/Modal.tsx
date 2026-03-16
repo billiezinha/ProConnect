@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { getPortfolioByServico } from "@/service/portfolioService";
 import { getAvaliacoesByServico, ResumoAvaliacao } from "@/service/avaliacaoService";
-import api from "@/service/api";
 import styles from "./Modal.module.css";
 
 interface ModalProps {
@@ -35,7 +34,7 @@ export default function Modal({ profissional, onClose }: ModalProps) {
         setFotos(portfolioData);
         setResumo(avaliacaoData);
       } catch (error) {
-        console.error("Erro ao carregar dados do modal");
+        console.error("Erro ao carregar dados do modal", error);
       } finally {
         setLoading(false);
       }
@@ -43,7 +42,7 @@ export default function Modal({ profissional, onClose }: ModalProps) {
     loadData();
   }, [profissional.id]);
 
-  const handleContatoClick = async () => {
+  const handleContatoClick = () => {
     const token = localStorage.getItem("token");
 
     if (!token) {
@@ -52,26 +51,21 @@ export default function Modal({ profissional, onClose }: ModalProps) {
       return;
     }
 
-    try {
-      await api.post("/servico-realizado", { 
-        servicoId: profissional.id 
-      });
-
-      const numeroLimpo = profissional.telefone?.replace(/\D/g, "");
-      const mensagem = encodeURIComponent(
-        `Olá ${profissional.nome}, vi seu perfil no ProConnect e gostaria de um orçamento para ${profissional.categoria}.`
-      );
-      
-      if (numeroLimpo) {
-        window.open(`https://wa.me/55${numeroLimpo}?text=${mensagem}`, "_blank");
-      } else {
-        toast.error("Telefone não disponível.");
-      }
-    } catch (error) {
-      console.error("Erro ao registrar contato no banco de dados");
-      const numeroLimpo = profissional.telefone?.replace(/\D/g, "");
-      window.open(`https://wa.me/55${numeroLimpo}`, "_blank");
+    if (!profissional.telefone) {
+      toast.error("Este profissional não tem telefone cadastrado.");
+      return;
     }
+
+    // 1. Limpa o número para deixar apenas os dígitos
+    const numeroLimpo = profissional.telefone.replace(/\D/g, "");
+    
+    // 2. Cria a mensagem pré-definida
+    const mensagem = encodeURIComponent(
+      `Olá ${profissional.nome}, vi o seu perfil no ProConnect e gostaria de pedir um orçamento.`
+    );
+    
+    // 3. Abre o link num novo separador
+    window.open(`https://wa.me/55${numeroLimpo}?text=${mensagem}`, "_blank");
   };
 
   return (
@@ -135,7 +129,7 @@ export default function Modal({ profissional, onClose }: ModalProps) {
         </div>
 
         <button onClick={handleContatoClick} className={styles.btnWhats}>
-          Pedir Orçamento via WhatsApp
+          Falar no WhatsApp
         </button>
       </div>
     </div>

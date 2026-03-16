@@ -188,8 +188,8 @@ export default function BuscaProfissionaisPage() {
             nome: selectedProfissional.nomeNegocio,
             categoria: selectedProfissional.categoria?.nomeServico,
             descricao: selectedProfissional.descricao,
-            // Tratando como 'any' para o build aceitar o campo que vem da API
-            telefone: (selectedProfissional as any).telefone, 
+            // AQUI ESTÁ A CORREÇÃO: vai buscar o telefone dentro de usuario
+            telefone: selectedProfissional.usuario?.telefone, 
             mediaNota: "Novo"
           }} 
           onClose={() => setShowModal(false)} 
