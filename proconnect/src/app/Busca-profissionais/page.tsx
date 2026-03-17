@@ -8,6 +8,7 @@ import Modal from "@/components/modal/Modal";
 import { LoadingGrid } from "@/components/loading/Loading";
 import toast from "react-hot-toast";
 import { categoryIcons, defaultIcon } from "../utils/categoryIcons";
+import AvaliacaoPendente from "@/components/AvaliacaoPendente/AvaliacaoPendente";
 
 export default function BuscaProfissionaisPage() {
   const [servicos, setServicos] = useState<Servico[]>([]);
@@ -180,20 +181,23 @@ export default function BuscaProfissionaisPage() {
         )}
       </main>
 
-      {/* CORREÇÃO APLICADA AQUI NA LINHA 190 */}
-{showModal && selectedProfissional && (
+      {/* MODAL DE DETALHES DO PROFISSIONAL */}
+      {showModal && selectedProfissional && (
         <Modal 
           profissional={{ 
             id: selectedProfissional.id,
             nome: selectedProfissional.nomeNegocio,
             categoria: selectedProfissional.categoria?.nomeServico,
             descricao: selectedProfissional.descricao,
-            telefone: selectedProfissional.usuario?.telefone
-            // ✨ APAGA a linha do mediaNota que estava aqui!
+            telefone: selectedProfissional.usuario?.telefone,
+            precos: selectedProfissional.preco // ✨ Adicionado para a Tabela de Preços funcionar!
           }} 
           onClose={() => setShowModal(false)} 
         />
       )}
+
+      {/* ✨ O MODAL DE AVALIAÇÃO (Abre quando o cliente volta do WhatsApp) */}
+      <AvaliacaoPendente />
     </div>
   );
 }

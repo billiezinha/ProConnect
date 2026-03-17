@@ -6,7 +6,7 @@ import type { User } from "@/interfaces/UserProps";
 import styles from "./page.module.css";
 import { 
   FaUserCircle, FaPhone, FaMapMarkerAlt, 
-  FaEdit, FaSignOutAlt, FaBriefcase, FaPlusCircle, FaClipboardList, FaCamera, FaTrash, FaCheckCircle, FaTimesCircle
+  FaEdit, FaSignOutAlt, FaBriefcase, FaPlusCircle, FaCamera, FaCheckCircle, FaTimesCircle
 } from "react-icons/fa";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
@@ -19,9 +19,11 @@ export default function PerfilPage() {
   const [uploading, setUploading] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   
-  // Estados para edição
+  // ✨ ESTADOS PARA EDIÇÃO (Agora com Cidade e Estado)
   const [editNome, setEditNome] = useState("");
   const [editTelefone, setEditTelefone] = useState("");
+  const [editCidade, setEditCidade] = useState("");
+  const [editEstado, setEditEstado] = useState("");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -29,8 +31,12 @@ export default function PerfilPage() {
     try {
       const userData = await getMe();
       setUser(userData);
+      
+      // Carrega os dados atuais para dentro dos inputs do modal
       setEditNome(userData.nome || "");
       setEditTelefone(userData.telefone || "");
+      setEditCidade(userData.cidade || "");
+      setEditEstado(userData.estado || "");
     } catch {
       handleLogout();
     } finally {
@@ -48,13 +54,10 @@ export default function PerfilPage() {
     router.replace("/login");
   };
 
-  // FUNÇÃO PARA ALTERAR DISPONIBILIDADE
   const toggleDisponibilidade = async () => {
     if (!user) return;
     try {
       const novoStatus = !user.disponivel;
-      
-      // Passando o user.id como primeiro argumento
       await updateMe(user.id, { disponivel: novoStatus });
       setUser({ ...user, disponivel: novoStatus });
       toast.success(novoStatus ? "Você está disponível!" : "Você está offline.");
@@ -63,14 +66,18 @@ export default function PerfilPage() {
     }
   };
 
-  // FUNÇÃO PARA SALVAR EDIÇÃO DE PERFIL
+  // ✨ FUNÇÃO ATUALIZADA: Agora envia também a cidade e o estado para a API
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return; // Garante que o usuário existe antes de atualizar
+    if (!user) return;
 
     try {
-      // CORREÇÃO: Passando o user.id como primeiro argumento
-      await updateMe(user.id, { nome: editNome, telefone: editTelefone });
+      await updateMe(user.id, { 
+        nome: editNome, 
+        telefone: editTelefone,
+        cidade: editCidade,
+        estado: editEstado.toUpperCase() // Força o estado a ficar em maiúsculas (ex: PI, SP)
+      });
       toast.success("Perfil atualizado com sucesso!");
       setIsEditModalOpen(false);
       carregarUtilizador();
@@ -96,7 +103,7 @@ export default function PerfilPage() {
     }
   };
 
-if (loading) return <LoadingProfile />;
+  if (loading) return <LoadingProfile />;
 
   return (
     <div className={styles.wrapper}>
@@ -110,7 +117,7 @@ if (loading) return <LoadingProfile />;
                 <FaUserCircle className={styles.avatarPlaceholder} />
               )}
               <div className={styles.avatarOverlay}>
-                <button className={styles.avatarBtn} onClick={() => fileInputRef.current?.click()}>
+                <button className={styles.avatarBtn} onClick={() => fileInputRef.current?.click()} disabled={uploading}>
                   <FaCamera />
                 </button>
               </div>
@@ -120,7 +127,6 @@ if (loading) return <LoadingProfile />;
             <h2>{user?.nome}</h2>
             <p className={styles.userEmail}>{user?.email}</p>
 
-            {/* BOTÃO DE DISPONIBILIDADE */}
             <div className={styles.statusSection}>
                <button 
                 onClick={toggleDisponibilidade}
@@ -152,7 +158,8 @@ if (loading) return <LoadingProfile />;
               </div>
               <div className={styles.infoBox}>
                 <label><FaMapMarkerAlt /> Localização</label>
-                <span>{user?.cidade || "Picos"}, {user?.estado || "PI"}</span>
+                {/* Aqui mostra as informações reais do banco de dados */}
+                <span>{user?.cidade || "Não informada"}, {user?.estado || "BR"}</span>
               </div>
             </div>
           </section>
@@ -168,24 +175,46 @@ if (loading) return <LoadingProfile />;
         </main>
       </div>
 
-      {/* MODAL DE EDIÇÃO */}
+      {/* ✨ MODAL DE EDIÇÃO ATUALIZADO */}
       {isEditModalOpen && (
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>
             <h3>Editar Perfil</h3>
             <form onSubmit={handleSaveProfile}>
+              
               <div className={styles.formGroup}>
                 <label>Nome Completo</label>
-                <input value={editNome} onChange={(e) => setEditNome(e.target.value)} required />
-              </div>
+<input value={editNome} onChange={(e) => setEditNome(e.target.value)} placeholder="Seu nome" required />              </div>
+              
               <div className={styles.formGroup}>
                 <label>Telefone</label>
-                <input value={editTelefone} onChange={(e) => setEditTelefone(e.target.value)} required />
+                <input value={editTelefone} onChange={(e) => setEditTelefone(e.target.value)} placeholder="(00) 00000-0000" required />
               </div>
+
+              {/* NOVOS CAMPOS: Cidade e Estado */}
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <div className={styles.formGroup} style={{ flex: 2 }}>
+                  <label>Cidade</label>
+                  <input value={editCidade} onChange={(e) => setEditCidade(e.target.value)} placeholder="Sua cidade" required />
+                </div>
+                
+                <div className={styles.formGroup} style={{ flex: 1 }}>
+                  <label>Estado</label>
+                  <input 
+                    value={editEstado} 
+                    onChange={(e) => setEditEstado(e.target.value)} 
+                    placeholder="UF (Ex: PI)" 
+                    maxLength={2} 
+                    required 
+                  />
+                </div>
+              </div>
+
               <div className={styles.modalActions}>
                 <button type="button" onClick={() => setIsEditModalOpen(false)}>Cancelar</button>
                 <button type="submit" className={styles.saveBtn}>Salvar Alterações</button>
               </div>
+
             </form>
           </div>
         </div>

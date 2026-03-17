@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import { getPortfolioByServico } from "@/service/portfolioService";
 import { getAvaliacoesByServico, ResumoAvaliacao } from "@/service/avaliacaoService";
 import styles from "./Modal.module.css";
-import { FaTimes, FaWhatsapp, FaStar } from "react-icons/fa";
+import { FaTimes, FaWhatsapp } from "react-icons/fa";
 
 interface Preco {
   nomeservico: string;
@@ -19,8 +19,8 @@ interface ModalProps {
     categoria?: string;
     descricao?: string;
     telefone?: string;
-    precos?: Preco[]; // Adicionado para receber os preços
-    imagem_url?: string; // Para a foto principal
+    precos?: Preco[]; // Recebe os preços
+    imagem_url?: string; // Foto principal
   };
   onClose: () => void;
 }
@@ -53,24 +53,39 @@ export default function Modal({ profissional, onClose }: ModalProps) {
 
   const handleContatoClick = () => {
     const token = localStorage.getItem("token");
+    
     if (!token) {
       toast.error("Para entrar em contato, faça login primeiro!");
       router.push("/login");
       return;
     }
+    
     if (!profissional.telefone) {
       toast.error("Este profissional não tem telefone cadastrado.");
       return;
     }
+
+    // ✨ A MAGIA DA AVALIAÇÃO: Guarda a intenção de contacto para mostrar o Modal depois
+    localStorage.setItem("@ProConnect:avaliar", JSON.stringify({
+      id: profissional.id,
+      nome: profissional.nome || "Profissional"
+    }));
+
+    // Abre o WhatsApp
     const numeroLimpo = profissional.telefone.replace(/\D/g, "");
-    const mensagem = encodeURIComponent(`Olá, vi seu perfil no ProConnect e gostaria de um orçamento.`);
+    const mensagem = encodeURIComponent(`Olá, vi o seu perfil no ProConnect e gostaria de pedir um orçamento.`);
     window.open(`https://wa.me/55${numeroLimpo}?text=${mensagem}`, "_blank");
+
+    // ✨ CORREÇÃO: Fecha o modal do profissional para não tapar a avaliação quando o cliente voltar!
+    onClose();
   };
 
   return (
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-        <button className={styles.closeBtn} onClick={onClose}>×</button>
+        <button className={styles.closeBtn} onClick={onClose}>
+          <FaTimes />
+        </button>
         
         <div className={styles.header}>
            <h2>{profissional.nome || "Profissional"}</h2>
@@ -102,7 +117,7 @@ export default function Modal({ profissional, onClose }: ModalProps) {
         <div className={styles.section}>
           <h3>Portfólio</h3>
           {loading ? (
-            <p>Carregando galeria...</p>
+            <p>A carregar galeria...</p>
           ) : fotos.length > 0 ? (
             <div className={styles.gridPortfolio}>
               {fotos.map(f => (
@@ -117,13 +132,15 @@ export default function Modal({ profissional, onClose }: ModalProps) {
         </div>
 
         <button onClick={handleContatoClick} className={styles.btnWhats}>
-          <FaWhatsapp /> Falar no WhatsApp
+          <FaWhatsapp style={{ fontSize: "1.2rem" }} /> Falar no WhatsApp
         </button>
 
-        {/* LIGHTBOX */}
+        {/* LIGHTBOX (Abre a imagem em ecrã inteiro) */}
         {fotoAmpliada && (
           <div className={styles.lightbox} onClick={() => setFotoAmpliada(null)}>
-            <button className={styles.fecharLightbox}><FaTimes /></button>
+            <button className={styles.fecharLightbox} aria-label="Fechar">
+              <FaTimes />
+            </button>
             <img src={fotoAmpliada} alt="Ampliada" className={styles.imagemAmpliada} />
           </div>
         )}

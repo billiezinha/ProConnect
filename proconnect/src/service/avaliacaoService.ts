@@ -19,7 +19,7 @@ export async function getAvaliacoesByServico(servicoId: number): Promise<ResumoA
   return data;
 }
 
-export async function createAvaliacao(data: { star: number; descricao: string; servicoId: number }) {
+export async function createAvaliacao(data: { servicoId: number; star: number; descricao: string }) {
   const resp = await api.post("/avaliacao", data);
   return resp.data;
 }

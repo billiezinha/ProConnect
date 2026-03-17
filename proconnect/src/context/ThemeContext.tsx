@@ -1,41 +1,60 @@
 "use client";
 import { createContext, useContext, useEffect, useState } from "react";
 
-const ThemeContext = createContext({ isDark: false, toggleTheme: () => {} });
+type Theme = "light" | "dark";
+
+interface ThemeContextType {
+  theme: Theme;
+}
+
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [isDark, setIsDark] = useState(false);
-  const [mounted, setMounted] = useState(false); // Proteção contra erros do Next.js
+  const [theme, setTheme] = useState<Theme>("light");
 
   useEffect(() => {
-    setMounted(true);
-    // Verifica qual é a cor atual que o nosso script do layout (abaixo) aplicou
-    const currentTheme = document.documentElement.getAttribute("data-theme");
-    setIsDark(currentTheme === "dark");
+    // 1. Função para ler a cor do sistema (Windows, macOS, iOS, Android)
+    const getSystemTheme = (): Theme => {
+      if (typeof window !== "undefined" && window.matchMedia) {
+        return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+      return "light"; // Padrão caso o navegador não suporte
+    };
+
+    // 2. Aplica o tema assim que a página carrega
+    const initialTheme = getSystemTheme();
+    setTheme(initialTheme);
+    document.documentElement.setAttribute("data-theme", initialTheme);
+
+    // 3. Ouve mudanças no sistema em TEMPO REAL
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    
+    const handleChange = (e: MediaQueryListEvent) => {
+      const newTheme = e.matches ? "dark" : "light";
+      setTheme(newTheme);
+      document.documentElement.setAttribute("data-theme", newTheme);
+    };
+
+    // Adiciona o "espião" para detetar quando o utilizador muda a cor no telemóvel
+    mediaQuery.addEventListener("change", handleChange);
+
+    // Limpa a memória quando o utilizador sai do site
+    return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
-  const toggleTheme = () => {
-    const newTheme = !isDark;
-    setIsDark(newTheme);
-    const themeString = newTheme ? "dark" : "light";
-    localStorage.setItem("@ProConnect:theme", themeString);
-    document.documentElement.setAttribute("data-theme", themeString);
-  };
-
-  // Evita que o React tente renderizar o tema errado na primeira fração de segundo
-  if (!mounted) {
-    return (
-      <ThemeContext.Provider value={{ isDark: false, toggleTheme }}>
-        {children}
-      </ThemeContext.Provider>
-    );
-  }
-
+  // Nota: Já não precisamos de exportar uma função "toggleTheme", 
+  // porque agora tudo é automático!
   return (
-    <ThemeContext.Provider value={{ isDark, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme }}>
       {children}
     </ThemeContext.Provider>
   );
 }
 
-export const useTheme = () => useContext(ThemeContext);
+export function useTheme() {
+  const context = useContext(ThemeContext);
+  if (context === undefined) {
+    throw new Error("useTheme deve ser usado dentro de um ThemeProvider");
+  }
+  return context;
+}

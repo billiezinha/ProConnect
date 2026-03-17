@@ -1,0 +1,129 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100000; /* Fica por cima de tudo */
+  padding: 20px;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modalContent {
+  background: var(--cor-fundo-card);
+  padding: 2rem;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 450px;
+  position: relative;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px) scale(0.9); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.closeBtn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  color: var(--cor-texto-secundario);
+  cursor: pointer;
+}
+
+.modalContent h2 {
+  font-size: 1.6rem;
+  color: var(--cor-texto);
+  margin-bottom: 10px;
+}
+
+.modalContent p {
+  color: var(--cor-texto-secundario);
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+}
+
+.starsContainer {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.starsContainer button {
+  background: none;
+  border: none;
+  font-size: 2.5rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.starsContainer button:hover {
+  transform: scale(1.1);
+}
+
+.starAtiva { color: #ffb800; }
+.starInativa { color: var(--cor-borda); }
+
+.textArea {
+  width: 100%;
+  padding: 15px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 12px;
+  background: var(--cor-fundo-input);
+  color: var(--cor-texto);
+  font-family: inherit;
+  resize: none;
+  margin-bottom: 20px;
+}
+
+.textArea:focus {
+  outline: none;
+  border-color: var(--cor-primaria);
+}
+
+.botoes {
+  display: flex;
+  gap: 10px;
+}
+
+.btnCancelar, .btnEnviar {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnCancelar {
+  background: var(--cor-fundo-input);
+  border: 1px solid var(--cor-borda);
+  color: var(--cor-texto);
+}
+
+.btnEnviar {
+  background: var(--cor-primaria);
+  border: none;
+  color: white;
+}
+
+.btnEnviar:disabled { opacity: 0.7; cursor: not-allowed; }
+.btnCancelar:hover { background: var(--cor-borda); }
+.btnEnviar:hover:not(:disabled) { filter: brightness(1.1); }

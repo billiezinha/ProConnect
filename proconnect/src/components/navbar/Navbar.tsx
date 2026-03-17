@@ -7,18 +7,14 @@ import {
   FaUserCircle, 
   FaSignOutAlt, 
   FaHeart, 
-  FaSun, 
-  FaMoon, 
   FaSearch, 
   FaSignInAlt 
 } from "react-icons/fa"; 
 import styles from "./Navbar.module.css";
 import Cookies from "js-cookie";
-import { useTheme } from "@/context/ThemeContext";
 
 export default function Navbar() {
   const [isLogged, setIsLogged] = useState(false);
-  const { isDark, toggleTheme } = useTheme();
   const [favCount, setFavCount] = useState(0);
   const router = useRouter();
   const pathname = usePathname();
@@ -74,14 +70,6 @@ export default function Navbar() {
             </div>
             <span className={styles.desktopText}>Favoritos</span>
           </Link>
-
-          <button 
-            onClick={toggleTheme} 
-            className={styles.themeToggle}
-            title={isDark ? "Modo Claro" : "Modo Escuro"}
-          >
-            {isDark ? <FaSun className={styles.sunIcon} /> : <FaMoon className={styles.moonIcon} />}
-          </button>
 
           {isLogged ? (
             <div className={styles.userMenu}>
