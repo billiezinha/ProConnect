@@ -10,6 +10,7 @@ import {
 } from "react-icons/fa";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
+import { LoadingProfile } from "@/components/loading/Loading";
 
 export default function PerfilPage() {
   const router = useRouter();
@@ -95,7 +96,7 @@ export default function PerfilPage() {
     }
   };
 
-  if (loading) return <div className={styles.loadingState}>A carregar painel...</div>;
+if (loading) return <LoadingProfile />;
 
   return (
     <div className={styles.wrapper}>

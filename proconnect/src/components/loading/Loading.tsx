@@ -21,3 +21,26 @@ export function LoadingGrid() {
     </div>
   );
 }
+
+export function LoadingProfile() {
+  return (
+    <div className={styles.profileContainer}>
+      {/* Skeleton da Barra Lateral (Foto e Nome) */}
+      <div className={styles.sidebarSkeleton}>
+        <div className={`${styles.avatarSkeleton} ${styles.skeletonBase}`}></div>
+        <div className={`${styles.textSkeleton} ${styles.skeletonBase}`} style={{ width: "80%", height: "24px" }}></div>
+        <div className={`${styles.textSkeleton} ${styles.skeletonBase}`} style={{ width: "60%" }}></div>
+        <div className={`${styles.buttonSkeleton} ${styles.skeletonBase}`}></div>
+      </div>
+
+      {/* Skeleton do Conteúdo Principal */}
+      <div className={styles.contentSkeleton}>
+        <div className={`${styles.cardSkeleton} ${styles.skeletonBase}`}></div>
+        <div className={styles.actionsGrid}>
+           <div className={`${styles.actionBox} ${styles.skeletonBase}`}></div>
+           <div className={`${styles.actionBox} ${styles.skeletonBase}`}></div>
+        </div>
+      </div>
+    </div>
+  );
+}
