@@ -198,3 +198,63 @@
   text-align: center; 
   padding: 15px 0; 
 }
+
+/* Adiciona a "mãozinha" para indicar que a foto é clicável */
+.fotoWrapper {
+  cursor: pointer;
+}
+
+/* =========================================
+   LIGHTBOX (FOTO AMPLIADA NO MODAL)
+========================================= */
+.lightbox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.9); /* Fundo quase todo preto */
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999; /* Tem de ser maior que o z-index do próprio Modal */
+  padding: 20px;
+}
+
+.fecharLightbox {
+  position: absolute;
+  top: 25px;
+  right: 35px;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+  z-index: 1000000;
+  transition: transform 0.2s ease;
+}
+
+.fecharLightbox:hover {
+  transform: scale(1.2);
+}
+
+.imagemAmpliada {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain; /* Para não cortar nenhum pedaço da foto */
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  animation: zoomInFoto 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes zoomInFoto {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

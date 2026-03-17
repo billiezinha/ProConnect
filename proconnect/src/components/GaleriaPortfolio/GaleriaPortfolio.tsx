@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { getPortfolioByServico, PortfolioFoto } from "@/service/portfolioService";
 import styles from "./GaleriaPortfolio.module.css";
+import { FaTimes } from "react-icons/fa"; // Ícone de fechar
 
 interface GaleriaPortfolioProps {
   servicoId: number;
@@ -10,6 +11,9 @@ interface GaleriaPortfolioProps {
 export default function GaleriaPortfolio({ servicoId }: GaleriaPortfolioProps) {
   const [fotos, setFotos] = useState<PortfolioFoto[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // NOVO: Estado para controlar qual foto está aberta em ecrã inteiro
+  const [fotoAmpliada, setFotoAmpliada] = useState<string | null>(null);
 
   useEffect(() => {
     async function carregarFotos() {
@@ -36,8 +40,11 @@ export default function GaleriaPortfolio({ servicoId }: GaleriaPortfolioProps) {
       <h3 className={styles.titulo}>Portfólio de Trabalhos</h3>
       <div className={styles.grid}>
         {fotos.map((foto) => (
-          <div key={foto.id} className={styles.imagemWrapper}>
-            {/* Usamos a tag img normal para evitar problemas de domínio no Next.js numa fase inicial */}
+          <div 
+            key={foto.id} 
+            className={styles.imagemWrapper}
+            onClick={() => setFotoAmpliada(foto.url)} // Ao clicar, define esta foto como a ampliada
+          >
             <img 
               src={foto.url} 
               alt={`Trabalho do serviço ${servicoId}`} 
@@ -46,6 +53,26 @@ export default function GaleriaPortfolio({ servicoId }: GaleriaPortfolioProps) {
           </div>
         ))}
       </div>
+
+      {/* NOVO: Modal / Lightbox para a foto ampliada */}
+      {fotoAmpliada && (
+        <div className={styles.lightbox} onClick={() => setFotoAmpliada(null)}>
+          <button 
+            className={styles.fecharLightbox} 
+            onClick={() => setFotoAmpliada(null)}
+            aria-label="Fechar imagem"
+          >
+            <FaTimes />
+          </button>
+          
+          <img 
+            src={fotoAmpliada} 
+            alt="Foto ampliada" 
+            className={styles.imagemAmpliada} 
+            onClick={(e) => e.stopPropagation()} // Impede que clicar na imagem feche o modal
+          />
+        </div>
+      )}
     </div>
   );
 }

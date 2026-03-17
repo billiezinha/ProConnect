@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { getPortfolioByServico } from "@/service/portfolioService";
 import { getAvaliacoesByServico, ResumoAvaliacao } from "@/service/avaliacaoService";
 import styles from "./Modal.module.css";
+import { FaTimes } from "react-icons/fa"; // NOVO: Ícone para fechar a foto
 
 interface ModalProps {
   profissional: {
@@ -23,6 +24,9 @@ export default function Modal({ profissional, onClose }: ModalProps) {
   const [fotos, setFotos] = useState<{ id: number; url: string }[]>([]);
   const [resumo, setResumo] = useState<ResumoAvaliacao | null>(null);
   const [loading, setLoading] = useState(true);
+  
+  // NOVO ESTADO: Guarda o URL da foto que o cliente quer ver maior
+  const [fotoAmpliada, setFotoAmpliada] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadData() {
@@ -56,15 +60,11 @@ export default function Modal({ profissional, onClose }: ModalProps) {
       return;
     }
 
-    // 1. Limpa o número para deixar apenas os dígitos
     const numeroLimpo = profissional.telefone.replace(/\D/g, "");
-    
-    // 2. Cria a mensagem pré-definida
     const mensagem = encodeURIComponent(
       `Olá ${profissional.nome}, vi o seu perfil no ProConnect e gostaria de pedir um orçamento.`
     );
     
-    // 3. Abre o link num novo separador
     window.open(`https://wa.me/55${numeroLimpo}?text=${mensagem}`, "_blank");
   };
 
@@ -98,7 +98,11 @@ export default function Modal({ profissional, onClose }: ModalProps) {
           ) : fotos.length > 0 ? (
             <div className={styles.gridPortfolio}>
               {fotos.map(f => (
-                <div key={f.id} className={styles.fotoWrapper}>
+                <div 
+                  key={f.id} 
+                  className={styles.fotoWrapper}
+                  onClick={() => setFotoAmpliada(f.url)} // NOVO: Ao clicar, abre a foto
+                >
                   <img src={f.url} className={styles.foto} alt="Trabalho" />
                 </div>
               ))}
@@ -131,6 +135,25 @@ export default function Modal({ profissional, onClose }: ModalProps) {
         <button onClick={handleContatoClick} className={styles.btnWhats}>
           Falar no WhatsApp
         </button>
+
+        {/* NOVO: LIGHTBOX (Abre a foto por cima de tudo) */}
+        {fotoAmpliada && (
+          <div className={styles.lightbox} onClick={() => setFotoAmpliada(null)}>
+            <button 
+              className={styles.fecharLightbox} 
+              aria-label="Fechar imagem"
+            >
+              <FaTimes />
+            </button>
+            <img 
+              src={fotoAmpliada} 
+              alt="Foto do trabalho ampliada" 
+              className={styles.imagemAmpliada} 
+              onClick={(e) => e.stopPropagation()} 
+            />
+          </div>
+        )}
+
       </div>
     </div>
   );
