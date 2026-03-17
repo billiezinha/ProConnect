@@ -1,9 +1,12 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { getPortfolioByServico } from "@/service/portfolioService";
 import { getAvaliacoesByServico, ResumoAvaliacao } from "@/service/avaliacaoService";
+import { registrarContato } from "@/service/contatoWhatsappService";
+import { criarServicoRealizado } from "@/service/servicoRealizadoService";
 import styles from "./Modal.module.css";
 import { FaTimes, FaWhatsapp, FaStar, FaRegStar, FaStarHalfAlt } from "react-icons/fa";
 
@@ -30,17 +33,13 @@ export default function Modal({ profissional, onClose }: ModalProps) {
 
   useEffect(() => {
     async function loadData() {
-      // ✨ CORREÇÃO 404: Só dispara a busca se o ID for válido
       if (!profissional?.id) return;
-
       try {
         setLoading(true);
-        // Buscamos os dados em paralelo para maior performance
         const [portfolioData, avaliacaoData] = await Promise.all([
-          getPortfolioByServico(profissional.id).catch(() => []), // Se falhar o portfolio, retorna vazio
-          getAvaliacoesByServico(profissional.id).catch(() => ({ media: 0, total: 0 })) // Se falhar avaliação, retorna zerado
+          getPortfolioByServico(profissional.id).catch(() => []),
+          getAvaliacoesByServico(profissional.id).catch(() => ({ media: 0, total: 0 }))
         ]);
-        
         setFotos(portfolioData);
         setResumo(avaliacaoData);
       } catch (error) {
@@ -66,7 +65,8 @@ export default function Modal({ profissional, onClose }: ModalProps) {
     return stars;
   };
 
-  const handleContatoClick = () => {
+  // ✅ corrigido: agora é async e registra contato + serviço realizado
+  const handleContatoClick = async () => {
     if (profissional.disponivel === false) {
       toast.error("Este profissional não está recebendo contatos no momento.");
       return;
@@ -84,7 +84,17 @@ export default function Modal({ profissional, onClose }: ModalProps) {
       return;
     }
 
-    // ✨ CRÍTICO: Guarda a intenção de avaliação antes de sair para o WhatsApp
+    try {
+      // ✅ Registra o contato e o serviço realizado no backend
+      await Promise.all([
+        registrarContato(profissional.id),
+        criarServicoRealizado(profissional.id),
+      ]);
+    } catch (err) {
+      console.error("Erro ao registrar contato:", err);
+    }
+
+    // ✅ Guarda para o modal de avaliação
     localStorage.setItem("@ProConnect:avaliar", JSON.stringify({
       id: profissional.id,
       nome: profissional.nome || "Profissional"

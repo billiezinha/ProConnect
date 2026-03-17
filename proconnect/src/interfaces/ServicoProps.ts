@@ -23,8 +23,7 @@ export interface Servico {
   imagemUrl?: string | null;
   preco: any[];
   portfolio?: any[];
-  // Se tiveres um disponivel aqui fora, podes manter, 
-  // mas o erro indica que ele falta lá dentro do usuario:
+  disponivel?: boolean;
   categoria?: {
     id: number;
     nomeServico: string;
@@ -33,8 +32,12 @@ export interface Servico {
     id: number;
     telefone: string;
     nome?: string;
-    // ✨ ADICIONA ESTA LINHA AQUI:
-    disponivel?: boolean; 
+    disponivel?: boolean;
+    cidade?: string; // ✨ ADICIONADO AQUI
+  };
+  localizacao?: {    // ✨ ADICIONADO AQUI
+    cidade?: string;
+    estado?: string;
   };
 }
 
