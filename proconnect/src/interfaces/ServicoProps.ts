@@ -1,6 +1,13 @@
 import type { Categoria } from "./CategoriaProps";
 import type { User } from "./UserProps";
 
+/** Interface para os itens do Portfólio (Fotos extras) */
+export interface PortfolioItem {
+  id: number;
+  imagem_url: string; // URL da imagem vinda do Supabase
+  servicoId: number;
+}
+
 /** Item de preço de um serviço já salvo */
 export interface PrecoItem {
   id: number;
@@ -13,10 +20,11 @@ export interface Servico {
   id: number;
   nomeNegocio: string;
   descricao: string;
-  imagemUrl?: string | null;
+  imagemUrl?: string | null; // Foto principal (capa)
   preco: PrecoItem[];
-  categoria?: Categoria; // pode vir opcional dependendo do endpoint
-  usuario?: User;        // idem
+  portfolio?: PortfolioItem[]; // ✨ Adicionado: Fotos do portfólio
+  categoria?: Categoria; 
+  usuario?: User;        
 }
 
 /** Item de preço para criação/atualização */

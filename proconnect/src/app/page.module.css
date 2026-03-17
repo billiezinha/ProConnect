@@ -292,3 +292,26 @@
     padding: 0 0.5rem;
   }
 }
+/* === AJUSTE DO BOTÃO NO MODO DARK === */
+
+[data-theme='dark'] .botaoPlano {
+  /* Um roxo mais claro e vibrante para saltar no fundo preto */
+  background-color: #a855f7; 
+  color: #ffffff; /* Garante que o texto seja branco puro */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.25); /* Um brilho roxo sutil */
+  transition: all 0.3s ease;
+}
+
+[data-theme='dark'] .botaoPlano:hover {
+  background-color: #bc77ff; /* Fica ainda mais claro ao passar o rato */
+  box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4);
+  transform: translateY(-2px);
+}
+
+/* Se o botão for do tipo "Outlined" (apenas borda), usa este: */
+[data-theme='dark'] .botaoPlano.outlined {
+  background-color: transparent;
+  border: 2px solid #a855f7;
+  color: #a855f7;
+}
