@@ -167,7 +167,7 @@ export default function PerfilPage() {
             </div>
             <div onClick={() => router.push("/cadastro-servico")} className={styles.actionCard}>
               <FaPlusCircle />
-              <h4>Novo Anúncio</h4>
+              <h4>Novo Serviço</h4>
               <p>Atraia mais clientes agora.</p>
             </div>
             <div onClick={() => router.push("/meus-pedidos")} className={styles.actionCard}>
