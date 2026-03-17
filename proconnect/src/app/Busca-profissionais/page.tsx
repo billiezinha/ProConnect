@@ -138,11 +138,16 @@ export default function BuscaProfissionaisPage() {
 
                 return (
                   <div key={s.id} className={styles.servicoCard}>
-                    <div className={styles.cardHeader}>
-                      <span className={styles.cardCategoryIcon}>
-                        {iconToRender}
-                      </span>
-                      
+                    
+                    {/* ✅ IMAGEM DE CAPA */}
+                    <div className={styles.cardImageContainer}>
+                      {s.imagem ? (
+                        <img src={s.imagem} alt={s.nomeNegocio} className={styles.cardImage} />
+                      ) : (
+                        <div className={styles.cardImagePlaceholder}>
+                          <span className={styles.cardCategoryIcon}>{iconToRender}</span>
+                        </div>
+                      )}
                       <button 
                         className={styles.favButton}
                         onClick={() => toggleFavorito(s.id, s.nomeNegocio)}
@@ -181,7 +186,6 @@ export default function BuscaProfissionaisPage() {
         )}
       </main>
 
-      {/* MODAL DE DETALHES DO PROFISSIONAL */}
       {showModal && selectedProfissional && (
         <Modal 
           profissional={{ 
@@ -190,13 +194,12 @@ export default function BuscaProfissionaisPage() {
             categoria: selectedProfissional.categoria?.nomeServico,
             descricao: selectedProfissional.descricao,
             telefone: selectedProfissional.usuario?.telefone,
-            precos: selectedProfissional.preco // ✨ Adicionado para a Tabela de Preços funcionar!
+            precos: selectedProfissional.preco
           }} 
           onClose={() => setShowModal(false)} 
         />
       )}
 
-      {/* ✨ O MODAL DE AVALIAÇÃO (Abre quando o cliente volta do WhatsApp) */}
       <AvaliacaoPendente />
     </div>
   );

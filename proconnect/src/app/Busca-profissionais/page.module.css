@@ -1,6 +1,6 @@
 /* === LAYOUT E CONTAINER === */
 .body {
-  background-color: var(--cor-fundo);
+  background-color: var(--cor-fundo, #f8fafc);
   min-height: 100vh;
   transition: background-color 0.3s ease;
 }
@@ -20,7 +20,7 @@
 .title {
   font-size: 2rem;
   font-weight: 800;
-  color: var(--cor-texto);
+  color: var(--cor-texto, #1e293b);
   margin-bottom: 1.5rem;
 }
 
@@ -35,18 +35,24 @@
   left: 1.2rem;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--cor-primaria);
+  color: var(--cor-primaria, #8b2cf5);
 }
 
 .searchInput {
   width: 100%;
   padding: 1rem 1rem 1rem 3.5rem;
-  border: 2px solid var(--cor-borda);
+  border: 2px solid var(--cor-borda, #e2e8f0);
   border-radius: 12px;
   font-size: 1rem;
-  background-color: var(--cor-fundo-input);
-  color: var(--cor-texto);
+  background-color: var(--cor-fundo-input, #ffffff);
+  color: var(--cor-texto, #1e293b);
   transition: all 0.3s ease;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--cor-primaria, #8b2cf5);
+  box-shadow: 0 0 0 3px rgba(139, 44, 245, 0.1);
 }
 
 /* === CATEGORIAS (COM SCROLL HORIZONTAL) === */
@@ -54,14 +60,10 @@
   display: flex;
   gap: 12px;
   width: 100%;
-  padding: 4px 2px 16px 2px; /* Espaço para a sombra não ser cortada */
+  padding: 4px 2px 16px 2px;
   margin-top: 1rem;
   min-height: 50px;
-  
-  /* Ativa o scroll horizontal */
   overflow-x: auto;
-  
-  /* Esconde a barra de scroll */
   scrollbar-width: none; 
   -ms-overflow-style: none; 
   -webkit-overflow-scrolling: touch;
@@ -80,21 +82,24 @@
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: 0.9rem;
-  
-  /* Mantém o botão numa linha e impede que encolha */
   white-space: nowrap; 
   flex-shrink: 0;      
 }
 
 .catBtn {
-  background-color: var(--cor-fundo-input);
-  color: var(--cor-texto);
-  border: 1px solid var(--cor-borda);
+  background-color: var(--cor-fundo-input, #ffffff);
+  color: var(--cor-texto, #1e293b);
+  border: 1px solid var(--cor-borda, #e2e8f0);
   font-weight: 500;
 }
 
+.catBtn:hover {
+  border-color: var(--cor-primaria, #8b2cf5);
+  color: var(--cor-primaria, #8b2cf5);
+}
+
 .catBtnActive {
-  background-color: var(--cor-primaria);
+  background-color: var(--cor-primaria, #8b2cf5);
   color: #fff;
   border: none;
   font-weight: 600;
@@ -116,7 +121,7 @@
   display: flex;
   align-items: center;
   background-color: rgba(139, 44, 245, 0.1);
-  border: 1px solid var(--cor-primaria);
+  border: 1px solid var(--cor-primaria, #8b2cf5);
   padding: 8px 16px;
   border-radius: 50px;
   gap: 10px;
@@ -124,21 +129,21 @@
 
 .chipIcon {
   font-size: 1.1rem;
-  color: var(--cor-primaria);
+  color: var(--cor-primaria, #8b2cf5);
   display: flex;
 }
 
 .chipText {
   font-size: 0.9rem;
   font-weight: 700;
-  color: var(--cor-texto);
+  color: var(--cor-texto, #1e293b);
 }
 
 .closeChipBtn {
   background: none;
   border: none;
   font-size: 1.4rem;
-  color: var(--cor-primaria);
+  color: var(--cor-primaria, #8b2cf5);
   cursor: pointer;
   padding: 0 0 0 5px;
   line-height: 1;
@@ -146,7 +151,7 @@
 
 .resultsCount {
   font-size: 0.9rem;
-  color: var(--cor-texto-secundario);
+  color: var(--cor-texto-secundario, #64748b);
 }
 
 /* === GRID DE RESULTADOS === */
@@ -159,53 +164,84 @@
 }
 
 .servicoCard {
-  background: var(--cor-fundo-card);
+  background: var(--cor-fundo-card, #ffffff);
   border-radius: 20px;
-  border: 1px solid var(--cor-borda);
-  padding: 1.5rem;
+  border: 1px solid var(--cor-borda, #e2e8f0);
+  padding: 1.2rem;
   display: flex;
   flex-direction: column;
   position: relative;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   min-height: 380px;
 }
 
-.cardHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.servicoCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* === IMAGEM DE CAPA (NOVIDADE!) === */
+.cardImageContainer {
+  position: relative;
+  width: 100%;
+  height: 160px; /* Altura padrão para as capas */
+  border-radius: 12px;
   margin-bottom: 1.2rem;
+  background-color: var(--cor-fundo, #f1f5f9);
+}
+
+.cardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* A magia que impede a imagem de distorcer */
+  border-radius: 12px;
+}
+
+.cardImagePlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(139,44,245,0.05), rgba(139,44,245,0.15));
+  border-radius: 12px;
 }
 
 .cardCategoryIcon {
-  background: rgba(139, 44, 245, 0.1);
-  color: var(--cor-primaria);
-  width: 45px;
-  height: 45px;
-  border-radius: 12px;
+  color: var(--cor-primaria, #8b2cf5);
+  font-size: 3rem;
+  opacity: 0.8;
+}
+
+/* === BOTÃO DE FAVORITO FLUTUANTE === */
+.favButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(4px);
+  border: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
-}
-
-/* === BOTÃO DE FAVORITO E ANIMAÇÕES === */
-@keyframes heartPop {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.4); }
-  100% { transform: scale(1); }
-}
-
-.favButton {
-  background: transparent;
-  border: none;
-  font-size: 1.4rem;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, background 0.2s ease;
+  z-index: 2;
 }
 
 .favButton:active {
   transform: scale(0.8);
+}
+
+@keyframes heartPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+  100% { transform: scale(1); }
 }
 
 .iconFill { 
@@ -214,7 +250,7 @@
 }
 
 .iconOutline {
-  color: var(--cor-texto-secundario);
+  color: #94a3b8;
   transition: color 0.2s ease;
 }
 
@@ -232,10 +268,8 @@
 .servicoTitle {
   font-size: 1.2rem;
   font-weight: 700;
-  color: var(--cor-texto);
-  margin-bottom: 0.8rem;
-  
-  /* Limita título a 2 linhas se for muito longo */
+  color: var(--cor-texto, #1e293b);
+  margin-bottom: 0.5rem;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2; 
@@ -245,7 +279,7 @@
 }
 
 .servicoDescription {
-  color: var(--cor-texto-secundario);
+  color: var(--cor-texto-secundario, #64748b);
   font-size: 0.95rem;
   line-height: 1.5;
   display: -webkit-box;
@@ -256,6 +290,30 @@
   text-overflow: ellipsis;
 }
 
+/* === ESTADOS DE ERRO/VAZIO === */
+.emptyState, .errorState {
+  text-align: center;
+  grid-column: 1 / -1;
+  padding: 4rem 1rem;
+  color: var(--cor-texto-secundario, #64748b);
+}
+
+.emptyIcon {
+  color: var(--cor-borda, #cbd5e1);
+  margin-bottom: 1rem;
+}
+
+.clearSearchBtn {
+  margin-top: 1rem;
+  background: var(--cor-primaria, #8b2cf5);
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
 /* === RODAPÉ DO CARD === */
 .cardFooter {
   margin-top: 1.5rem;
@@ -263,18 +321,19 @@
 
 .detailsButton {
   width: 100%;
-  background: var(--cor-primaria);
+  background: var(--cor-primaria, #8b2cf5);
   color: white;
   border: none;
   padding: 0.9rem;
   border-radius: 12px;
   font-weight: 700;
   cursor: pointer;
-  transition: filter 0.2s;
+  transition: filter 0.2s, transform 0.2s;
 }
 
 .detailsButton:hover {
   filter: brightness(1.1);
+  transform: translateY(-2px);
 }
 
 /* === ANIMAÇÕES === */

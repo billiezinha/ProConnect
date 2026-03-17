@@ -15,16 +15,24 @@ export interface PrecoItem {
   precificacao: number;
 }
 
-/** Estrutura principal retornada pela API */
 export interface Servico {
   id: number;
   nomeNegocio: string;
   descricao: string;
-  imagemUrl?: string | null; // Foto principal (capa)
-  preco: PrecoItem[];
-  portfolio?: PortfolioItem[]; // ✨ Adicionado: Fotos do portfólio
-  categoria?: Categoria; 
-  usuario?: User;        
+  imagem?: string | null; 
+  imagemUrl?: string | null; 
+  preco: any[];
+  portfolio?: any[]; 
+  categoria?: {
+    id: number;
+    nomeServico: string;
+  };
+  // ✨ A CORREÇÃO É AQUI: Adiciona o id (e o nome, caso precises)
+  usuario?: {
+    id: number;
+    telefone: string;
+    nome?: string;
+  };
 }
 
 /** Item de preço para criação/atualização */

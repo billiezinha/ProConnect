@@ -19,8 +19,9 @@ interface ModalProps {
     categoria?: string;
     descricao?: string;
     telefone?: string;
-    precos?: Preco[]; // Recebe os preços
-    imagem_url?: string; // Foto principal
+    precos?: any[]; // Ou Preco[] se tiveres importado
+    imagem_url?: string;
+    portfolio?: any[]; // ✨ ADICIONA ISTO AQUI!
   };
   onClose: () => void;
 }
