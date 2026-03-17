@@ -23,11 +23,14 @@ export interface Servico {
   imagemUrl?: string | null; 
   preco: any[];
   portfolio?: any[]; 
+  
+  // ✨ ADICIONA ESTA LINHA AQUI:
+  disponivel?: boolean; 
+  
   categoria?: {
     id: number;
     nomeServico: string;
   };
-  // ✨ A CORREÇÃO É AQUI: Adiciona o id (e o nome, caso precises)
   usuario?: {
     id: number;
     telefone: string;

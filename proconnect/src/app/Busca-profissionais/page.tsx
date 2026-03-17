@@ -162,6 +162,13 @@ export default function BuscaProfissionaisPage() {
 
                     <div className={styles.cardContent}>
                       <h3 className={styles.servicoTitle}>{s.nomeNegocio}</h3>
+                      
+                      {/* ✨ SELO DE DISPONIBILIDADE */}
+                      <div className={`${styles.statusBadge} ${s.disponivel !== false ? styles.statusOn : styles.statusOff}`}>
+                        <span className={`${styles.statusDot} ${s.disponivel !== false ? styles.dotOn : styles.dotOff}`}></span>
+                        {s.disponivel !== false ? "Disponível agora" : "Indisponível no momento"}
+                      </div>
+
                       <p className={styles.servicoDescription}>{s.descricao}</p>
                     </div>
 
@@ -194,7 +201,9 @@ export default function BuscaProfissionaisPage() {
             categoria: selectedProfissional.categoria?.nomeServico,
             descricao: selectedProfissional.descricao,
             telefone: selectedProfissional.usuario?.telefone,
-            precos: selectedProfissional.preco
+            precos: selectedProfissional.preco,
+            portfolio: selectedProfissional.portfolio, // ✅ Adicionado para exibir as fotos no modal
+            disponivel: selectedProfissional.disponivel // ✅ Adicionado para bloquear o botão do WhatsApp
           }} 
           onClose={() => setShowModal(false)} 
         />

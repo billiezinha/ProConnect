@@ -71,6 +71,31 @@ export default function PerfilPage() {
     }
   };
 
+  // ✨ NOVA FUNÇÃO: Alternar Disponibilidade
+  const handleToggleDisponibilidade = async () => {
+    if (!user) return;
+
+    // Define qual vai ser o novo status (o inverso do atual)
+    const novoStatus = !user.disponivel;
+
+    // 1. Atualiza visualmente na mesma hora para não dar "lag" no clique
+    setUser({ ...user, disponivel: novoStatus });
+
+    try {
+      // 2. Avisa o back-end da mudança
+      await updateMe(user.id, { disponivel: novoStatus });
+      toast.success(
+        novoStatus 
+          ? "Selo ativado! Os clientes agora verão que você está disponível." 
+          : "Selo desativado. Você está offline."
+      );
+    } catch (error) {
+      // 3. Se a internet falhar ou der erro no servidor, desfaz a alteração visual
+      setUser({ ...user, disponivel: !novoStatus });
+      toast.error("Erro ao alterar a disponibilidade. Tente novamente.");
+    }
+  };
+
   if (loading) return <LoadingProfile />;
 
   return (
@@ -94,7 +119,11 @@ export default function PerfilPage() {
             <p className={styles.userEmail}>{user?.email}</p>
 
             <div className={styles.statusSection}>
-               <button className={`${styles.statusToggle} ${user?.disponivel ? styles.online : styles.offline}`}>
+               {/* ✨ ADICIONADO O ONCLICK AQUI */}
+               <button 
+                 onClick={handleToggleDisponibilidade} 
+                 className={`${styles.statusToggle} ${user?.disponivel ? styles.online : styles.offline}`}
+               >
                  {user?.disponivel ? <FaCheckCircle /> : <FaTimesCircle />}
                  {user?.disponivel ? "Disponível" : "Indisponível"}
                </button>

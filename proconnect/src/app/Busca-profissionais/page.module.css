@@ -353,3 +353,36 @@
     min-height: auto;
   }
 }
+
+/* === STATUS DE DISPONIBILIDADE === */
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  width: fit-content;
+}
+
+.statusOn {
+  background-color: #dcfce7; /* Verde clarinho */
+  color: #16a34a; /* Verde escuro */
+}
+
+.statusOff {
+  background-color: #fee2e2; /* Vermelho clarinho */
+  color: #dc2626; /* Vermelho escuro */
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.dotOn { background-color: #16a34a; }
+.dotOff { background-color: #dc2626; }

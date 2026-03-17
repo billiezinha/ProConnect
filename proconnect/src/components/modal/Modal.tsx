@@ -19,9 +19,10 @@ interface ModalProps {
     categoria?: string;
     descricao?: string;
     telefone?: string;
-    precos?: any[]; // Ou Preco[] se tiveres importado
+    precos?: any[]; 
     imagem_url?: string;
-    portfolio?: any[]; // ✨ ADICIONA ISTO AQUI!
+    portfolio?: any[]; 
+    disponivel?: boolean; // ✅ Status de disponibilidade
   };
   onClose: () => void;
 }
@@ -36,7 +37,6 @@ export default function Modal({ profissional, onClose }: ModalProps) {
   useEffect(() => {
     async function loadData() {
       try {
-        // Busca o portfólio e as avaliações via API
         const [portfolioData, avaliacaoData] = await Promise.all([
           getPortfolioByServico(profissional.id),
           getAvaliacoesByServico(profissional.id)
@@ -53,6 +53,12 @@ export default function Modal({ profissional, onClose }: ModalProps) {
   }, [profissional.id]);
 
   const handleContatoClick = () => {
+    // ✨ SEGURANÇA EXTRA: Impede a ação se estiver indisponível
+    if (profissional.disponivel === false) {
+      toast.error("Este profissional não está a receber contactos no momento.");
+      return;
+    }
+
     const token = localStorage.getItem("token");
     
     if (!token) {
@@ -66,18 +72,15 @@ export default function Modal({ profissional, onClose }: ModalProps) {
       return;
     }
 
-    // ✨ A MAGIA DA AVALIAÇÃO: Guarda a intenção de contacto para mostrar o Modal depois
     localStorage.setItem("@ProConnect:avaliar", JSON.stringify({
       id: profissional.id,
       nome: profissional.nome || "Profissional"
     }));
 
-    // Abre o WhatsApp
     const numeroLimpo = profissional.telefone.replace(/\D/g, "");
     const mensagem = encodeURIComponent(`Olá, vi o seu perfil no ProConnect e gostaria de pedir um orçamento.`);
     window.open(`https://wa.me/55${numeroLimpo}?text=${mensagem}`, "_blank");
 
-    // ✨ CORREÇÃO: Fecha o modal do profissional para não tapar a avaliação quando o cliente voltar!
     onClose();
   };
 
@@ -132,8 +135,19 @@ export default function Modal({ profissional, onClose }: ModalProps) {
           )}
         </div>
 
-        <button onClick={handleContatoClick} className={styles.btnWhats}>
-          <FaWhatsapp style={{ fontSize: "1.2rem" }} /> Falar no WhatsApp
+        {/* ✨ BOTÃO DO WHATSAPP COM LÓGICA DE DISPONIBILIDADE */}
+        <button 
+          onClick={handleContatoClick} 
+          className={styles.btnWhats}
+          disabled={profissional.disponivel === false}
+          style={{
+            opacity: profissional.disponivel === false ? 0.6 : 1,
+            cursor: profissional.disponivel === false ? "not-allowed" : "pointer",
+            backgroundColor: profissional.disponivel === false ? "#94a3b8" : ""
+          }}
+        >
+          <FaWhatsapp style={{ fontSize: "1.2rem" }} /> 
+          {profissional.disponivel === false ? "Profissional Indisponível" : "Falar no WhatsApp"}
         </button>
 
         {/* LIGHTBOX (Abre a imagem em ecrã inteiro) */}
