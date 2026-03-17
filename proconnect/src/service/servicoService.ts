@@ -1,8 +1,15 @@
 import api from "./api";
-import type { CreateServicoPayload, Servico, UpdateServicoPayload } from "@/interfaces/ServicoProps";
+import type { Servico, UpdateServicoPayload } from "@/interfaces/ServicoProps";
 
-export async function createServico(data: CreateServicoPayload): Promise<Servico> {
-  const resp = await api.post<Servico>("/servico", data);
+// Alterado para aceitar FormData em vez do Payload antigo
+export async function createServico(formData: FormData): Promise<Servico> {
+  // Com Axios, não precisamos do fetch manual. 
+  // O Axios identifica o FormData e define o Boundary sozinho.
+  const resp = await api.post<Servico>("/servico", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return resp.data;
 }
 
