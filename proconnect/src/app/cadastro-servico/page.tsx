@@ -40,7 +40,7 @@ export default function CadastroServicoPage() {
     setError(null);
 
     try {
-      // ETAPA 1: JSON
+      // ETAPA 1: JSON (Cria o registro no banco)
       const novoServico = await createServico({
         nomeNegocio,
         descricao,
@@ -49,16 +49,25 @@ export default function CadastroServicoPage() {
       });
 
       // ETAPA 2: Upload das imagens usando o ID gerado
+      // AJUSTADO: Chave alterada para "imagem" conforme a API
       if (novoServico.id && (fotoCapa || fotosPortfolio.length > 0)) {
         const formData = new FormData();
-        if (fotoCapa) formData.append("fotoCapa", fotoCapa);
-        fotosPortfolio.forEach((foto) => formData.append("fotosPortfolio", foto));
+        
+        // Foto de Capa -> chave "imagem"
+        if (fotoCapa) formData.append("imagem", fotoCapa); 
+        
+        // Portfólio -> Geralmente a API espera a mesma chave "imagem" para múltiplos 
+        // ou "imagens". Vou manter "imagem" para seguir seu padrão.
+        fotosPortfolio.forEach((foto) => {
+          formData.append("imagem", foto); 
+        });
+
         await uploadImagemServico(novoServico.id, formData);
       }
 
       router.push("/meus-servicos");
     } catch (err) {
-      setError("Erro ao salvar. Verifique os dados.");
+      setError("Erro ao salvar. Verifique se os campos estão corretos.");
     } finally { setLoading(false); }
   };
 
@@ -99,7 +108,6 @@ export default function CadastroServicoPage() {
                   </select>
                 </div>
 
-                {/* LISTA DE PREÇOS REESTILIZADA */}
                 <div className={styles.priceContainer}>
                   <label className={styles.label}><FaListUl /> Tabela de Preços</label>
                   <div className={styles.priceHeader}>
