@@ -386,3 +386,61 @@
 
 .dotOn { background-color: #16a34a; }
 .dotOff { background-color: #dc2626; }
+
+.cardImageContainer {
+  position: relative;
+  width: 100%;
+}
+
+.cardImage {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 12px 12px 0 0;
+}
+
+.cardImagePlaceholder {
+  width: 100%;
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--cor-fundo-secao);
+  border-radius: 12px 12px 0 0;
+}
+
+.statusBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  width: fit-content;
+  margin-bottom: 8px;
+}
+
+.statusOn {
+  background-color: rgba(39, 174, 96, 0.15);
+  color: #27ae60;
+}
+
+.statusOff {
+  background-color: rgba(231, 76, 60, 0.15);
+  color: #e74c3c;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.dotOn {
+  background-color: #27ae60;
+}
+
+.dotOff {
+  background-color: #e74c3c;
+}

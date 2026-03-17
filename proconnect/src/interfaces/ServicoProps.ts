@@ -19,14 +19,12 @@ export interface Servico {
   id: number;
   nomeNegocio: string;
   descricao: string;
-  imagem?: string | null; 
-  imagemUrl?: string | null; 
+  imagem?: string | null;
+  imagemUrl?: string | null;
   preco: any[];
-  portfolio?: any[]; 
-  
-  // ✨ ADICIONA ESTA LINHA AQUI:
-  disponivel?: boolean; 
-  
+  portfolio?: any[];
+  // Se tiveres um disponivel aqui fora, podes manter, 
+  // mas o erro indica que ele falta lá dentro do usuario:
   categoria?: {
     id: number;
     nomeServico: string;
@@ -35,6 +33,8 @@ export interface Servico {
     id: number;
     telefone: string;
     nome?: string;
+    // ✨ ADICIONA ESTA LINHA AQUI:
+    disponivel?: boolean; 
   };
 }
 

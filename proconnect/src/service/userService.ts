@@ -34,8 +34,9 @@ export async function removerFotoPerfil(): Promise<void> {
   await api.delete("/usuario/me/imagem");
 }
 
-// ✨ FUNÇÃO ADICIONADA AQUI NO LUGAR CERTO:
+// ✨ FUNÇÃO CORRIGIDA: 
+// Recebe o ID para não quebrar o teu Perfil, mas envia o PUT para a rota "/usuario/me"
 export async function updateMe(id: number, data: Partial<User>): Promise<User> {
-  const resp = await api.put<User>(`/usuario/${id}`, data);
+  const resp = await api.put<User>("/usuario/me", data);
   return resp.data;
 }

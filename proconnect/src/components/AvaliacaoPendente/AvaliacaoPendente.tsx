@@ -9,11 +9,10 @@ export default function AvaliacaoPendente() {
   const [pendente, setPendente] = useState<{ id: number; nome: string } | null>(null);
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
-  const [descricao, setDescricao] = useState("");
+  const [comentario, setComentario] = useState(""); // Alterado de 'descricao' para 'comentario'
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Função que verifica se há alguma avaliação pendente no localStorage
     const verificarPendente = () => {
       const salvo = localStorage.getItem("@ProConnect:avaliar");
       if (salvo) {
@@ -21,12 +20,9 @@ export default function AvaliacaoPendente() {
       }
     };
 
-    // Verifica assim que a página carrega
     verificarPendente();
 
-    // ✨ O SEGREDO: Verifica sempre que o utilizador VOLTA para a aba do site
     const handleFocus = () => {
-      // Pequeno delay para a transição ser mais suave
       setTimeout(verificarPendente, 1500); 
     };
 
@@ -38,27 +34,32 @@ export default function AvaliacaoPendente() {
     localStorage.removeItem("@ProConnect:avaliar");
     setPendente(null);
     setRating(0);
-    setDescricao("");
+    setComentario("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!pendente) return;
+
     if (rating === 0) {
-      toast.error("Por favor, dê uma nota de 1 a 5 estrelas.");
+      toast.error("Por favor, selecione uma nota de 1 a 5 estrelas.");
       return;
     }
 
     setLoading(true);
     try {
+      // ✅ CORREÇÃO: Enviando 'nota' e 'comentario' para coincidir com o serviço
       await createAvaliacao({ 
-        servicoId: pendente!.id, 
-        star: rating, 
-        descricao 
+        servicoId: pendente.id, 
+        nota: rating, 
+        comentario: comentario 
       });
-      toast.success("Avaliação enviada com sucesso! Obrigado.");
-      fecharModal(); // Limpa e fecha o modal
+
+      toast.success("Avaliação enviada com sucesso!");
+      fecharModal();
     } catch (error) {
-      toast.error("Erro ao enviar avaliação. Tente novamente.");
+      toast.error("Erro ao enviar avaliação.");
     } finally {
       setLoading(false);
     }
@@ -73,8 +74,8 @@ export default function AvaliacaoPendente() {
           <FaTimes />
         </button>
         
-        <h2>Como correu?</h2>
-        <p>Voltou do WhatsApp com <strong>{pendente.nome}</strong>? Ajude a comunidade e avalie o atendimento!</p>
+        <h2>Como foi o atendimento?</h2>
+        <p>Avaliando o serviço de <strong>{pendente.nome}</strong></p>
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.starsContainer}>
@@ -93,19 +94,19 @@ export default function AvaliacaoPendente() {
           </div>
 
           <textarea
-            placeholder="Deixe um comentário sobre o serviço (opcional)..."
-            value={descricao}
-            onChange={(e) => setDescricao(e.target.value)}
+            placeholder="Deixe um comentário (opcional)..."
+            value={comentario}
+            onChange={(e) => setComentario(e.target.value)}
             className={styles.textArea}
             rows={3}
           />
 
           <div className={styles.botoes}>
             <button type="button" onClick={fecharModal} className={styles.btnCancelar}>
-              Avaliar depois
+              Depois
             </button>
             <button type="submit" disabled={loading} className={styles.btnEnviar}>
-              {loading ? "A enviar..." : "Enviar Avaliação"}
+              {loading ? "Enviando..." : "Enviar Avaliação"}
             </button>
           </div>
         </form>

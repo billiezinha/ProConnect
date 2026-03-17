@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import { getServicos } from "@/service/servicoService";
 import { Servico } from "@/interfaces/ServicoProps";
 import styles from "./page.module.css";
-import { FaSearch, FaHeart, FaRegHeart, FaTimes } from "react-icons/fa";
+import { FaSearch, FaHeart, FaRegHeart, FaTimes, FaFilter } from "react-icons/fa";
 import Modal from "@/components/modal/Modal";
 import { LoadingGrid } from "@/components/loading/Loading";
 import toast from "react-hot-toast";
@@ -54,11 +54,21 @@ export default function BuscaProfissionaisPage() {
     localStorage.setItem("@ProConnect:favoritos", JSON.stringify(novaLista));
   };
 
+  // Limpa todos os filtros de uma vez
+  const limparFiltros = () => {
+    setSearchTerm("");
+    setSelectedCategory(null);
+  };
+
   const filteredServicos = useMemo(() => {
-    const t = searchTerm.toLowerCase();
+    const t = searchTerm.toLowerCase().trim();
     return servicos.filter(s => {
-      const matchesSearch = s.nomeNegocio.toLowerCase().includes(t) || s.descricao.toLowerCase().includes(t);
-      const matchesCategory = selectedCategory ? s.categoria?.nomeServico === selectedCategory : true;
+      const nomeNegocio = s.nomeNegocio?.toLowerCase() || "";
+      const descricao = s.descricao?.toLowerCase() || "";
+      const matchesSearch = nomeNegocio.includes(t) || descricao.includes(t);
+      const matchesCategory = selectedCategory 
+        ? s.categoria?.nomeServico === selectedCategory 
+        : true;
       return matchesSearch && matchesCategory;
     });
   }, [searchTerm, selectedCategory, servicos]);
@@ -126,7 +136,10 @@ export default function BuscaProfissionaisPage() {
         {loading ? (
           <LoadingGrid />
         ) : error ? (
-          <p className={styles.errorState}>{error}</p>
+          <div className={styles.errorContainer}>
+            <p className={styles.errorState}>{error}</p>
+            <button onClick={() => window.location.reload()} className={styles.retryBtn}>Tentar novamente</button>
+          </div>
         ) : (
           <div className={styles.resultsGrid}>
             {filteredServicos.length > 0 ? (
@@ -135,11 +148,12 @@ export default function BuscaProfissionaisPage() {
                 const iconToRender = (catName && catName in categoryIcons) 
                   ? categoryIcons[catName as keyof typeof categoryIcons] 
                   : defaultIcon;
+                
+                // Determina se está disponível (padrão true se não definido)
+                const isDisponivel = s.usuario?.disponivel !== false;
 
                 return (
                   <div key={s.id} className={styles.servicoCard}>
-                    
-                    {/* ✅ IMAGEM DE CAPA */}
                     <div className={styles.cardImageContainer}>
                       {s.imagem ? (
                         <img src={s.imagem} alt={s.nomeNegocio} className={styles.cardImage} />
@@ -151,6 +165,7 @@ export default function BuscaProfissionaisPage() {
                       <button 
                         className={styles.favButton}
                         onClick={() => toggleFavorito(s.id, s.nomeNegocio)}
+                        title="Favoritar"
                       >
                         {favoritos.includes(s.id) ? (
                           <FaHeart className={styles.iconFill} />
@@ -163,13 +178,14 @@ export default function BuscaProfissionaisPage() {
                     <div className={styles.cardContent}>
                       <h3 className={styles.servicoTitle}>{s.nomeNegocio}</h3>
                       
-                      {/* ✨ SELO DE DISPONIBILIDADE */}
-                      <div className={`${styles.statusBadge} ${s.disponivel !== false ? styles.statusOn : styles.statusOff}`}>
-                        <span className={`${styles.statusDot} ${s.disponivel !== false ? styles.dotOn : styles.dotOff}`}></span>
-                        {s.disponivel !== false ? "Disponível agora" : "Indisponível no momento"}
+                      <div className={`${styles.statusBadge} ${isDisponivel ? styles.statusOn : styles.statusOff}`}>
+                        <span className={`${styles.statusDot} ${isDisponivel ? styles.dotOn : styles.dotOff}`}></span>
+                        {isDisponivel ? "Disponível agora" : "Indisponível no momento"}
                       </div>
 
-                      <p className={styles.servicoDescription}>{s.descricao}</p>
+                      <p className={styles.servicoDescription}>
+                        {s.descricao.length > 120 ? `${s.descricao.substring(0, 120)}...` : s.descricao}
+                      </p>
                     </div>
 
                     <div className={styles.cardFooter}>
@@ -187,7 +203,12 @@ export default function BuscaProfissionaisPage() {
                 );
               })
             ) : (
-              <p className={styles.emptyState}>Nenhum profissional encontrado.</p>
+              <div className={styles.emptyStateWrapper}>
+                <p className={styles.emptyState}>Nenhum profissional encontrado com estes filtros.</p>
+                <button onClick={limparFiltros} className={styles.clearFiltersBtn}>
+                  Limpar todos os filtros
+                </button>
+              </div>
             )}
           </div>
         )}
@@ -202,8 +223,8 @@ export default function BuscaProfissionaisPage() {
             descricao: selectedProfissional.descricao,
             telefone: selectedProfissional.usuario?.telefone,
             precos: selectedProfissional.preco,
-            portfolio: selectedProfissional.portfolio, // ✅ Adicionado para exibir as fotos no modal
-            disponivel: selectedProfissional.disponivel // ✅ Adicionado para bloquear o botão do WhatsApp
+            portfolio: selectedProfissional.portfolio,
+            disponivel: selectedProfissional.usuario?.disponivel !== false
           }} 
           onClose={() => setShowModal(false)} 
         />
