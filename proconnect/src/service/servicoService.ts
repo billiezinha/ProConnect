@@ -1,16 +1,24 @@
 import api from "./api";
 import type { Servico, UpdateServicoPayload } from "@/interfaces/ServicoProps";
 
-// Alterado para aceitar FormData em vez do Payload antigo
-export async function createServico(formData: FormData): Promise<Servico> {
-  // Com Axios, não precisamos do fetch manual. 
-  // O Axios identifica o FormData e define o Boundary sozinho.
-  const resp = await api.post<Servico>("/servico", formData, {
+// 1. Cria o serviço enviando JSON puro (Nomes em minúsculo conforme o seu backend)
+export async function createServico(data: {
+  nomeNegocio: string;
+  descricao: string;
+  categoriaId: number;
+  preco: { nomeservico: string; precificacao: number }[];
+}): Promise<Servico> {
+  const resp = await api.post<Servico>("/servico", data);
+  return resp.data;
+}
+
+// 2. Rota para upload das imagens (Usando o ID que o backend gerou)
+export async function uploadImagemServico(id: number, formData: FormData): Promise<void> {
+  await api.patch(`/servico/${id}/imagem`, formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   });
-  return resp.data;
 }
 
 export async function getServicos(): Promise<Servico[]> {
