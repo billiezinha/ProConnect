@@ -2,10 +2,9 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { 
   FaUserCircle, 
-  FaSignOutAlt, 
   FaHeart, 
   FaSearch, 
   FaSignInAlt 
@@ -16,7 +15,6 @@ import Cookies from "js-cookie";
 export default function Navbar() {
   const [isLogged, setIsLogged] = useState(false);
   const [favCount, setFavCount] = useState(0);
-  const router = useRouter();
   const pathname = usePathname();
 
   // Função memorizada para checar o estado de login
@@ -39,13 +37,6 @@ export default function Navbar() {
       window.removeEventListener("storage", checkAuthState);
     };
   }, [pathname, checkAuthState]);
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    Cookies.remove("token");
-    setIsLogged(false);
-    router.replace("/login");
-  };
 
   const hideNavbar = ["/login", "/cadastro-usuario"].includes(pathname);
   if (hideNavbar) return null;
@@ -73,13 +64,11 @@ export default function Navbar() {
 
           {isLogged ? (
             <div className={styles.userMenu}>
+              {/* O botão de Sair foi removido daqui! */}
               <Link href="/perfil" className={styles.profileLink}>
                 <FaUserCircle className={styles.alwaysIcon} />
                 <span className={styles.desktopText}>Meu Perfil</span>
               </Link>
-              <button onClick={handleLogout} className={styles.logoutBtn} aria-label="Sair">
-                <FaSignOutAlt className={styles.alwaysIcon} />
-              </button>
             </div>
           ) : (
             <Link href="/login" className={styles.loginBtn}>
