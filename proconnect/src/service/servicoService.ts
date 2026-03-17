@@ -19,9 +19,10 @@ export async function uploadImagemServico(id: number, formData: FormData): Promi
   });
 }
 
-// ETAPA 3: Upload do Portfólio (POST - Uma por uma)
-export async function uploadPortfolioServico(id: number, formData: FormData): Promise<void> {
-  await api.post(`/servico/${id}/portfolio`, formData, {
+// ✨ ETAPA 3: Upload do Portfólio (Corrigido com a rota certa!)
+export async function uploadPortfolioServico(servicoId: number, formData: FormData): Promise<void> {
+  formData.append("servicoId", String(servicoId)); // adiciona o servicoId no FormData
+  await api.post(`/portfolio`, formData, {         // rota correta
     headers: { "Content-Type": "multipart/form-data" },
   });
 }

@@ -1,7 +1,9 @@
+/* === LAYOUT E ESTRUTURA === */
 .wrapper {
-  background-color: var(--cor-fundo-site, #f8f9fa); /* Usa sua variável de tema */
-  min-height: calc(100vh - 80px); /* Desconta a altura da sua Navbar */
+  background-color: var(--cor-fundo-site, #f8f9fa);
+  min-height: calc(100vh - 80px);
   padding: 40px 20px;
+  transition: all 0.3s ease;
 }
 
 .container {
@@ -12,37 +14,104 @@
   gap: 30px;
 }
 
+/* === SIDEBAR (ESQUERDA) === */
 .sidebar {
   background: var(--cor-fundo-card, #ffffff);
   padding: 40px 20px;
   border-radius: 24px;
-  text-align: center;
   box-shadow: 0 10px 30px rgba(0,0,0,0.05);
   height: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centraliza tudo na sidebar */
 }
 
-.avatar { font-size: 90px; color: var(--cor-primaria); margin-bottom: 20px; }
-.userCore h2 { font-size: 1.5rem; color: var(--cor-texto-principal); margin-bottom: 5px; }
-.userEmail { color: var(--cor-texto-secundario); font-size: 0.9rem; margin-bottom: 30px; }
-
-.logoutBtn {
+.userCore {
   width: 100%;
-  padding: 14px;
-  background: transparent;
-  border: 1.5px solid #ff4757;
-  color: #ff4757;
-  border-radius: 12px;
-  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* ✨ Centraliza a foto e os textos */
+  text-align: center;
+}
+
+.avatarContainer {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  margin: 0 auto 20px auto; /* ✨ Garante centralização absoluta */
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid var(--cor-primaria);
+  box-shadow: 0 8px 20px rgba(139, 44, 245, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarPlaceholder {
+  width: 100%;
+  height: 100%;
+  font-size: 130px;
+  color: var(--cor-borda);
+}
+
+.avatarOverlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.avatarContainer:hover .avatarOverlay { opacity: 1; }
+
+.avatarBtn {
+  background: white;
+  color: var(--cor-primaria);
+  border: none;
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: transform 0.2s;
+}
+
+.avatarBtn:hover { transform: scale(1.1); }
+
+.userCore h2 { font-size: 1.6rem; color: var(--cor-texto); margin-top: 10px; }
+.userEmail { color: var(--cor-texto-secundario); font-size: 0.95rem; margin-bottom: 25px; }
+
+/* === STATUS E BOTÕES === */
+.statusSection { width: 100%; margin-bottom: 20px; }
+
+.statusToggle {
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; width: 100%; padding: 12px;
+  border-radius: 14px; border: none; font-weight: 700;
+  cursor: pointer; transition: 0.3s;
+}
+
+.online { background: #e6fffa; color: #2d6a4f; border: 1px solid #c6f6d5; }
+.offline { background: #fff5f5; color: #c53030; border: 1px solid #feb2b2; }
+
+.logoutBtn {
+  width: 100%; padding: 14px;
+  background: transparent; border: 1.5px solid #ff4757;
+  color: #ff4757; border-radius: 12px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px; cursor: pointer; transition: 0.2s;
 }
 
 .logoutBtn:hover { background: #ff4757; color: white; }
 
+/* === CONTEÚDO PRINCIPAL (DIREITA) === */
 .card {
   background: var(--cor-fundo-card, #ffffff);
   padding: 30px;
@@ -52,322 +121,87 @@
 }
 
 .cardHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
-  border-bottom: 1px solid #eee;
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 25px; border-bottom: 1px solid var(--cor-borda);
   padding-bottom: 15px;
 }
 
+.editBtn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 18px; font-size: 0.9rem; font-weight: 600;
+  color: var(--cor-primaria); background: rgba(139, 44, 245, 0.08);
+  border: none; border-radius: 10px; cursor: pointer; transition: all 0.3s;
+}
+
+.editBtn:hover { background: var(--cor-primaria); color: white; transform: translateY(-2px); }
+
 .infoGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .infoBox label { display: flex; align-items: center; gap: 8px; color: var(--cor-texto-secundario); font-size: 0.85rem; margin-bottom: 8px; }
-.infoBox span { font-weight: 700; color: var(--cor-texto-principal); font-size: 1rem; }
+.infoBox span { font-weight: 700; color: var(--cor-texto); font-size: 1.05rem; }
 
 .quickActions { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .actionCard {
   background: var(--cor-fundo-card, #ffffff);
-  padding: 30px;
-  border-radius: 24px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  padding: 30px; border-radius: 24px;
+  cursor: pointer; text-align: center;
+  transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
 }
 
 .actionCard:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(139, 44, 245, 0.15); }
-.actionCard svg { font-size: 35px; color: var(--cor-primaria); margin-bottom: 15px; }
+.actionCard svg { font-size: 40px; color: var(--cor-primaria); margin-bottom: 15px; }
 
-@media (max-width: 900px) {
-  .container { grid-template-columns: 1fr; }
-}
-
-/* === ESTILOS DA FOTO DE PERFIL === */
-.avatarContainer {
-  position: relative;
-  width: 120px;
-  height: 120px;
-  margin: 0 auto 16px auto;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 3px solid var(--cor-primaria);
-  box-shadow: var(--sombra-suave);
-}
-
-.avatarPlaceholder {
-  width: 100%;
-  height: 100%;
-  color: var(--cor-borda);
-  background-color: var(--cor-fundo-input);
-}
-
-.avatarImg {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* O fundo escuro que aparece ao passar o rato */
-.avatarOverlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-
-.avatarContainer:hover .avatarOverlay {
-  opacity: 1;
-}
-
-.avatarBtn {
-  background: white;
-  color: var(--cor-primaria);
-  border: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.avatarBtn:hover {
-  transform: scale(1.1);
-}
-
-.btnRemover {
-  color: #ef4444; /* Vermelho para dar a ideia de apagar */
-}
-
-.uploadingText {
-  font-size: 0.85rem;
-  color: var(--cor-primaria);
-  font-weight: 600;
-  margin-bottom: 12px;
-  animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-  0% { opacity: 0.6; }
-  50% { opacity: 1; }
-  100% { opacity: 0.6; }
-}
-/* STATUS DISPONIBILIDADE */
-.statusSection {
-  margin-top: 15px;
-  width: 100%;
-}
-
-.statusToggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  padding: 10px;
-  border-radius: 12px;
-  border: none;
-  font-weight: 700;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.online { background: #e6fffa; color: #2d6a4f; border: 1px solid #2d6a4f; }
-.offline { background: #fff5f5; color: #c53030; border: 1px solid #c53030; }
-
-/* MODAL DE EDIÇÃO */
+/* === MODAL DE EDIÇÃO === */
 .modalOverlay {
-  position: fixed;
-  top:0; left:0; width:100%; height:100%;
-  background: rgba(0,0,0,0.6);
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
   display: flex; align-items: center; justify-content: center;
-  z-index: 1000;
+  z-index: 2000; animation: fadeIn 0.3s ease;
 }
 
-.modalContent {
-  background: white;
-  padding: 30px;
-  border-radius: 20px;
-  width: 90%;
-  max-width: 400px;
-}
-
-.formGroup { margin-bottom: 15px; display: flex; flex-direction: column; }
-.formGroup input { padding: 10px; border-radius: 8px; border: 1px solid #ddd; }
-
-.modalActions { display: flex; gap: 10px; margin-top: 20px; }
-.saveBtn { background: var(--cor-primaria); color: white; border: none; padding: 10px; border-radius: 8px; flex: 1; cursor: pointer; }
-
-/* === BOTÃO EDITAR PERFIL === */
-.editBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px; /* Espaço perfeito entre o ícone e o texto */
-  padding: 8px 16px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  
-  /* Cores: Fundo roxo muito clarinho com texto roxo forte */
-  color: var(--cor-primaria, #8b2cf5);
-  background-color: rgba(139, 44, 245, 0.1); 
-  border: 1px solid transparent;
-  border-radius: 8px;
-  cursor: pointer;
-  
-  /* Transição suave para o hover */
-  transition: all 0.3s ease;
-}
-
-/* O que acontece quando o rato passa por cima */
-.editBtn:hover {
-  background-color: var(--cor-primaria, #8b2cf5); /* Fundo fica roxo sólido */
-  color: #ffffff; /* Texto e ícone ficam brancos */
-  transform: translateY(-2px); /* Levanta um bocadinho */
-  box-shadow: 0 4px 12px rgba(139, 44, 245, 0.25); /* Sombra suave */
-}
-
-/* O que acontece quando o utilizador clica */
-.editBtn:active {
-  transform: translateY(0) scale(0.98); /* Fica ligeiramente mais pequeno */
-}
-
-/* =========================================
-   MODAL DE EDIÇÃO DE PERFIL
-========================================= */
-
-/* O fundo escuro e desfocado atrás do modal */
-.modalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 20px;
-  animation: fadeIn 0.3s ease;
-}
-
-/* A caixa branca do modal */
 .modalContent {
   background-color: var(--cor-fundo-card, #ffffff);
-  width: 100%;
-  max-width: 420px; /* Largura ideal para formulários curtos */
-  padding: 2.5rem 2rem;
-  border-radius: 24px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-  animation: slideUpModal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  width: 95%; max-width: 440px; padding: 2.5rem;
+  border-radius: 28px; box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+  animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.modalContent h3 {
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: var(--cor-texto, #333);
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
-
-/* === GRUPO DE INPUTS === */
-.formGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 1.5rem;
-}
-
-.formGroup label {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--cor-texto-secundario, #666);
-  margin-left: 4px;
-}
-
+.formGroup { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.5rem; }
+.formGroup label { font-size: 0.9rem; font-weight: 700; color: var(--cor-texto-secundario); }
 .formGroup input {
-  width: 100%;
-  padding: 14px 16px;
+  padding: 14px 18px; border-radius: 14px;
   border: 2px solid var(--cor-borda, #eaeaea);
-  border-radius: 12px;
-  background-color: var(--cor-fundo-input, #fafafa);
-  color: var(--cor-texto, #333);
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  outline: none;
+  background: var(--cor-fundo-input, #fafafa);
+  color: var(--cor-texto); transition: 0.3s;
 }
 
-/* O que acontece quando clicas para escrever (Focus) */
-.formGroup input:focus {
-  border-color: var(--cor-primaria, #8b2cf5);
-  background-color: #fff;
-  box-shadow: 0 0 0 4px rgba(139, 44, 245, 0.1);
+.formGroup input:focus { border-color: var(--cor-primaria); background: white; outline: none; }
+
+.modalActions { display: flex; gap: 15px; margin-top: 25px; }
+.modalActions button { flex: 1; padding: 15px; border-radius: 14px; font-weight: 700; cursor: pointer; border: none; transition: 0.2s; }
+
+.saveBtn { background: var(--cor-primaria); color: white; }
+.saveBtn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+/* === MODO NOTURNO (TRUE BLACK) === */
+[data-theme='dark'] .wrapper { background-color: #000000; }
+[data-theme='dark'] .sidebar,
+[data-theme='dark'] .card,
+[data-theme='dark'] .actionCard,
+[data-theme='dark'] .modalContent {
+  background-color: #0a0a0a; border: 1px solid #1a1a1a; box-shadow: none;
+}
+[data-theme='dark'] .infoBox { background-color: #141414; border-radius: 14px; padding: 12px; }
+[data-theme='dark'] .formGroup input { background-color: #111; border-color: #222; }
+[data-theme='dark'] .formGroup input:focus { background-color: #000; border-color: var(--cor-primaria); }
+
+/* === RESPONSIVIDADE === */
+@media (max-width: 900px) {
+  .container { grid-template-columns: 1fr; }
+  .infoGrid, .quickActions { grid-template-columns: 1fr; }
 }
 
-/* === BOTÕES DO MODAL === */
-.modalActions {
-  display: flex;
-  gap: 12px;
-  margin-top: 2rem;
-}
-
-.modalActions button {
-  flex: 1; /* Faz os dois botões terem o mesmo tamanho */
-  padding: 14px;
-  border-radius: 12px;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  border: none;
-  transition: all 0.2s ease;
-}
-
-/* Botão de Cancelar */
-.modalActions button[type="button"] {
-  background-color: var(--cor-fundo-input, #f3f4f6);
-  color: var(--cor-texto-secundario, #666);
-}
-
-.modalActions button[type="button"]:hover {
-  background-color: #e5e7eb;
-  color: var(--cor-texto, #333);
-}
-
-/* Botão de Salvar */
-.saveBtn {
-  background-color: var(--cor-primaria, #8b2cf5);
-  color: #ffffff;
-  box-shadow: 0 4px 12px rgba(139, 44, 245, 0.3);
-}
-
-.saveBtn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(139, 44, 245, 0.4);
-}
-
-.saveBtn:active {
-  transform: translateY(0);
-}
-
-/* === ANIMAÇÕES === */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideUpModal {
-  from { opacity: 0; transform: translateY(30px) scale(0.95); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { 
+  from { opacity: 0; transform: translateY(40px) scale(0.95); } 
+  to { opacity: 1; transform: translateY(0) scale(1); } 
 }

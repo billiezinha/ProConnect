@@ -17,6 +17,7 @@
   gap: 2.5rem;
   align-items: flex-start;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .formSection {
@@ -88,45 +89,69 @@
   resize: vertical;
 }
 
-/* === TABELA DE PREÇOS (NOVO DESIGN) === */
+/* === TABELA DE PREÇOS (AJUSTADA) === */
 .priceContainer {
-  background-color: #f8fafc;
-  padding: 1.2rem;
-  border-radius: 10px;
-  border: 1px solid #e2e8f0;
+  background-color: var(--cor-fundo-input, #f8fafc);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid var(--cor-borda, #e2e8f0);
   margin-bottom: 1.5rem;
 }
 
 .priceHeader {
   display: flex;
   gap: 10px;
-  padding: 0 0.5rem 0.5rem;
-  font-size: 0.75rem;
+  padding: 0 4px 8px 4px; /* Alinhamento com o padding dos inputs */
+  font-size: 0.8rem;
   font-weight: 700;
-  color: #64748b;
+  color: var(--cor-texto-secundario, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+/* O segredo para alinhar: o primeiro span (Serviço) cresce, o segundo (Preço) é fixo */
+.priceHeader span:first-child {
+  flex: 1;
+}
+
+.priceHeader span:last-child {
+  width: 120px; /* Mesma largura do inputSmall + margens do botão se houver */
+  text-align: left;
 }
 
 .priceRow {
   display: flex;
   gap: 10px;
-  margin-bottom: 10px;
-  animation: fadeIn 0.3s ease-out;
+  margin-bottom: 12px;
+  align-items: center;
 }
 
-.inputSmall {
-  width: 110px;
+/* O input do nome do serviço ocupa todo o espaço restante */
+.priceRow .input {
+  flex: 1;
   padding: 0.8rem;
-  border: 1px solid var(--cor-borda);
+  border: 1px solid var(--cor-borda, #e2e8f0);
   border-radius: 8px;
-  font-weight: 600;
+  font-size: 0.95rem;
 }
 
+/* O input do preço tem largura fixa para não "dançar" no ecrã */
+.inputSmall {
+  width: 120px;
+  padding: 0.8rem;
+  border: 1px solid var(--cor-borda, #e2e8f0);
+  border-radius: 8px;
+  font-weight: 700;
+  color: var(--cor-primaria);
+  text-align: right;
+}
+
+/* Botão de adicionar com estilo moderno */
 .addBtn {
   width: 100%;
-  padding: 0.7rem;
-  background-color: #fff;
+  margin-top: 8px;
+  padding: 10px;
+  background-color: transparent;
   color: var(--cor-primaria);
   border: 2px dashed var(--cor-primaria);
   border-radius: 8px;
@@ -136,25 +161,12 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: 0.2s;
+  transition: all 0.2s ease;
 }
 
 .addBtn:hover {
-  background-color: #f5f0ff;
-}
-
-.removeBtn {
-  background-color: #fee2e2;
-  color: #dc2626;
-  border: none;
-  padding: 0 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.removeBtn:hover {
-  background-color: #fecaca;
+  background-color: rgba(139, 44, 245, 0.05);
+  border-style: solid;
 }
 
 /* === CARD DE PREVIEW === */
@@ -304,4 +316,79 @@
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 900px) {
+  .contentLayout {
+    flex-direction: column;
+    align-items: center; /* ✨ Centraliza o formulário e a prévia no telemóvel */
+  }
+  
+  .formSection, .previewSection {
+    width: 100%;
+    max-width: 500px; /* Evita que o formulário fique demasiado largo em tablets */
+  }
+
+  .previewSection {
+    position: static;
+    order: -1;
+  }
+}
+
+/* === ESTILIZAÇÃO DO UPLOAD DE FOTO PRINCIPAL === */
+
+.formGroup input[type="file"] {
+  width: 100%;
+  padding: 2rem;
+  background-color: var(--cor-fundo-input, #f8fafc);
+  border: 2px dashed var(--cor-borda, #e2e8f0);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--cor-texto-secundario, #64748b);
+  position: relative;
+  text-align: center;
+}
+
+/* Estiliza o botão interno que o navegador cria */
+.formGroup input[type="file"]::file-selector-button {
+  background-color: var(--cor-primaria, #8b2cf5);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  margin-right: 20px;
+  cursor: pointer;
+  font-weight: 700;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(139, 44, 245, 0.2);
+}
+
+.formGroup input[type="file"]::file-selector-button:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+
+/* Efeito de hover na caixa inteira */
+.formGroup input[type="file"]:hover {
+  border-color: var(--cor-primaria);
+  background-color: rgba(139, 44, 245, 0.03);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+}
+
+/* Ajuste do ícone e texto do Label acima do input */
+.formGroup .label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--cor-texto);
+  margin-bottom: 12px;
+}
+
+.formGroup .label svg {
+  color: var(--cor-primaria);
+  font-size: 1.2rem;
 }

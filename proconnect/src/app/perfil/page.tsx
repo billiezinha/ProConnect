@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
-import { getMe, uploadFotoPerfil, removerFotoPerfil, updateMe } from "@/service/userService";
+import { getMe, uploadFotoPerfil, updateMe } from "@/service/userService";
 import type { User } from "@/interfaces/UserProps";
 import styles from "./page.module.css";
 import { 
@@ -17,9 +17,9 @@ export default function PerfilPage() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   
-  // ✨ ESTADOS PARA EDIÇÃO (Agora com Cidade e Estado)
   const [editNome, setEditNome] = useState("");
   const [editTelefone, setEditTelefone] = useState("");
   const [editCidade, setEditCidade] = useState("");
@@ -31,8 +31,6 @@ export default function PerfilPage() {
     try {
       const userData = await getMe();
       setUser(userData);
-      
-      // Carrega os dados atuais para dentro dos inputs do modal
       setEditNome(userData.nome || "");
       setEditTelefone(userData.telefone || "");
       setEditCidade(userData.cidade || "");
@@ -44,9 +42,7 @@ export default function PerfilPage() {
     }
   };
 
-  useEffect(() => { 
-    carregarUtilizador(); 
-  }, []);
+  useEffect(() => { carregarUtilizador(); }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -54,52 +50,24 @@ export default function PerfilPage() {
     router.replace("/login");
   };
 
-  const toggleDisponibilidade = async () => {
-    if (!user) return;
-    try {
-      const novoStatus = !user.disponivel;
-      await updateMe(user.id, { disponivel: novoStatus });
-      setUser({ ...user, disponivel: novoStatus });
-      toast.success(novoStatus ? "Você está disponível!" : "Você está offline.");
-    } catch (error) {
-      toast.error("Erro ao alterar status.");
-    }
-  };
-
-  // ✨ FUNÇÃO ATUALIZADA: Agora envia também a cidade e o estado para a API
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
-
+    setIsSaving(true);
     try {
       await updateMe(user.id, { 
         nome: editNome, 
         telefone: editTelefone,
         cidade: editCidade,
-        estado: editEstado.toUpperCase() // Força o estado a ficar em maiúsculas (ex: PI, SP)
+        estado: editEstado.toUpperCase() 
       });
-      toast.success("Perfil atualizado com sucesso!");
+      toast.success("Perfil atualizado!");
       setIsEditModalOpen(false);
-      carregarUtilizador();
-    } catch (error) {
-      toast.error("Erro ao atualizar perfil.");
-    }
-  };
-
-  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("imagem", file);
-    setUploading(true);
-    try {
-      await uploadFotoPerfil(formData);
-      toast.success("Foto atualizada!");
       await carregarUtilizador();
     } catch {
-      toast.error("Erro ao atualizar foto.");
+      toast.error("Erro ao atualizar.");
     } finally {
-      setUploading(false);
+      setIsSaving(false);
     }
   };
 
@@ -117,21 +85,16 @@ export default function PerfilPage() {
                 <FaUserCircle className={styles.avatarPlaceholder} />
               )}
               <div className={styles.avatarOverlay}>
-                <button className={styles.avatarBtn} onClick={() => fileInputRef.current?.click()} disabled={uploading}>
+                <button className={styles.avatarBtn} onClick={() => fileInputRef.current?.click()}>
                   <FaCamera />
                 </button>
               </div>
-              <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" style={{ display: "none" }} />
             </div>
-            
             <h2>{user?.nome}</h2>
             <p className={styles.userEmail}>{user?.email}</p>
 
             <div className={styles.statusSection}>
-               <button 
-                onClick={toggleDisponibilidade}
-                className={`${styles.statusToggle} ${user?.disponivel ? styles.online : styles.offline}`}
-               >
+               <button className={`${styles.statusToggle} ${user?.disponivel ? styles.online : styles.offline}`}>
                  {user?.disponivel ? <FaCheckCircle /> : <FaTimesCircle />}
                  {user?.disponivel ? "Disponível" : "Indisponível"}
                </button>
@@ -139,7 +102,7 @@ export default function PerfilPage() {
           </div>
 
           <button onClick={handleLogout} className={styles.logoutBtn}>
-            <FaSignOutAlt /> Sair
+            <FaSignOutAlt /> Sair da Conta
           </button>
         </aside>
 
@@ -158,8 +121,7 @@ export default function PerfilPage() {
               </div>
               <div className={styles.infoBox}>
                 <label><FaMapMarkerAlt /> Localização</label>
-                {/* Aqui mostra as informações reais do banco de dados */}
-                <span>{user?.cidade || "Não informada"}, {user?.estado || "BR"}</span>
+                <span>{user?.cidade || "Cidade"}, {user?.estado || "UF"}</span>
               </div>
             </div>
           </section>
@@ -175,46 +137,35 @@ export default function PerfilPage() {
         </main>
       </div>
 
-      {/* ✨ MODAL DE EDIÇÃO ATUALIZADO */}
       {isEditModalOpen && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modalContent}>
+        <div className={styles.modalOverlay} onClick={() => setIsEditModalOpen(false)}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
             <h3>Editar Perfil</h3>
             <form onSubmit={handleSaveProfile}>
-              
               <div className={styles.formGroup}>
                 <label>Nome Completo</label>
-<input value={editNome} onChange={(e) => setEditNome(e.target.value)} placeholder="Seu nome" required />              </div>
-              
+                <input value={editNome} onChange={(e) => setEditNome(e.target.value)} required />
+              </div>
               <div className={styles.formGroup}>
                 <label>Telefone</label>
-                <input value={editTelefone} onChange={(e) => setEditTelefone(e.target.value)} placeholder="(00) 00000-0000" required />
+                <input value={editTelefone} onChange={(e) => setEditTelefone(e.target.value)} required />
               </div>
-
-              {/* NOVOS CAMPOS: Cidade e Estado */}
               <div style={{ display: 'flex', gap: '10px' }}>
                 <div className={styles.formGroup} style={{ flex: 2 }}>
                   <label>Cidade</label>
-                  <input value={editCidade} onChange={(e) => setEditCidade(e.target.value)} placeholder="Sua cidade" required />
+                  <input value={editCidade} onChange={(e) => setEditCidade(e.target.value)} required />
                 </div>
-                
                 <div className={styles.formGroup} style={{ flex: 1 }}>
-                  <label>Estado</label>
-                  <input 
-                    value={editEstado} 
-                    onChange={(e) => setEditEstado(e.target.value)} 
-                    placeholder="UF (Ex: PI)" 
-                    maxLength={2} 
-                    required 
-                  />
+                  <label>UF</label>
+                  <input value={editEstado} onChange={(e) => setEditEstado(e.target.value.toUpperCase())} maxLength={2} required />
                 </div>
               </div>
-
               <div className={styles.modalActions}>
                 <button type="button" onClick={() => setIsEditModalOpen(false)}>Cancelar</button>
-                <button type="submit" className={styles.saveBtn}>Salvar Alterações</button>
+                <button type="submit" className={styles.saveBtn} disabled={isSaving}>
+                  {isSaving ? "A guardar..." : "Salvar Alterações"}
+                </button>
               </div>
-
             </form>
           </div>
         </div>
