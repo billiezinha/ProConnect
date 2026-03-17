@@ -19,7 +19,6 @@ export interface UpdateUserPayload {
   endereco?: string;
 }
 
-// Para receber dados do usuário da API (sem senha)
 export interface User {
   id: number;
   nome: string;
@@ -28,7 +27,8 @@ export interface User {
   estado?: string;
   cidade?: string;
   endereco?: string;
-  imagem?: string; // NOVO: Campo para a foto de perfil
+  imagem?: string;
+  disponivel?: boolean; // ✨ ADICIONA ESTA LINHA AQUI
 }
 
 // Token pode trazer userId como string/number, ou até em "sub"

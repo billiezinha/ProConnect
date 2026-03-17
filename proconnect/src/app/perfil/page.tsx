@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
-import { getMe, uploadFotoPerfil, removerFotoPerfil, updateMe } from "@/service/userService"; // Certifique-se de criar o updateMe
+import { getMe, uploadFotoPerfil, removerFotoPerfil, updateMe } from "@/service/userService";
 import type { User } from "@/interfaces/UserProps";
 import styles from "./page.module.css";
 import { 
@@ -37,7 +37,9 @@ export default function PerfilPage() {
     }
   };
 
-  useEffect(() => { carregarUtilizador(); }, []);
+  useEffect(() => { 
+    carregarUtilizador(); 
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -50,7 +52,9 @@ export default function PerfilPage() {
     if (!user) return;
     try {
       const novoStatus = !user.disponivel;
-      await updateMe({ disponivel: novoStatus });
+      
+      // Passando o user.id como primeiro argumento
+      await updateMe(user.id, { disponivel: novoStatus });
       setUser({ ...user, disponivel: novoStatus });
       toast.success(novoStatus ? "Você está disponível!" : "Você está offline.");
     } catch (error) {
@@ -61,8 +65,11 @@ export default function PerfilPage() {
   // FUNÇÃO PARA SALVAR EDIÇÃO DE PERFIL
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) return; // Garante que o usuário existe antes de atualizar
+
     try {
-      await updateMe({ nome: editNome, telefone: editTelefone });
+      // CORREÇÃO: Passando o user.id como primeiro argumento
+      await updateMe(user.id, { nome: editNome, telefone: editTelefone });
       toast.success("Perfil atualizado com sucesso!");
       setIsEditModalOpen(false);
       carregarUtilizador();
@@ -102,7 +109,9 @@ export default function PerfilPage() {
                 <FaUserCircle className={styles.avatarPlaceholder} />
               )}
               <div className={styles.avatarOverlay}>
-                <button className={styles.avatarBtn} onClick={() => fileInputRef.current?.click()}><FaCamera /></button>
+                <button className={styles.avatarBtn} onClick={() => fileInputRef.current?.click()}>
+                  <FaCamera />
+                </button>
               </div>
               <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" style={{ display: "none" }} />
             </div>
@@ -122,24 +131,38 @@ export default function PerfilPage() {
             </div>
           </div>
 
-          <button onClick={handleLogout} className={styles.logoutBtn}><FaSignOutAlt /> Sair</button>
+          <button onClick={handleLogout} className={styles.logoutBtn}>
+            <FaSignOutAlt /> Sair
+          </button>
         </aside>
 
         <main className={styles.content}>
           <section className={styles.card}>
             <div className={styles.cardHeader}>
               <h3><FaUserCircle /> Dados Pessoais</h3>
-              <button onClick={() => setIsEditModalOpen(true)} className={styles.editBtn}><FaEdit /> Editar Perfil</button>
+              <button onClick={() => setIsEditModalOpen(true)} className={styles.editBtn}>
+                <FaEdit /> Editar Perfil
+              </button>
             </div>
             <div className={styles.infoGrid}>
-              <div className={styles.infoBox}><label><FaPhone /> Telefone</label><span>{user?.telefone || "Não cadastrado"}</span></div>
-              <div className={styles.infoBox}><label><FaMapMarkerAlt /> Localização</label><span>{user?.cidade || "Picos"}, {user?.estado || "PI"}</span></div>
+              <div className={styles.infoBox}>
+                <label><FaPhone /> Telefone</label>
+                <span>{user?.telefone || "Não cadastrado"}</span>
+              </div>
+              <div className={styles.infoBox}>
+                <label><FaMapMarkerAlt /> Localização</label>
+                <span>{user?.cidade || "Picos"}, {user?.estado || "PI"}</span>
+              </div>
             </div>
           </section>
 
           <div className={styles.quickActions}>
-            <div onClick={() => router.push("/meus-servicos")} className={styles.actionCard}><FaBriefcase /><h4>Meus Serviços</h4></div>
-            <div onClick={() => router.push("/cadastro-servico")} className={styles.actionCard}><FaPlusCircle /><h4>Novo Serviço</h4></div>
+            <div onClick={() => router.push("/meus-servicos")} className={styles.actionCard}>
+              <FaBriefcase /><h4>Meus Serviços</h4>
+            </div>
+            <div onClick={() => router.push("/cadastro-servico")} className={styles.actionCard}>
+              <FaPlusCircle /><h4>Novo Serviço</h4>
+            </div>
           </div>
         </main>
       </div>

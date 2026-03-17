@@ -193,19 +193,14 @@
   color: var(--cor-texto);
   margin-bottom: 0.8rem;
   /* Limita título a 2 linhas se for muito longo */
+/* Encontra onde tens isto: */
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 2; /* O número pode ser 2 ou 3 */
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-.servicoDescription {
-  font-size: 0.9rem;
-  color: var(--cor-texto-secundario);
-  line-height: 1.6;
-  /* MÁGICA DO TRUNCAMENTO: Limita a descrição a 4 linhas */
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
+  
+  /* E adiciona a linha standard: */
+  line-clamp: 2; /* ✨ ADICIONA ESTA LINHA COM O MESMO NÚMERO */
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -252,4 +247,33 @@
   .servicoCard {
     min-height: auto; /* No mobile, deixamos o tamanho fluir naturalmente se preferir */
   }
+}
+/* Animação de "Pop" quando clica */
+@keyframes heartPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+
+.favButton {
+  /* Mantém o que já tens aqui e garante que tem transition */
+  transition: transform 0.2s ease;
+}
+
+.favButton:active {
+  transform: scale(0.8); /* Fica pequenino quando o dedo prime */
+}
+
+.iconFill {
+  color: #ef4444; /* Vermelho vivo */
+  animation: heartPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.iconOutline {
+  color: var(--cor-texto-secundario);
+  transition: color 0.2s ease;
+}
+
+.favButton:hover .iconOutline {
+  color: #ef4444; /* Fica vermelho ao passar o rato mesmo antes de clicar */
 }

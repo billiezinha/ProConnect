@@ -181,16 +181,15 @@ export default function BuscaProfissionaisPage() {
       </main>
 
       {/* CORREÇÃO APLICADA AQUI NA LINHA 190 */}
-      {showModal && selectedProfissional && (
+{showModal && selectedProfissional && (
         <Modal 
           profissional={{ 
             id: selectedProfissional.id,
             nome: selectedProfissional.nomeNegocio,
             categoria: selectedProfissional.categoria?.nomeServico,
             descricao: selectedProfissional.descricao,
-            // AQUI ESTÁ A CORREÇÃO: vai buscar o telefone dentro de usuario
-            telefone: selectedProfissional.usuario?.telefone, 
-            mediaNota: "Novo"
+            telefone: selectedProfissional.usuario?.telefone
+            // ✨ APAGA a linha do mediaNota que estava aqui!
           }} 
           onClose={() => setShowModal(false)} 
         />

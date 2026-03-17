@@ -33,3 +33,9 @@ export async function uploadFotoPerfil(formData: FormData): Promise<User> {
 export async function removerFotoPerfil(): Promise<void> {
   await api.delete("/usuario/me/imagem");
 }
+
+export async function updateMe(id: number, data: Partial<User>): Promise<User> {
+  // Adicionámos <User> depois do put
+  const response = await api.put<User>(`/usuario/${id}`, data); 
+  return response.data;
+}
