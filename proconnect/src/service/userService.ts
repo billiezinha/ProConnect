@@ -34,8 +34,8 @@ export async function removerFotoPerfil(): Promise<void> {
   await api.delete("/usuario/me/imagem");
 }
 
+// ✨ FUNÇÃO ADICIONADA AQUI NO LUGAR CERTO:
 export async function updateMe(id: number, data: Partial<User>): Promise<User> {
-  // Adicionámos <User> depois do put
-  const response = await api.put<User>(`/usuario/${id}`, data); 
-  return response.data;
+  const resp = await api.put<User>(`/usuario/${id}`, data);
+  return resp.data;
 }

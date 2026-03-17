@@ -49,7 +49,3 @@ export async function updateServico(id: number, data: UpdateServicoPayload): Pro
 export async function deleteServico(id: number): Promise<void> {
   await api.delete(`/servico/${id}`);
 }
-export async function updateMe(data: Partial<User>) {
-  const resp = await api.put("/usuario/me", data);
-  return resp.data;
-}
