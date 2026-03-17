@@ -49,37 +49,56 @@
   transition: all 0.3s ease;
 }
 
-/* === CATEGORIAS === */
+/* === CATEGORIAS (COM SCROLL HORIZONTAL) === */
 .categoriesRow {
   display: flex;
-  justify-content: center;
-  gap: 1rem;
-  flex-wrap: wrap;
+  gap: 12px;
+  width: 100%;
+  padding: 4px 2px 16px 2px; /* Espaço para a sombra não ser cortada */
   margin-top: 1rem;
   min-height: 50px;
+  
+  /* Ativa o scroll horizontal */
+  overflow-x: auto;
+  
+  /* Esconde a barra de scroll */
+  scrollbar-width: none; 
+  -ms-overflow-style: none; 
+  -webkit-overflow-scrolling: touch;
+}
+
+.categoriesRow::-webkit-scrollbar {
+  display: none;
 }
 
 .catBtn, .catBtnActive {
   display: flex;
-  flex-direction: column;
   align-items: center;
   gap: 8px;
-  background: var(--cor-fundo-card);
-  border: 2px solid var(--cor-borda);
-  padding: 0.8rem;
-  border-radius: 16px;
+  padding: 10px 20px;
+  border-radius: 24px;
   cursor: pointer;
-  min-width: 90px;
   transition: all 0.2s ease;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--cor-texto-secundario);
+  font-size: 0.9rem;
+  
+  /* Mantém o botão numa linha e impede que encolha */
+  white-space: nowrap; 
+  flex-shrink: 0;      
+}
+
+.catBtn {
+  background-color: var(--cor-fundo-input);
+  color: var(--cor-texto);
+  border: 1px solid var(--cor-borda);
+  font-weight: 500;
 }
 
 .catBtnActive {
-  border-color: var(--cor-primaria);
-  background-color: rgba(139, 44, 245, 0.1);
-  color: var(--cor-primaria);
+  background-color: var(--cor-primaria);
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(139, 44, 245, 0.3);
 }
 
 /* === FILTRO COMPACTO === */
@@ -130,13 +149,13 @@
   color: var(--cor-texto-secundario);
 }
 
-/* === GRID DE RESULTADOS (O CORAÇÃO DO AJUSTE) === */
+/* === GRID DE RESULTADOS === */
 .resultsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 2rem;
   margin-top: 1rem;
-  align-items: stretch; /* Faz todos os cards da linha terem a mesma altura */
+  align-items: stretch;
 }
 
 .servicoCard {
@@ -145,10 +164,10 @@
   border: 1px solid var(--cor-borda);
   padding: 1.5rem;
   display: flex;
-  flex-direction: column; /* Essencial para alinhar o botão ao fundo */
+  flex-direction: column;
   position: relative;
   transition: all 0.3s ease;
-  min-height: 380px; /* Define um tamanho mínimo padronizado */
+  min-height: 380px;
 }
 
 .cardHeader {
@@ -170,19 +189,42 @@
   font-size: 1.2rem;
 }
 
+/* === BOTÃO DE FAVORITO E ANIMAÇÕES === */
+@keyframes heartPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+
 .favButton {
   background: transparent;
   border: none;
   font-size: 1.4rem;
   cursor: pointer;
-  color: var(--cor-borda);
+  transition: transform 0.2s ease;
 }
 
-.iconFill { color: #ff4b5c; }
+.favButton:active {
+  transform: scale(0.8);
+}
 
-/* CONTEÚDO DO CARD */
+.iconFill { 
+  color: #ef4444; 
+  animation: heartPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.iconOutline {
+  color: var(--cor-texto-secundario);
+  transition: color 0.2s ease;
+}
+
+.favButton:hover .iconOutline {
+  color: #ef4444;
+}
+
+/* === CONTEÚDO DO CARD === */
 .cardContent {
-  flex-grow: 1; /* Empurra o que está abaixo (footer) para o final do card */
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
 }
@@ -192,23 +234,31 @@
   font-weight: 700;
   color: var(--cor-texto);
   margin-bottom: 0.8rem;
-  /* Limita título a 2 linhas se for muito longo */
-/* Encontra onde tens isto: */
-  display: -webkit-box;
-  -webkit-line-clamp: 2; /* O número pode ser 2 ou 3 */
-  -webkit-box-orient: vertical;
-  overflow: hidden;
   
-  /* E adiciona a linha standard: */
-  line-clamp: 2; /* ✨ ADICIONA ESTA LINHA COM O MESMO NÚMERO */
+  /* Limita título a 2 linhas se for muito longo */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2; 
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* RODAPÉ DO CARD */
+.servicoDescription {
+  color: var(--cor-texto-secundario);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* === RODAPÉ DO CARD === */
 .cardFooter {
-  margin-top: 1.5rem; /* Garante espaço mínimo entre texto e botão */
+  margin-top: 1.5rem;
 }
 
 .detailsButton {
@@ -235,45 +285,12 @@
 
 /* === RESPONSIVIDADE === */
 @media (max-width: 600px) {
-  .categoriesRow {
-    justify-content: flex-start;
-    overflow-x: auto;
-    padding-bottom: 10px;
-  }
   .compactFilterWrapper {
     flex-direction: column;
     align-items: flex-start;
   }
+  
   .servicoCard {
-    min-height: auto; /* No mobile, deixamos o tamanho fluir naturalmente se preferir */
+    min-height: auto;
   }
-}
-/* Animação de "Pop" quando clica */
-@keyframes heartPop {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.4); }
-  100% { transform: scale(1); }
-}
-
-.favButton {
-  /* Mantém o que já tens aqui e garante que tem transition */
-  transition: transform 0.2s ease;
-}
-
-.favButton:active {
-  transform: scale(0.8); /* Fica pequenino quando o dedo prime */
-}
-
-.iconFill {
-  color: #ef4444; /* Vermelho vivo */
-  animation: heartPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.iconOutline {
-  color: var(--cor-texto-secundario);
-  transition: color 0.2s ease;
-}
-
-.favButton:hover .iconOutline {
-  color: #ef4444; /* Fica vermelho ao passar o rato mesmo antes de clicar */
 }
