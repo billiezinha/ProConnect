@@ -258,3 +258,67 @@
     transform: scale(1);
   }
 }
+/* === TABELA DE PREÇOS (NOVO) === */
+.tabelaPrecos {
+  background: var(--cor-fundo-input);
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid var(--cor-borda);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.itemPreco {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px dotted var(--cor-borda);
+}
+
+.itemPreco:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.itemPreco span {
+  font-size: 0.95rem;
+  color: var(--cor-texto);
+  font-weight: 500;
+}
+
+.itemPreco strong {
+  font-size: 1rem;
+  color: var(--cor-primaria);
+  font-weight: 700;
+}
+
+/* === AJUSTES DE RESPONSIVIDADE PARA O PORTFÓLIO === */
+@media (max-width: 480px) {
+  .gridPortfolio {
+    grid-template-columns: repeat(2, 1fr); /* 2 colunas em telas muito pequenas */
+  }
+  
+  .modalContent {
+    padding: 20px;
+    border-radius: 20px 20px 0 0;
+    align-self: flex-end; /* Abre como "bottom sheet" no mobile */
+    max-height: 95vh;
+  }
+}
+
+/* Estilo para o ícone de carregamento */
+.loadingText {
+  text-align: center;
+  color: var(--cor-texto-secundario);
+  font-size: 0.9rem;
+  padding: 20px;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
