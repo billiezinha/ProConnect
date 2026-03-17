@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { createServico, uploadImagemServico } from "@/service/servicoService";
+import { createServico, uploadImagemServico, uploadPortfolioServico } from "@/service/servicoService";
 import { getCategorias } from "@/service/categoriaService";
 import type { Categoria } from "@/interfaces/CategoriaProps";
 import styles from "./Cadproduto.module.css";
@@ -40,7 +40,7 @@ export default function CadastroServicoPage() {
     setError(null);
 
     try {
-      // ETAPA 1: JSON (Cria o registro no banco)
+      // ETAPA 1: Criar o serviço (JSON)
       const novoServico = await createServico({
         nomeNegocio,
         descricao,
@@ -48,27 +48,37 @@ export default function CadastroServicoPage() {
         preco: precos
       });
 
-      // ETAPA 2: Upload das imagens usando o ID gerado
-      // AJUSTADO: Chave alterada para "imagem" conforme a API
-      if (novoServico.id && (fotoCapa || fotosPortfolio.length > 0)) {
-        const formData = new FormData();
-        
-        // Foto de Capa -> chave "imagem"
-        if (fotoCapa) formData.append("imagem", fotoCapa); 
-        
-        // Portfólio -> Geralmente a API espera a mesma chave "imagem" para múltiplos 
-        // ou "imagens". Vou manter "imagem" para seguir seu padrão.
-        fotosPortfolio.forEach((foto) => {
-          formData.append("imagem", foto); 
-        });
+      const servicoId = novoServico.id;
 
-        await uploadImagemServico(novoServico.id, formData);
+      if (!servicoId) throw new Error("ID do serviço não retornado.");
+
+      // ETAPA 2: Upload da foto de capa (Single - chave "imagem")
+      if (fotoCapa) {
+        const formCapa = new FormData();
+        formCapa.append("imagem", fotoCapa);
+        await uploadImagemServico(servicoId, formCapa);
+      }
+
+      // ETAPA 3: Upload do portfólio (Um por um para evitar MulterError)
+      if (fotosPortfolio.length > 0) {
+        for (const foto of fotosPortfolio) {
+          const formPort = new FormData();
+          formPort.append("imagem", foto); 
+          try {
+            await uploadPortfolioServico(servicoId, formPort);
+          } catch (pErr) {
+            console.error("Falha ao subir uma imagem do portfólio", pErr);
+          }
+        }
       }
 
       router.push("/meus-servicos");
-    } catch (err) {
+    } catch (err: any) {
+      console.error(err);
       setError("Erro ao salvar. Verifique se os campos estão corretos.");
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -85,7 +95,6 @@ export default function CadastroServicoPage() {
         <div className={styles.container}>
           <div className={styles.contentLayout}>
             
-            {/* FORMULÁRIO */}
             <div className={styles.formSection}>
               <form onSubmit={handleSubmit} className={styles.form}>
                 {error && <p className={styles.error}>{error}</p>}
@@ -152,12 +161,11 @@ export default function CadastroServicoPage() {
                 </div>
 
                 <button type="submit" className={styles.submitButton} disabled={loading}>
-                  {loading ? "Salvando..." : "Publicar Serviço"}
+                  {loading ? "Processando Uploads..." : "Publicar Serviço"}
                 </button>
               </form>
             </div>
 
-            {/* PREVIEW LATERAL */}
             <div className={styles.previewSection}>
               <h3 className={styles.previewTitle}>Prévia do Card</h3>
               <div className={styles.cardPreview}>
@@ -170,9 +178,12 @@ export default function CadastroServicoPage() {
                     <h4>{nomeNegocio || "Nome do Negócio"}</h4>
                     <span className={styles.rating}><FaStar color="#f1c40f" /> 5.0</span>
                   </div>
-                  <p className={styles.previewDesc}>{descricao.substring(0, 80)}{descricao.length > 80 ? "..." : ""}</p>
-                  <p className={styles.cardPreco}>A partir de: <strong>R$ {Math.min(...precos.map(p => p.precificacao)).toFixed(2)}</strong></p>
-                  
+                  <p className={styles.previewDesc}>
+                    {descricao ? (descricao.length > 80 ? descricao.substring(0, 80) + "..." : descricao) : "Sua descrição aparecerá aqui."}
+                  </p>
+                  <p className={styles.cardPreco}>
+                    A partir de: <strong>R$ {precos.length > 0 ? Math.min(...precos.map(p => p.precificacao)).toFixed(2) : "0.00"}</strong>
+                  </p>
                   <div className={styles.portfolioMini}>
                     {previewsPortfolio.map((url, i) => <img key={i} src={url} alt="Portfolio" />)}
                   </div>

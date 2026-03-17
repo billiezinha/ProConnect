@@ -1,7 +1,7 @@
 import api from "./api";
 import type { Servico, UpdateServicoPayload } from "@/interfaces/ServicoProps";
 
-// 1. Cria o serviço enviando JSON puro (Nomes em minúsculo conforme o seu backend)
+// ETAPA 1: Criar o serviço (JSON)
 export async function createServico(data: {
   nomeNegocio: string;
   descricao: string;
@@ -12,12 +12,17 @@ export async function createServico(data: {
   return resp.data;
 }
 
-// 2. Rota para upload das imagens (Usando o ID que o backend gerou)
+// ETAPA 2: Upload da Foto de Capa (PATCH)
 export async function uploadImagemServico(id: number, formData: FormData): Promise<void> {
   await api.patch(`/servico/${id}/imagem`, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+}
+
+// ETAPA 3: Upload do Portfólio (POST - Uma por uma)
+export async function uploadPortfolioServico(id: number, formData: FormData): Promise<void> {
+  await api.post(`/servico/${id}/portfolio`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
   });
 }
 
