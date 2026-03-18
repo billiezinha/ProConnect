@@ -1,12 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
 import { getCategorias } from "@/service/categoriaService";
-import { uploadImagemServico } from "@/service/servicoService"; 
+import { uploadImagemServico, removerImagemServico } from "@/service/servicoService";
 import type { Categoria } from "@/interfaces/CategoriaProps";
 import type { Servico, UpdateServicoPayload } from "@/interfaces/ServicoProps";
 import styles from "./page.module.css";
 import { HiOutlineX } from "react-icons/hi";
-import { FaTrash, FaPlus } from "react-icons/fa"; // ✨ Importado o FaPlus e FaTrash
+import { FaTrash, FaPlus } from "react-icons/fa";
 import toast from "react-hot-toast";
 
 // Importações dos novos componentes de Portfólio
@@ -29,6 +29,10 @@ export default function EditServicoModal({ servico, onClose, onSave }: EditServi
   );
 
   const [novaLogo, setNovaLogo] = useState<File | null>(null);
+  
+  // ✨ NOVO ESTADO: Controla se a imagem que vem do banco de dados deve ser escondida/removida
+  const [logoRemovida, setLogoRemovida] = useState(false);
+  
   const [atualizador, setAtualizador] = useState(0);
 
   useEffect(() => {
@@ -43,9 +47,20 @@ export default function EditServicoModal({ servico, onClose, onSave }: EditServi
     fetchCategorias();
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // ✨ LÓGICA 1: Apaga a imagem fisicamente do Supabase se o utilizador removeu
+    if (logoRemovida && !novaLogo) {
+      try {
+        await removerImagemServico(servico.id);
+        toast.success("Logo antiga removida com sucesso!");
+      } catch (error) {
+        console.error("Erro ao remover logo", error);
+      }
+    }
+
+    // ✨ LÓGICA 2: Faz o upload se o utilizador escolheu uma foto nova
     if (novaLogo) {
       try {
         const formData = new FormData();
@@ -57,19 +72,24 @@ export default function EditServicoModal({ servico, onClose, onSave }: EditServi
       }
     }
 
-    const payload: UpdateServicoPayload = {
+    // ✨ LÓGICA 3: O payload com a estrutura EXATA para não dar Erro 500 no Prisma!
+    const payload: any = {
       nomeNegocio,
       descricao,
       categoriaId: Number(categoriaId),
-      preco: [
-        {
-          nomeservico: nomeNegocio,
-          precificacao: Number(valorPreco)
-        }
-      ]
+      // O Prisma precisa deste formato (deleteMany + create) para conseguir atualizar o preço!
+      preco: {
+        deleteMany: {}, 
+        create: [
+          {
+            nomeservico: nomeNegocio,
+            precificacao: Number(valorPreco)
+          }
+        ]
+      }
     };
     
-    onSave(payload);
+    onSave(payload as UpdateServicoPayload);
   };
 
   const handleUploadSuccess = () => {
@@ -88,7 +108,7 @@ export default function EditServicoModal({ servico, onClose, onSave }: EditServi
 
         <form onSubmit={handleSubmit} className={styles.form}>
           
-          {/* ✨ NOVO: CAMPO DE LOGO (Design Circular Exatamente como na Imagem) */}
+          {/* CAMPO DE LOGO */}
           <div className={styles.formGroup} style={{ borderBottom: '1px solid #e2e8f0', paddingBottom: '1.5rem', marginBottom: '0.5rem' }}>
             <label className={styles.logoLabelCentered}>Logo / Foto de Capa do Serviço</label>
             
@@ -97,26 +117,32 @@ export default function EditServicoModal({ servico, onClose, onSave }: EditServi
                 type="file" 
                 accept="image/*" 
                 id="upload-logo"
-                onChange={(e) => setNovaLogo(e.target.files?.[0] || null)}
+                onChange={(e) => {
+                  setNovaLogo(e.target.files?.[0] || null);
+                  setLogoRemovida(false); // Se escolher uma nova, já não está "removida"
+                }}
                 className={styles.fileInputHidden}
               />
               
               <label htmlFor="upload-logo" className={styles.logoPlaceholder}>
                 {novaLogo ? (
                   <img src={URL.createObjectURL(novaLogo)} alt="Nova capa" className={styles.logoImage} />
-                ) : servico.imagem ? (
+                ) : (servico.imagem && !logoRemovida) ? ( // ✨ Agora verifica se NÃO foi removida
                   <img src={servico.imagem} alt="Capa atual" className={styles.logoImage} />
                 ) : (
                   <FaPlus className={styles.addIcon} />
                 )}
               </label>
 
-              {/* Botão de Remover (Só aparece se houver imagem) */}
-              {(novaLogo || servico.imagem) && (
+              {/* Botão de Remover */}
+              {(novaLogo || (servico.imagem && !logoRemovida)) && (
                 <button 
                   type="button" 
                   className={styles.removerLogoBtn}
-                  onClick={() => setNovaLogo(null)}
+                  onClick={() => {
+                    setNovaLogo(null); // Limpa o ficheiro que acabou de ser escolhido (se houver)
+                    setLogoRemovida(true); // Esconde a imagem antiga que vem do banco
+                  }}
                 >
                   <FaTrash /> Remover foto
                 </button>

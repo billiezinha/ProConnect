@@ -50,3 +50,7 @@ export async function updateServico(id: number, data: UpdateServicoPayload): Pro
 export async function deleteServico(id: number): Promise<void> {
   await api.delete(`/servico/${id}`);
 }
+
+export async function removerImagemServico(id: number): Promise<void> {
+  await api.delete(`/servico/${id}/imagem`);
+}
