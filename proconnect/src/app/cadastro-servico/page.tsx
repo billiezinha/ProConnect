@@ -7,6 +7,7 @@ import { getCategorias } from "@/service/categoriaService";
 import type { Categoria } from "@/interfaces/CategoriaProps";
 import styles from "./Cadproduto.module.css";
 import { FaArrowLeft, FaCamera, FaImages, FaPlus, FaTrash, FaStar, FaInfoCircle, FaListUl } from "react-icons/fa";
+import SelectCategoria from "@/components/ui/SelectCategoria";
 
 export default function CadastroServicoPage() {
   const router = useRouter();
@@ -36,6 +37,13 @@ export default function CadastroServicoPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validação extra: Garante que uma categoria foi selecionada no novo componente
+    if (!categoriaId) {
+      setError("Por favor, selecione uma categoria para o seu serviço.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -109,12 +117,14 @@ export default function CadastroServicoPage() {
                   <textarea className={styles.textarea} value={descricao} onChange={e => setDescricao(e.target.value)} placeholder="Conte um pouco sobre seu trabalho..." required />
                 </div>
 
+                {/* ✨ CAIXA DE PESQUISA INTELIGENTE DE CATEGORIA */}
                 <div className={styles.formGroup}>
                   <label className={styles.label}>Categoria</label>
-                  <select className={styles.select} value={categoriaId} onChange={e => setCategoriaId(Number(e.target.value))} required>
-                    <option value="">Selecione...</option>
-                    {categorias.map(c => <option key={c.id} value={c.id}>{c.nomeServico}</option>)}
-                  </select>
+                  <SelectCategoria 
+                    categorias={categorias} 
+                    value={Number(categoriaId) || 0} 
+                    onChange={(novoId) => setCategoriaId(novoId)} 
+                  />
                 </div>
 
                 <div className={styles.priceContainer}>
