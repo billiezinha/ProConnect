@@ -15,52 +15,63 @@ export const normalizeString = (str: string) => {
 };
 
 export const categoryGroups: Record<string, { icon: ReactNode, services: string[] }> = {
-  "Reformas": {
+  "Reformas & Casa": {
     icon: <FaHardHat />,
     services: [
       "Eletricista", "Encanador", "Pintor", "Pedreiro", "Marceneiro", 
-      "Serralheiro", "Vidraceiro", "Arquitetura e Urbanismo", "Engenheiro Civil"
+      "Serralheiro", "Vidraceiro", "Arquitetura e Urbanismo", "Engenheiro Civil",
+      "Montador de Móveis", "Chaveiro", "Desentupidor", "Dedetizador / Controle de Pragas", 
+      "Gesseiro / Drywall", "Tapeceiro / Estofador", "Decorador(a) de Interiores"
     ]
   },
-  "Tecnologia": {
+  "Tecnologia & Digital": {
     icon: <FaLaptopCode />,
     services: [
       "Programador", "Desenvolvedor Web", "Designer Gráfico", "Fotógrafo", 
-      "Fotógrafo(a)", "Videomaker", "Técnico em Informática / PC", "Técnico em Celulares"
+      "Fotógrafo(a)", "Videomaker", "Técnico em Informática / PC", "Técnico em Celulares",
+      "Assistente Virtual / Secretária Remota", "Gestor(a) de Tráfego", 
+      "Redator(a) / Copywriter", "Social Media"
     ]
   },
   "Saúde": {
     icon: <FaHeartbeat />,
     services: [
       "Enfermeiro(a)", "Nutricionista", "Psicólogo(a)", "Fisioterapeuta", 
-      "Personal Trainer", "Veterinário(a)", "Cuidador(a) de Idosos", "Massoterapeuta"
+      "Personal Trainer", "Veterinário(a)", "Cuidador(a) de Idosos", "Massoterapeuta",
+      "Podólogo(a)", "Fonoaudiólogo(a)", "Acupunturista"
     ]
   },
-  "Beleza": {
+  "Beleza & Estética": {
     icon: <FaCut />,
     services: [
-      "Manicure", "Maquiador(a)", "Cabeleireiro(a)", "Manicure / Pedicure", "Esteticista"
+      "Manicure", "Maquiador(a)", "Cabeleireiro(a)", "Manicure / Pedicure", "Esteticista",
+      "Barbeiro", "Designer de Sobrancelhas", "Depilador(a)", "Tatuador(a) / Body Piercer"
     ]
   },
   "Educação & Consultoria": {
     icon: <FaChalkboardTeacher />,
     services: [
       "Professor(a) Particular", "Tradutor(a) / Intérprete", "Advogado", 
-      "Contador(a)", "Consultor(a) Financeiro", "Corretor de Imóveis"
+      "Contador(a)", "Consultor(a) Financeiro", "Corretor de Imóveis",
+      "Professor(a) de Idiomas", "Professor(a) de Música", 
+      "Tradutor(a) Juramentado(a)", "Síndico Profissional"
     ]
   },
-  "Automotivo": {
+  "Automotivo & Transporte": {
     icon: <FaCar />,
     services: [
       "Mecânico de Autos", "Eletricista de Autos", "Funileiro / Pintor Automotivo", 
-      "Borracheiro", "Motorista de Aplicativo / Táxi", "Fretes e Mudanças"
+      "Borracheiro", "Motorista de Aplicativo / Táxi", "Fretes e Mudanças",
+      "Lavagem / Estética Automotiva", "Guincho / Reboque", "Entregador / Motoboy", 
+      "Motorista Particular / Executivo"
     ]
   },
   "Eventos": {
     icon: <FaUtensils />,
     services: [
       "DJ / Som para Festas", "Animação de Festas", "Buffet e Banquete", 
-      "Confeiteiro(a)", "Cozinheiro(a) / Chef"
+      "Confeiteiro(a)", "Cozinheiro(a) / Chef", "Cerimonialista / Assessor(a) de Eventos", 
+      "Bartender / Barman", "Recreador(a) Infantil"
     ]
   },
   "Domésticos": {
@@ -74,7 +85,7 @@ export const categoryGroups: Record<string, { icon: ReactNode, services: string[
     icon: <FaPaw />,
     services: [
       "Passeador(a) de Cães (Dog Walker)", "Banho e Tosa", "Adestrador(a)", 
-      "Segurança e Monitoramento", "Detetive Particular"
+      "Segurança e Monitoramento", "Detetive Particular", "Guia de Turismo"
     ]
   }
 };
