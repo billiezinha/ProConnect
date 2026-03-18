@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/navbar/Navbar";
+import Footer from "@/components/footer/Footer"; // 1. Importação do novo Footer
 import SplashScreen from "@/components/SplashScreen/SplashScreen";
 import { ThemeProvider } from "@/context/ThemeContext";
 import "./globals.css";
@@ -50,12 +51,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               initial={{ opacity: 0 }} 
               animate={{ opacity: 1 }} 
               transition={{ duration: 0.8 }}
+              style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}
             >
               <Toaster position="top-right" reverseOrder={false} />
               
               <Navbar /> 
 
-              <main>{children}</main>
+              {/* flex: 1 garante que o footer fique no fim da página mesmo com pouco conteúdo */}
+              <main style={{ flex: 1 }}>{children}</main>
+
+              <Footer /> {/* 2. Footer adicionado aqui */}
             </motion.div>
           )}
         </ThemeProvider>

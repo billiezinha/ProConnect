@@ -134,10 +134,6 @@ export default function Home() {
               Cadastre-se Gratuitamente
             </Link>
           </div>
-          <div className={styles.rodapeInfo}>
-            <p className={styles.textoFooter}>ProConnect</p>
-            <p className={styles.textoFooterDireitos}>© 2024 ProConnect. Todos os direitos reservados.</p>
-          </div>
         </div>
       </footer>
     </div>
