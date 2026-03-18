@@ -37,6 +37,7 @@ export default function Home() {
         <div className={styles.container}>
           <h2 className={styles.tituloSecao}>Escolha o Plano Certo Para Você</h2>
           <div className={styles.planosWrapper}>
+            
             {/* Card Gratuito */}
             <div className={styles.cardPlano}>
               <h3 className={styles.planoTitulo}>Gratuito</h3>
@@ -45,6 +46,9 @@ export default function Home() {
                 <li>✔️ Perfil Visível Para Clientes</li>
                 <li>✔️ Contato Direto</li>
                 <li>✔️ Receber Avaliações</li>
+                <li>                </li>
+                <li>                </li>
+                <li>                </li>
               </ul>
               <Link href="/cadastro-usuario" className={`${styles.botaoPlano} ${styles.botaoOutline}`}>
                 Começar Agora
@@ -62,10 +66,17 @@ export default function Home() {
                 <li>✔️ Prioridade em Indicações</li>
                 <li>✔️ Análise de Desempenho do Perfil</li>
               </ul>
-              <div className={styles.botaoPlano}>
-                <h3 className={styles.breve}>em breve...</h3>
+              {/* ✨ CORREÇÃO AQUI: Estilizado como um botão inativo para alinhar perfeitamente */}
+              <div className={styles.botaoPlano} style={{ 
+                backgroundColor: "var(--cor-fundo-secao)", 
+                border: "2px dashed var(--cor-borda)", 
+                color: "var(--cor-texto-secundario)", 
+                cursor: "not-allowed" 
+              }}>
+                Em breve...
               </div>
             </div>
+            
           </div>
         </div>
       </section>

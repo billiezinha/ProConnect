@@ -315,3 +315,11 @@
   border: 2px solid #a855f7;
   color: #a855f7;
 }
+
+.planosWrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 3rem;
+  align-items: stretch; /* <-- ISSO É OBRIGATÓRIO PARA ALINHAR LADO A LADO */
+}
