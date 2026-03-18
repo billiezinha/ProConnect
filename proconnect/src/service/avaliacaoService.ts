@@ -1,9 +1,11 @@
 import api from "./api";
 
-// Interface para o que o Front-end espera (usada no Modal)
+// Interface para o que o Front-end espera
 export interface ResumoAvaliacao {
   media: number;
   total: number;
+  avaliacoes?: any[]; // Opcional: útil se quiser listar os comentários na tela
+  contagemEstrelas?: Record<number, number>;
 }
 
 // Interface baseada na resposta real do seu Back-end (Controller)
@@ -20,25 +22,29 @@ interface BackendResponse {
 export async function getAvaliacoesByServico(servicoId: number): Promise<ResumoAvaliacao> {
   // Segurança: Evita chamadas com ID inválido que resultam em 404
   if (!servicoId) {
-    return { media: 0, total: 0 };
+    return { media: 0, total: 0, avaliacoes: [] };
   }
 
   try {
-    const { data } = await api.get<BackendResponse>(`/avaliacao/${servicoId}`);
+    // Timestamp adicionado para quebrar o cache do navegador e do Next.js
+    const timestamp = new Date().getTime();
+    const { data } = await api.get<BackendResponse>(`/avaliacao/${servicoId}?t=${timestamp}`);
     
-    // Mapeamento: O Back-end envia 'mediaEstrelas' e o Modal espera 'media'
+    // Mapeamento completo
     return {
       media: data.mediaEstrelas || 0,
-      total: data.avaliacoes ? data.avaliacoes.length : 0
+      total: data.avaliacoes ? data.avaliacoes.length : 0,
+      avaliacoes: data.avaliacoes || [],
+      contagemEstrelas: data.contagemEstrelas || {}
     };
   } catch (error: any) {
     // Se o serviço não tiver avaliações (404), retornamos valores zerados
     if (error.response && (error.response.status === 404 || error.response.status === 403)) {
-      return { media: 0, total: 0 };
+      return { media: 0, total: 0, avaliacoes: [] };
     }
     
     console.error("Erro ao carregar avaliações:", error);
-    return { media: 0, total: 0 };
+    return { media: 0, total: 0, avaliacoes: [] };
   }
 }
 
@@ -58,5 +64,5 @@ export async function criarAvaliacao(payload: { servicoId: number; nota: number;
   return data;
 }
 
-// Exportação adicional para compatibilidade com o componente AvaliacaoPendente
+// Exportação adicional para compatibilidade
 export const createAvaliacao = criarAvaliacao;

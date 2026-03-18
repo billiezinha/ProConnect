@@ -38,7 +38,7 @@ export default function Modal({ profissional, onClose }: ModalProps) {
         setLoading(true);
         const [portfolioData, avaliacaoData] = await Promise.all([
           getPortfolioByServico(profissional.id).catch(() => []),
-          getAvaliacoesByServico(profissional.id).catch(() => ({ media: 0, total: 0 }))
+          getAvaliacoesByServico(profissional.id).catch(() => ({ media: 0, total: 0, avaliacoes: [] }))
         ]);
         setFotos(portfolioData);
         setResumo(avaliacaoData);
@@ -65,7 +65,6 @@ export default function Modal({ profissional, onClose }: ModalProps) {
     return stars;
   };
 
-  // ✅ corrigido: agora é async e registra contato + serviço realizado
   const handleContatoClick = async () => {
     if (profissional.disponivel === false) {
       toast.error("Este profissional não está recebendo contatos no momento.");
@@ -85,7 +84,6 @@ export default function Modal({ profissional, onClose }: ModalProps) {
     }
 
     try {
-      // ✅ Registra o contato e o serviço realizado no backend
       await Promise.all([
         registrarContato(profissional.id),
         criarServicoRealizado(profissional.id),
@@ -94,7 +92,6 @@ export default function Modal({ profissional, onClose }: ModalProps) {
       console.error("Erro ao registrar contato:", err);
     }
 
-    // ✅ Guarda para o modal de avaliação
     localStorage.setItem("@ProConnect:avaliar", JSON.stringify({
       id: profissional.id,
       nome: profissional.nome || "Profissional"
@@ -165,6 +162,40 @@ export default function Modal({ profissional, onClose }: ModalProps) {
             </div>
           ) : (
             <p className={styles.noData}>Nenhuma foto disponível.</p>
+          )}
+        </div>
+
+        {/* ✅ SECÇÃO ATUALIZADA: Comentários com nome do usuário */}
+        <div className={styles.section}>
+          <h3>Avaliações e Comentários</h3>
+          {resumo?.avaliacoes && resumo.avaliacoes.length > 0 ? (
+            <div className={styles.listaAvaliacoes}>
+              {resumo.avaliacoes.map((av: any, index: number) => (
+                <div key={index} className={styles.cardAvaliacao}>
+                  {/* Nome de quem fez o comentário */}
+                  <strong className={styles.nomeAvaliador}>
+                    {av.usuario?.nome || "Usuário anônimo"}
+                  </strong>
+
+                  <div className={styles.estrelasComentario}>
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <FaStar 
+                        key={star} 
+                        color={star <= av.star ? "#ffc107" : "#e4e5e9"} 
+                        size={14} 
+                      />
+                    ))}
+                  </div>
+                  {av.descricao ? (
+                    <p className={styles.textoComentario}>"{av.descricao}"</p>
+                  ) : (
+                    <p className={styles.textoComentarioVazio}>(Avaliação sem comentário)</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className={styles.noData}>Este serviço ainda não possui avaliações. Seja o primeiro a avaliar!</p>
           )}
         </div>
 
