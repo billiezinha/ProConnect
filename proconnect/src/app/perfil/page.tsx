@@ -50,6 +50,29 @@ export default function PerfilPage() {
     router.replace("/login");
   };
 
+  // ✅ FUNÇÃO CORRIGIDA: Removido o 'user.id' do argumento
+  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("imagem", file);
+
+    setUploading(true);
+    const toastId = toast.loading("A atualizar foto...");
+
+    try {
+      // ✅ Chamada correta: Apenas o formData
+      await uploadFotoPerfil(formData);
+      toast.success("Foto de perfil atualizada!", { id: toastId });
+      await carregarUtilizador(); 
+    } catch (error) {
+      toast.error("Erro ao fazer upload da imagem.", { id: toastId });
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
@@ -71,28 +94,17 @@ export default function PerfilPage() {
     }
   };
 
-  // ✨ NOVA FUNÇÃO: Alternar Disponibilidade
   const handleToggleDisponibilidade = async () => {
     if (!user) return;
-
-    // Define qual vai ser o novo status (o inverso do atual)
     const novoStatus = !user.disponivel;
-
-    // 1. Atualiza visualmente na mesma hora para não dar "lag" no clique
     setUser({ ...user, disponivel: novoStatus });
 
     try {
-      // 2. Avisa o back-end da mudança
       await updateMe(user.id, { disponivel: novoStatus });
-      toast.success(
-        novoStatus 
-          ? "Selo ativado! Os clientes agora verão que você está disponível." 
-          : "Selo desativado. Você está offline."
-      );
+      toast.success(novoStatus ? "Disponível para novos clientes!" : "Status alterado para offline.");
     } catch (error) {
-      // 3. Se a internet falhar ou der erro no servidor, desfaz a alteração visual
       setUser({ ...user, disponivel: !novoStatus });
-      toast.error("Erro ao alterar a disponibilidade. Tente novamente.");
+      toast.error("Erro ao alterar disponibilidade.");
     }
   };
 
@@ -110,16 +122,29 @@ export default function PerfilPage() {
                 <FaUserCircle className={styles.avatarPlaceholder} />
               )}
               <div className={styles.avatarOverlay}>
-                <button className={styles.avatarBtn} onClick={() => fileInputRef.current?.click()}>
+                <button 
+                  className={styles.avatarBtn} 
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                >
                   <FaCamera />
                 </button>
               </div>
             </div>
+
+            {/* Input escondido que dispara ao clicar na câmara */}
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              onChange={handleFileChange} 
+              style={{ display: 'none' }} 
+              accept="image/*" 
+            />
+
             <h2>{user?.nome}</h2>
             <p className={styles.userEmail}>{user?.email}</p>
 
             <div className={styles.statusSection}>
-               {/* ✨ ADICIONADO O ONCLICK AQUI */}
                <button 
                  onClick={handleToggleDisponibilidade} 
                  className={`${styles.statusToggle} ${user?.disponivel ? styles.online : styles.offline}`}
