@@ -23,14 +23,14 @@
   height: fit-content;
   display: flex;
   flex-direction: column;
-  align-items: center; /* Centraliza tudo na sidebar */
+  align-items: center; 
 }
 
 .userCore {
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center; /* ✨ Centraliza a foto e os textos */
+  align-items: center; 
   text-align: center;
 }
 
@@ -38,7 +38,7 @@
   position: relative;
   width: 130px;
   height: 130px;
-  margin: 0 auto 20px auto; /* ✨ Garante centralização absoluta */
+  margin: 0 auto 20px auto; 
   border-radius: 50%;
   overflow: hidden;
   border: 4px solid var(--cor-primaria);
@@ -165,8 +165,32 @@
   animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.formGroup { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.5rem; }
-.formGroup label { font-size: 0.9rem; font-weight: 700; color: var(--cor-texto-secundario); }
+.modalTitle {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--cor-texto, #1e293b);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.form { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 1.2rem; 
+}
+
+.formGroup { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 8px; 
+}
+
+.formGroup label { 
+  font-size: 0.9rem; 
+  font-weight: 700; 
+  color: var(--cor-texto-secundario); 
+}
+
 .formGroup input {
   padding: 14px 18px; border-radius: 14px;
   border: 2px solid var(--cor-borda, #eaeaea);
@@ -174,13 +198,41 @@
   color: var(--cor-texto); transition: 0.3s;
 }
 
-.formGroup input:focus { border-color: var(--cor-primaria); background: white; outline: none; }
+.formGroup input:focus { 
+  border-color: var(--cor-primaria); 
+  background: white; 
+  outline: none; 
+}
 
-.modalActions { display: flex; gap: 15px; margin-top: 25px; }
-.modalActions button { flex: 1; padding: 15px; border-radius: 14px; font-weight: 700; cursor: pointer; border: none; transition: 0.2s; }
+.formRow {
+  display: flex;
+  gap: 10px;
+}
+
+.modalActions { 
+  display: flex; 
+  gap: 15px; 
+  margin-top: 15px; 
+}
+
+.modalActions button { 
+  flex: 1; padding: 15px; border-radius: 14px; font-weight: 700; 
+  cursor: pointer; border: none; transition: 0.2s; 
+}
 
 .saveBtn { background: var(--cor-primaria); color: white; }
 .saveBtn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+.cancelBtn {
+  background: var(--cor-fundo-site, #f1f5f9);
+  color: var(--cor-texto-secundario, #64748b);
+}
+
+.cancelBtn:hover {
+  background: var(--cor-borda, #e2e8f0);
+  color: var(--cor-texto, #1e293b);
+  transform: translateY(-2px);
+}
 
 /* === MODO NOTURNO (TRUE BLACK) === */
 [data-theme='dark'] .wrapper { background-color: #000000; }
@@ -193,6 +245,8 @@
 [data-theme='dark'] .infoBox { background-color: #141414; border-radius: 14px; padding: 12px; }
 [data-theme='dark'] .formGroup input { background-color: #111; border-color: #222; }
 [data-theme='dark'] .formGroup input:focus { background-color: #000; border-color: var(--cor-primaria); }
+[data-theme='dark'] .cancelBtn { background: #1a1a1a; color: #a1a1aa; }
+[data-theme='dark'] .cancelBtn:hover { background: #27272a; color: white; }
 
 /* === RESPONSIVIDADE === */
 @media (max-width: 900px) {

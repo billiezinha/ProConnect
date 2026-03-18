@@ -34,7 +34,8 @@ export default function PerfilPage() {
       setEditNome(userData.nome || "");
       setEditTelefone(userData.telefone || "");
       setEditCidade(userData.cidade || "");
-      setEditEstado(userData.estado || "");
+      // Força o estado a ficar em maiúsculas ao carregar os dados
+      setEditEstado(userData.estado?.toUpperCase() || "");
     } catch {
       handleLogout();
     } finally {
@@ -50,7 +51,6 @@ export default function PerfilPage() {
     router.replace("/login");
   };
 
-  // ✅ FUNÇÃO CORRIGIDA: Removido o 'user.id' do argumento
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -62,7 +62,6 @@ export default function PerfilPage() {
     const toastId = toast.loading("A atualizar foto...");
 
     try {
-      // ✅ Chamada correta: Apenas o formData
       await uploadFotoPerfil(formData);
       toast.success("Foto de perfil atualizada!", { id: toastId });
       await carregarUtilizador(); 
@@ -101,7 +100,7 @@ export default function PerfilPage() {
 
     try {
       await updateMe(user.id, { disponivel: novoStatus });
-      toast.success(novoStatus ? "Disponível para novos clientes!" : "Status alterado para offline.");
+      toast.success(novoStatus ? "Selo ativado! Está disponível." : "Selo desativado. Está offline.");
     } catch (error) {
       setUser({ ...user, disponivel: !novoStatus });
       toast.error("Erro ao alterar disponibilidade.");
@@ -132,7 +131,6 @@ export default function PerfilPage() {
               </div>
             </div>
 
-            {/* Input escondido que dispara ao clicar na câmara */}
             <input 
               type="file" 
               ref={fileInputRef} 
@@ -194,33 +192,50 @@ export default function PerfilPage() {
       {isEditModalOpen && (
         <div className={styles.modalOverlay} onClick={() => setIsEditModalOpen(false)}>
           <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-            <h3>Editar Perfil</h3>
-            <form onSubmit={handleSaveProfile}>
+            <h3 className={styles.modalTitle}>Editar Perfil</h3>
+            
+            <form className={styles.form} onSubmit={handleSaveProfile}>
               <div className={styles.formGroup}>
-                <label>Nome Completo</label>
-                <input value={editNome} onChange={(e) => setEditNome(e.target.value)} required />
+                <label htmlFor="nome">Nome Completo</label>
+                <input id="nome" value={editNome} onChange={(e) => setEditNome(e.target.value)} required />
               </div>
+              
               <div className={styles.formGroup}>
-                <label>Telefone</label>
-                <input value={editTelefone} onChange={(e) => setEditTelefone(e.target.value)} required />
+                <label htmlFor="telefone">Telefone</label>
+                <input id="telefone" value={editTelefone} onChange={(e) => setEditTelefone(e.target.value)} required />
               </div>
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <div className={styles.formGroup} style={{ flex: 2 }}>
-                  <label>Cidade</label>
-                  <input value={editCidade} onChange={(e) => setEditCidade(e.target.value)} required />
-                </div>
+              
+<div className={styles.formRow}>
+                {/* Cidade ocupa todo o espaço livre */}
                 <div className={styles.formGroup} style={{ flex: 1 }}>
-                  <label>UF</label>
-                  <input value={editEstado} onChange={(e) => setEditEstado(e.target.value.toUpperCase())} maxLength={2} required />
+                  <label htmlFor="cidade">Cidade</label>
+                  <input id="cidade" value={editCidade} onChange={(e) => setEditCidade(e.target.value)} required />
+                </div>
+                
+                {/* UF com tamanho fixo e texto centralizado */}
+                <div className={styles.formGroup} style={{ width: "90px" }}>
+                  <label htmlFor="uf">UF</label>
+                  <input 
+                    id="uf" 
+                    value={editEstado} 
+                    onChange={(e) => setEditEstado(e.target.value.toUpperCase())} 
+                    maxLength={2} 
+                    required 
+                    style={{ textAlign: "center" }} /* Centraliza as 2 letrinhas */
+                  />
                 </div>
               </div>
+              
               <div className={styles.modalActions}>
-                <button type="button" onClick={() => setIsEditModalOpen(false)}>Cancelar</button>
+                <button type="button" onClick={() => setIsEditModalOpen(false)} className={styles.cancelBtn}>
+                  Cancelar
+                </button>
                 <button type="submit" className={styles.saveBtn} disabled={isSaving}>
                   {isSaving ? "A guardar..." : "Salvar Alterações"}
                 </button>
               </div>
             </form>
+
           </div>
         </div>
       )}
