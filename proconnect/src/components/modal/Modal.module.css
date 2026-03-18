@@ -226,3 +226,97 @@
 
   .header h2 { font-size: 1.4rem; }
 }
+
+/* ... seus estilos anteriores ... */
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20000;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.imagemAmpliada {
+  max-width: 90%;
+  max-height: 85%;
+  border-radius: 12px;
+  object-fit: contain;
+  box-shadow: 0 0 30px rgba(0,0,0,0.5);
+  animation: zoomIn 0.3s ease;
+}
+
+@keyframes zoomIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Botão de Fechar no Lightbox */
+.fecharLightbox {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  z-index: 20001;
+}
+
+.fecharLightbox:hover {
+  background: rgba(255, 255, 255, 0.4);
+  transform: scale(1.1);
+}
+
+/* Botões de Navegação (Setas) */
+.navBtnLeft, .navBtnRight {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: none;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  font-size: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  z-index: 20001;
+}
+
+.navBtnLeft { left: 20px; }
+.navBtnRight { right: 20px; }
+
+.navBtnLeft:hover, .navBtnRight:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Esconde setas em mobile muito pequeno para não cobrir a imagem */
+@media (max-width: 600px) {
+  .navBtnLeft, .navBtnRight {
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+    background: rgba(255, 255, 255, 0.3);
+  }
+  .fecharLightbox {
+    top: 20px;
+    right: 20px;
+  }
+}

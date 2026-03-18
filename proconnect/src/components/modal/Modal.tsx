@@ -8,7 +8,8 @@ import { getAvaliacoesByServico, ResumoAvaliacao } from "@/service/avaliacaoServ
 import { registrarContato } from "@/service/contatoWhatsappService";
 import { criarServicoRealizado } from "@/service/servicoRealizadoService";
 import styles from "./Modal.module.css";
-import { FaTimes, FaWhatsapp, FaStar, FaRegStar, FaStarHalfAlt } from "react-icons/fa";
+// ✅ Importados ícones de navegação
+import { FaTimes, FaWhatsapp, FaStar, FaRegStar, FaStarHalfAlt, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 interface ModalProps {
   profissional: {
@@ -29,7 +30,9 @@ export default function Modal({ profissional, onClose }: ModalProps) {
   const [fotos, setFotos] = useState<{ id: number; url: string }[]>([]);
   const [resumo, setResumo] = useState<ResumoAvaliacao | null>(null);
   const [loading, setLoading] = useState(true);
-  const [fotoAmpliada, setFotoAmpliada] = useState<string | null>(null);
+  
+  // ✅ Alterado: Agora guardamos o INDEX da foto aberta
+  const [fotoIndex, setFotoIndex] = useState<number | null>(null);
 
   useEffect(() => {
     async function loadData() {
@@ -51,6 +54,21 @@ export default function Modal({ profissional, onClose }: ModalProps) {
     loadData();
   }, [profissional.id]);
 
+  // ✅ Funções para navegar entre as fotos
+  const proximaFoto = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (fotoIndex !== null) {
+      setFotoIndex((prev) => (prev! + 1) % fotos.length);
+    }
+  };
+
+  const fotoAnterior = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (fotoIndex !== null) {
+      setFotoIndex((prev) => (prev! - 1 + fotos.length) % fotos.length);
+    }
+  };
+
   const renderStars = (rating: number) => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
@@ -70,19 +88,16 @@ export default function Modal({ profissional, onClose }: ModalProps) {
       toast.error("Este profissional não está recebendo contatos no momento.");
       return;
     }
-
     const token = localStorage.getItem("token");
     if (!token) {
       toast.error("Para entrar em contato, faça login primeiro!");
       router.push("/login");
       return;
     }
-    
     if (!profissional.telefone) {
       toast.error("Este profissional não tem telefone cadastrado.");
       return;
     }
-
     try {
       await Promise.all([
         registrarContato(profissional.id),
@@ -91,46 +106,38 @@ export default function Modal({ profissional, onClose }: ModalProps) {
     } catch (err) {
       console.error("Erro ao registrar contato:", err);
     }
-
     localStorage.setItem("@ProConnect:avaliar", JSON.stringify({
       id: profissional.id,
       nome: profissional.nome || "Profissional"
     }));
-
     const numeroLimpo = profissional.telefone.replace(/\D/g, "");
     const mensagem = encodeURIComponent(`Olá, vi o seu perfil no ProConnect e gostaria de pedir um orçamento.`);
     window.open(`https://wa.me/55${numeroLimpo}?text=${mensagem}`, "_blank");
-
     onClose();
   };
 
   return (
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-        {/* Botão de fechar */}
         <button className={styles.closeBtn} onClick={onClose} aria-label="Fechar modal">
           <FaTimes />
         </button>
         
-        {/* CABEÇALHO (Fixo no topo) */}
         <div className={styles.header}>
            <h2>{profissional.nome || "Profissional"}</h2>
            <div className={styles.badgeRow}>
               <span className={styles.badgeCategoria}>{profissional.categoria}</span>
-              {resumo && resumo.total > 0 && (
-                <div className={styles.ratingInfo}>
-                  <div className={styles.starsContainer}>
-                    {renderStars(resumo.media)}
-                  </div>
-                  <span className={styles.ratingText}>
-                    {resumo.media.toFixed(1)} ({resumo.total})
-                  </span>
+              <div className={styles.ratingInfo}>
+                <div className={styles.starsContainer}>
+                  {renderStars(resumo?.media || 0)}
                 </div>
-              )}
+                <span className={styles.ratingText}>
+                  {(resumo?.media || 0).toFixed(1)} ({resumo?.total || 0})
+                </span>
+              </div>
            </div>
         </div>
         
-        {/* CORPO DO MODAL COM SCROLL INTERNO */}
         <div className={styles.scrollBody}>
           <div className={styles.section}>
             <p className={styles.descricao}>{profissional.descricao}</p>
@@ -158,8 +165,9 @@ export default function Modal({ profissional, onClose }: ModalProps) {
               <p className={styles.loadingText}>Carregando galeria...</p>
             ) : fotos.length > 0 ? (
               <div className={styles.gridPortfolio}>
-                {fotos.map(f => (
-                  <div key={f.id} className={styles.fotoWrapper} onClick={() => setFotoAmpliada(f.url)}>
+                {/* ✅ onClick passa o INDEX da foto */}
+                {fotos.map((f, index) => (
+                  <div key={f.id} className={styles.fotoWrapper} onClick={() => setFotoIndex(index)}>
                     <img src={f.url} className={styles.foto} alt="Trabalho" />
                   </div>
                 ))}
@@ -175,11 +183,13 @@ export default function Modal({ profissional, onClose }: ModalProps) {
               <div className={styles.listaAvaliacoes}>
                 {resumo.avaliacoes.map((av: any, index: number) => (
                   <div key={index} className={styles.cardAvaliacao}>
-                    <strong className={styles.nomeAvaliador}>{av.usuario?.nome || "Usuário"}</strong>
-                    <div className={styles.estrelasComentario}>
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <FaStar key={star} color={star <= av.star ? "#ffc107" : "#e4e5e9"} size={14} />
-                      ))}
+                    <div className={styles.headerAvaliacao}>
+                      <span className={styles.nomeAvaliador}>{av.usuario?.nome || "Usuário"}</span>
+                      <div className={styles.starsPequenas}>
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <FaStar key={star} color={star <= av.star ? "#ffc107" : "#e4e5e9"} size={12} />
+                        ))}
+                      </div>
                     </div>
                     {av.descricao && <p className={styles.textoComentario}>"{av.descricao}"</p>}
                   </div>
@@ -191,21 +201,37 @@ export default function Modal({ profissional, onClose }: ModalProps) {
           </div>
         </div>
 
-        {/* FOOTER COM BOTÃO (Fixo na base) */}
         <div className={styles.footer}>
-          <button 
-            onClick={handleContatoClick} 
-            className={styles.btnWhats}
-            disabled={profissional.disponivel === false}
-          >
+          <button onClick={handleContatoClick} className={styles.btnWhats} disabled={profissional.disponivel === false}>
             <FaWhatsapp style={{ fontSize: "1.2rem" }} /> 
             {profissional.disponivel === false ? "Profissional Indisponível" : "Falar no WhatsApp"}
           </button>
         </div>
 
-        {fotoAmpliada && (
-          <div className={styles.lightbox} onClick={() => setFotoAmpliada(null)}>
-            <img src={fotoAmpliada} alt="Imagem ampliada" className={styles.imagemAmpliada} />
+        {/* ✅ LIGHTBOX ATUALIZADO COM NAVEGAÇÃO */}
+        {fotoIndex !== null && (
+          <div className={styles.lightbox} onClick={() => setFotoIndex(null)}>
+            <button className={styles.fecharLightbox} onClick={() => setFotoIndex(null)}>
+              <FaTimes />
+            </button>
+            
+            {fotos.length > 1 && (
+              <>
+                <button className={styles.navBtnLeft} onClick={fotoAnterior}>
+                  <FaChevronLeft />
+                </button>
+                <button className={styles.navBtnRight} onClick={proximaFoto}>
+                  <FaChevronRight />
+                </button>
+              </>
+            )}
+
+            <img 
+              src={fotos[fotoIndex].url} 
+              alt="Imagem ampliada" 
+              className={styles.imagemAmpliada} 
+              onClick={(e) => e.stopPropagation()} // Impede fechar ao clicar na imagem
+            />
           </div>
         )}
       </div>
