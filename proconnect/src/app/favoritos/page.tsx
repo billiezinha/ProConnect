@@ -9,8 +9,8 @@ import Modal from "@/components/modal/Modal";
 import { LoadingGrid } from "@/components/loading/Loading";
 import { FaHeart } from "react-icons/fa";
 import toast from "react-hot-toast";
-// ✨ Importa os ícones de categoria para os cartões sem imagem ✨
-import { categoryIcons, defaultIcon } from "../utils/categoryIcons";
+// ✅ Importação corrigida para a nova lógica de grupos
+import { getServiceIcon, defaultIcon } from "../utils/categoryIcons";
 
 export default function FavoritosPage() {
   const [servicosFavoritos, setServicosFavoritos] = useState<Servico[]>([]);
@@ -31,6 +31,7 @@ export default function FavoritosPage() {
 
         if (idsFavoritos.length > 0) {
           const todos = await getServicos();
+          // Filtra os serviços que estão na lista de IDs favoritados vinda da API
           const filtrados = todos.filter((s: Servico) => idsFavoritos.includes(s.id));
           setServicosFavoritos(filtrados);
         } else {
@@ -47,7 +48,7 @@ export default function FavoritosPage() {
   }, []);
 
   const handleRemoverFavorito = async (id: number, nome: string) => {
-    // Atualização otimista
+    // Atualização otimista: Remove do ecrã instantaneamente
     setServicosFavoritos(prev => prev.filter(s => s.id !== id));
     
     try {
@@ -55,7 +56,7 @@ export default function FavoritosPage() {
       toast.success(`${nome} removido dos favoritos.`);
     } catch (error) {
       toast.error("Erro ao remover o favorito.");
-      // Se falhar, recarrega
+      // Se falhar na API, recarrega para sincronizar o estado
       window.location.reload(); 
     }
   };
@@ -70,19 +71,18 @@ export default function FavoritosPage() {
             <FaHeart style={{ color: 'var(--cor-primaria)', marginRight: '10px' }} />
             Meus Profissionais Salvos
           </h1>
-          <p className={styles.subtitle}>Consulte aqui os profissionais que guardou para contato posterior.</p>
+          <p className={styles.subtitle}>Consulte aqui os profissionais que guardou para contacto posterior.</p>
         </div>
 
         <div className={styles.resultsGrid}>
           {servicosFavoritos.length > 0 ? (
             servicosFavoritos.map((s) => {
-              // ✅ Cálculos necessários para o card completo (Disponibilidade e Ícone)
+              // ✅ Lógica corrigida para os ícones (pega o ícone do grupo)
               const isDisponivel = s.usuario?.disponivel !== false;
-              const catName = s.categoria?.nomeServico;
-              const icon = (catName && catName in categoryIcons) ? categoryIcons[catName as keyof typeof categoryIcons] : defaultIcon;
+              const catName = s.categoria?.nomeServico || "";
+              const icon = getServiceIcon(catName);
 
               return (
-                // ✅ ESTRUTURA HTML EXATA IGUAL À BUSCA DE PROFISSIONAIS ✅
                 <div key={s.id} className={styles.servicoCard}>
                   <div className={styles.cardImageContainer}>
                     {s.imagem ? (
@@ -92,7 +92,8 @@ export default function FavoritosPage() {
                         <span className={styles.cardCategoryIcon}>{icon}</span>
                       </div>
                     )}
-                    {/* Botão de favorito (coração cheio) que remove ao clicar */}
+                    
+                    {/* Botão para desfavoritar (coração cheio) */}
                     <button 
                       className={styles.favButton} 
                       onClick={() => handleRemoverFavorito(s.id, s.nomeNegocio)}
@@ -105,18 +106,15 @@ export default function FavoritosPage() {
                   <div className={styles.cardContent}>
                     <h3 className={styles.servicoTitle}>{s.nomeNegocio}</h3>
                     
-                    {/* Selo de Disponibilidade */}
                     <div className={`${styles.statusBadge} ${isDisponivel ? styles.statusOn : styles.statusOff}`}>
                       <span className={`${styles.statusDot} ${isDisponivel ? styles.dotOn : styles.dotOff}`}></span>
                       {isDisponivel ? "Disponível agora" : "Indisponível"}
                     </div>
 
-                    {/* Descrição cortada (limitada por CSS) */}
                     <p className={styles.servicoDescription}>
                       {s.descricao.length > 110 ? `${s.descricao.substring(0, 110)}...` : s.descricao}
                     </p>
                     
-                    {/* Localização */}
                     <div className={styles.cityText}>
                       📍 {s.localizacao?.cidade || s.usuario?.cidade || "Local não informado"}
                     </div>

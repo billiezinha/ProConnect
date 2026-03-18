@@ -1,14 +1,14 @@
 "use client";
 import { useState, useEffect, useMemo } from "react";
 import { getServicos } from "@/service/servicoService";
-import { getFavoritosIds, adicionarFavorito, removerFavorito } from "@/service/favoritoService"; // ✅ Importados os novos serviços
+import { getFavoritosIds, adicionarFavorito, removerFavorito } from "@/service/favoritoService"; 
 import { Servico } from "@/interfaces/ServicoProps";
 import styles from "./page.module.css";
 import { FaSearch, FaHeart, FaRegHeart, FaTimes } from "react-icons/fa";
 import Modal from "@/components/modal/Modal";
 import { LoadingGrid } from "@/components/loading/Loading";
 import toast from "react-hot-toast";
-import { categoryIcons, defaultIcon } from "../utils/categoryIcons";
+import { categoryGroups, getServiceIcon, defaultIcon } from "../utils/categoryIcons";
 import AvaliacaoPendente from "@/components/AvaliacaoPendente/AvaliacaoPendente";
 
 export default function BuscaProfissionaisPage() {
@@ -35,7 +35,6 @@ export default function BuscaProfissionaisPage() {
       }
     };
 
-    // ✅ Carrega os favoritos do servidor se o usuário estiver logado
     const carregarFavoritos = async () => {
       const token = localStorage.getItem("token");
       if (token) {
@@ -48,7 +47,6 @@ export default function BuscaProfissionaisPage() {
     carregarFavoritos();
   }, []);
 
-  // ✅ Função otimizada para salvar os favoritos na API
   const toggleFavorito = async (id: number, nome: string) => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -58,49 +56,57 @@ export default function BuscaProfissionaisPage() {
 
     const isJaFavorito = favoritos.includes(id);
 
-    // 1. Atualização Otimista: Muda na tela imediatamente para dar sensação de rapidez
     setFavoritos(prev => 
       isJaFavorito ? prev.filter(favId => favId !== id) : [...prev, id]
     );
 
     try {
-      // 2. Chama a API em segundo plano
       if (isJaFavorito) {
         await removerFavorito(id);
-        toast.success(`${nome} removido dos favoritos.`);
+        toast.success(`${nome} removido.`);
       } else {
         await adicionarFavorito(id);
         toast.success(`${nome} favoritado!`, { icon: '❤️' });
       }
     } catch (error) {
-      // 3. Se a API falhar, reverte a cor do coração e avisa o erro
       setFavoritos(prev => 
         isJaFavorito ? [...prev, id] : prev.filter(favId => favId !== id)
       );
-      toast.error("Erro ao guardar o favorito no servidor.");
+      toast.error("Erro ao processar favorito.");
     }
   };
 
   const filteredServicos = useMemo(() => {
+    // Para depuração: mostra no console F12 os nomes exatos que vêm do banco
+    if (servicos.length > 0) {
+       console.log("Categorias no DB:", servicos.map(s => `|${s.categoria?.nomeServico}|`));
+    }
+
     const busca = searchTerm.toLowerCase().trim();
-    const catSelecionada = selectedCategory ? selectedCategory.toLowerCase().trim() : null;
-    const removeAcentos = (str: string) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
     return servicos.filter(s => {
+      // Normalização dos dados do banco
+      const nomeServicoDB = (s.categoria?.nomeServico || "").toLowerCase().trim();
       const titulo = (s.nomeNegocio || "").toLowerCase();
       const desc = (s.descricao || "").toLowerCase();
-      const categoriaDB = (s.categoria?.nomeServico || "").toLowerCase();
       const cidade = (s.localizacao?.cidade || s.usuario?.cidade || "").toLowerCase();
 
+      // 1. Lógica da Barra de Pesquisa (Filtro por texto)
       const passaBusca = !busca || 
         titulo.includes(busca) || 
         desc.includes(busca) || 
-        categoriaDB.includes(busca) ||
+        nomeServicoDB.includes(busca) ||
         cidade.includes(busca);
 
+      // 2. Lógica das Macro Categorias (Filtro por Botão)
       let passaBotao = true;
-      if (catSelecionada) {
-        passaBotao = removeAcentos(categoriaDB).includes(removeAcentos(catSelecionada));
+      if (selectedCategory) {
+        const grupo = categoryGroups[selectedCategory];
+        if (grupo) {
+          // Criamos uma lista de comparação normalizada (sem espaços e tudo minúsculo)
+          const servicosDoGrupoNormalizados = grupo.services.map(n => n.toLowerCase().trim());
+          passaBotao = servicosDoGrupoNormalizados.includes(nomeServicoDB);
+        }
       }
 
       return passaBusca && passaBotao;
@@ -138,14 +144,14 @@ export default function BuscaProfissionaisPage() {
             >
               Todos
             </button>
-            {Object.keys(categoryIcons).map(cat => (
+            {Object.keys(categoryGroups).map(groupName => (
               <button 
-                key={cat} 
-                onClick={() => setSelectedCategory(cat)} 
-                className={selectedCategory === cat ? styles.catBtnActive : styles.catBtn}
+                key={groupName} 
+                onClick={() => setSelectedCategory(groupName)} 
+                className={selectedCategory === groupName ? styles.catBtnActive : styles.catBtn}
               >
-                <span className={styles.btnIcon}>{categoryIcons[cat as keyof typeof categoryIcons]}</span>
-                {cat}
+                <span className={styles.btnIcon}>{categoryGroups[groupName].icon}</span>
+                {groupName}
               </button>
             ))}
           </div>
@@ -156,8 +162,8 @@ export default function BuscaProfissionaisPage() {
             {filteredServicos.length > 0 ? (
               filteredServicos.map((s) => {
                 const isDisponivel = s.usuario?.disponivel !== false;
-                const catName = s.categoria?.nomeServico;
-                const icon = (catName && catName in categoryIcons) ? categoryIcons[catName as keyof typeof categoryIcons] : defaultIcon;
+                const catName = s.categoria?.nomeServico || "";
+                const icon = getServiceIcon(catName);
 
                 return (
                   <div key={s.id} className={styles.servicoCard}>

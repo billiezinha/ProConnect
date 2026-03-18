@@ -46,11 +46,8 @@ export default function Home() {
                 <li>✔️ Perfil Visível Para Clientes</li>
                 <li>✔️ Contato Direto</li>
                 <li>✔️ Receber Avaliações</li>
-                <li>                </li>
-                <li>                </li>
-                <li>                </li>
               </ul>
-              <Link href="/cadastro-usuario" className={`${styles.botaoPlano} ${styles.botaoOutline}`}>
+              <Link href="/cadastro-usuario" className={`${styles.botaoPlano} ${styles.butaoOutline}`}>
                 Começar Agora
               </Link>
             </div>
@@ -66,7 +63,6 @@ export default function Home() {
                 <li>✔️ Prioridade em Indicações</li>
                 <li>✔️ Análise de Desempenho do Perfil</li>
               </ul>
-              {/* ✨ CORREÇÃO AQUI: Estilizado como um botão inativo para alinhar perfeitamente */}
               <div className={styles.botaoPlano} style={{ 
                 backgroundColor: "var(--cor-fundo-secao)", 
                 border: "2px dashed var(--cor-borda)", 
