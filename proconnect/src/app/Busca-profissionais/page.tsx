@@ -1,9 +1,10 @@
 "use client";
 import { useState, useEffect, useMemo } from "react";
 import { getServicos } from "@/service/servicoService";
+import { getFavoritosIds, adicionarFavorito, removerFavorito } from "@/service/favoritoService"; // ✅ Importados os novos serviços
 import { Servico } from "@/interfaces/ServicoProps";
 import styles from "./page.module.css";
-import { FaSearch, FaHeart, FaRegHeart, FaTimes } from "react-icons/fa"; // Removidas FaDatabase e FaMapMarkerAlt
+import { FaSearch, FaHeart, FaRegHeart, FaTimes } from "react-icons/fa";
 import Modal from "@/components/modal/Modal";
 import { LoadingGrid } from "@/components/loading/Loading";
 import toast from "react-hot-toast";
@@ -15,7 +16,6 @@ export default function BuscaProfissionaisPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
   
-  // ✅ ESTADO UNIFICADO: Apenas um termo de pesquisa
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   
@@ -34,22 +34,51 @@ export default function BuscaProfissionaisPage() {
         setLoading(false);
       }
     };
+
+    // ✅ Carrega os favoritos do servidor se o usuário estiver logado
+    const carregarFavoritos = async () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        const favsServer = await getFavoritosIds();
+        setFavoritos(favsServer);
+      }
+    };
+
     fetchServicos();
-    const salvos = localStorage.getItem("@ProConnect:favoritos");
-    if (salvos) setFavoritos(JSON.parse(salvos));
+    carregarFavoritos();
   }, []);
 
-  const toggleFavorito = (id: number, nome: string) => {
-    let novaLista;
-    if (favoritos.includes(id)) {
-      novaLista = favoritos.filter(favId => favId !== id);
-      toast.success(`${nome} removido.`);
-    } else {
-      novaLista = [...favoritos, id];
-      toast.success(`${nome} favoritado!`, { icon: '❤️' });
+  // ✅ Função otimizada para salvar os favoritos na API
+  const toggleFavorito = async (id: number, nome: string) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("Para favoritar, faça login primeiro!");
+      return;
     }
-    setFavoritos(novaLista);
-    localStorage.setItem("@ProConnect:favoritos", JSON.stringify(novaLista));
+
+    const isJaFavorito = favoritos.includes(id);
+
+    // 1. Atualização Otimista: Muda na tela imediatamente para dar sensação de rapidez
+    setFavoritos(prev => 
+      isJaFavorito ? prev.filter(favId => favId !== id) : [...prev, id]
+    );
+
+    try {
+      // 2. Chama a API em segundo plano
+      if (isJaFavorito) {
+        await removerFavorito(id);
+        toast.success(`${nome} removido dos favoritos.`);
+      } else {
+        await adicionarFavorito(id);
+        toast.success(`${nome} favoritado!`, { icon: '❤️' });
+      }
+    } catch (error) {
+      // 3. Se a API falhar, reverte a cor do coração e avisa o erro
+      setFavoritos(prev => 
+        isJaFavorito ? [...prev, id] : prev.filter(favId => favId !== id)
+      );
+      toast.error("Erro ao guardar o favorito no servidor.");
+    }
   };
 
   const filteredServicos = useMemo(() => {
@@ -63,7 +92,6 @@ export default function BuscaProfissionaisPage() {
       const categoriaDB = (s.categoria?.nomeServico || "").toLowerCase();
       const cidade = (s.localizacao?.cidade || s.usuario?.cidade || "").toLowerCase();
 
-      // ✅ PESQUISA INTELIGENTE: Procura o termo em tudo
       const passaBusca = !busca || 
         titulo.includes(busca) || 
         desc.includes(busca) || 
