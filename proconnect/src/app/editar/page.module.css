@@ -188,3 +188,94 @@
 .galeriaWrapper {
   margin-top: 24px;
 }
+
+/* ESTILOS DA NOVA LOGO */
+.logoUploadWrapper {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 5px;
+}
+
+.logoPreview {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 2px solid var(--cor-borda);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.fileInput {
+  font-size: 0.9rem;
+  color: var(--cor-texto-secundario);
+}
+
+/* === ESTILOS DA NOVA LOGO (Design Circular) === */
+.logoContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.logoLabelCentered {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--cor-texto);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.logoPlaceholder {
+  width: 130px;
+  height: 130px;
+  border: 2px dashed var(--cor-borda);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--cor-fundo-input);
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.logoPlaceholder:hover {
+  border-color: var(--cor-primaria);
+  background-color: var(--cor-fundo);
+}
+
+.logoImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.addIcon {
+  font-size: 2rem;
+  color: #94a3b8; /* Cor cinzenta para o ícone de mais */
+}
+
+.fileInputHidden {
+  display: none;
+}
+
+.removerLogoBtn {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #ef4444; /* Vermelho */
+  background: none;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: opacity 0.2s;
+}
+
+.removerLogoBtn:hover {
+  opacity: 0.8;
+}

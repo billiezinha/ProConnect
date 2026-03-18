@@ -1,10 +1,13 @@
 "use client";
 import { useState, useEffect } from "react";
 import { getCategorias } from "@/service/categoriaService";
+import { uploadImagemServico } from "@/service/servicoService"; 
 import type { Categoria } from "@/interfaces/CategoriaProps";
 import type { Servico, UpdateServicoPayload } from "@/interfaces/ServicoProps";
 import styles from "./page.module.css";
 import { HiOutlineX } from "react-icons/hi";
+import { FaTrash, FaPlus } from "react-icons/fa"; // ✨ Importado o FaPlus e FaTrash
+import toast from "react-hot-toast";
 
 // Importações dos novos componentes de Portfólio
 import UploadPortfolio from "@/components/UploadPortfolio/UploadPortfolio";
@@ -19,18 +22,13 @@ interface EditServicoModalProps {
 export default function EditServicoModal({ servico, onClose, onSave }: EditServicoModalProps) {
   const [nomeNegocio, setNomeNegocio] = useState(servico.nomeNegocio);
   const [descricao, setDescricao] = useState(servico.descricao);
-  
-  const [categoriaId, setCategoriaId] = useState<number>(
-    servico.categoria?.id || 0
-  );
-  
+  const [categoriaId, setCategoriaId] = useState<number>(servico.categoria?.id || 0);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
-  
   const [valorPreco, setValorPreco] = useState<number>(
     servico.preco && servico.preco.length > 0 ? servico.preco[0].precificacao : 0
   );
 
-  // Estado para forçar a atualização da galeria quando uma nova foto é enviada
+  const [novaLogo, setNovaLogo] = useState<File | null>(null);
   const [atualizador, setAtualizador] = useState(0);
 
   useEffect(() => {
@@ -45,9 +43,20 @@ export default function EditServicoModal({ servico, onClose, onSave }: EditServi
     fetchCategorias();
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (novaLogo) {
+      try {
+        const formData = new FormData();
+        formData.append("imagem", novaLogo);
+        await uploadImagemServico(servico.id, formData);
+        toast.success("Logo do serviço atualizada!");
+      } catch (error) {
+        toast.error("Erro ao atualizar a Logo.");
+      }
+    }
+
     const payload: UpdateServicoPayload = {
       nomeNegocio,
       descricao,
@@ -63,7 +72,6 @@ export default function EditServicoModal({ servico, onClose, onSave }: EditServi
     onSave(payload);
   };
 
-  // Função chamada após o upload bem-sucedido
   const handleUploadSuccess = () => {
     setAtualizador(prev => prev + 1); 
   };
@@ -78,8 +86,44 @@ export default function EditServicoModal({ servico, onClose, onSave }: EditServi
           </button>
         </div>
 
-        {/* Formulário Principal (Texto e Preço) */}
         <form onSubmit={handleSubmit} className={styles.form}>
+          
+          {/* ✨ NOVO: CAMPO DE LOGO (Design Circular Exatamente como na Imagem) */}
+          <div className={styles.formGroup} style={{ borderBottom: '1px solid #e2e8f0', paddingBottom: '1.5rem', marginBottom: '0.5rem' }}>
+            <label className={styles.logoLabelCentered}>Logo / Foto de Capa do Serviço</label>
+            
+            <div className={styles.logoContainer}>
+              <input 
+                type="file" 
+                accept="image/*" 
+                id="upload-logo"
+                onChange={(e) => setNovaLogo(e.target.files?.[0] || null)}
+                className={styles.fileInputHidden}
+              />
+              
+              <label htmlFor="upload-logo" className={styles.logoPlaceholder}>
+                {novaLogo ? (
+                  <img src={URL.createObjectURL(novaLogo)} alt="Nova capa" className={styles.logoImage} />
+                ) : servico.imagem ? (
+                  <img src={servico.imagem} alt="Capa atual" className={styles.logoImage} />
+                ) : (
+                  <FaPlus className={styles.addIcon} />
+                )}
+              </label>
+
+              {/* Botão de Remover (Só aparece se houver imagem) */}
+              {(novaLogo || servico.imagem) && (
+                <button 
+                  type="button" 
+                  className={styles.removerLogoBtn}
+                  onClick={() => setNovaLogo(null)}
+                >
+                  <FaTrash /> Remover foto
+                </button>
+              )}
+            </div>
+          </div>
+
           <div className={styles.formGroup}>
             <label htmlFor="nomeNegocio">Nome do Negócio</label>
             <input 
@@ -130,33 +174,27 @@ export default function EditServicoModal({ servico, onClose, onSave }: EditServi
           </div>
 
           <div className={styles.modalActions}>
-            <button type="button" onClick={onClose} className={styles.cancelBtn}>
-              Cancelar
-            </button>
-            <button type="submit" className={styles.saveBtn}>
-              Salvar Alterações
-            </button>
+            <button type="button" onClick={onClose} className={styles.cancelBtn}>Cancelar</button>
+            <button type="submit" className={styles.saveBtn}>Salvar Alterações</button>
           </div>
         </form>
 
-        {/* Secção do Portfólio (Fora do formulário para evitar submissões acidentais) */}
-        <div className={styles.portfolioSection}>
-          <hr className={styles.divisor} />
-          <h3 className={styles.portfolioTitulo}>Gerir Imagens do Portfólio</h3>
-          <p className={styles.portfolioDescricao}>
-            Adiciona fotografias dos teus trabalhos para atrair mais clientes.
-          </p>
+        {/* SECÇÃO DO PORTFÓLIO */}
+        <div className={styles.portfolioSection} style={{ marginTop: '2.5rem' }}>
+          <hr className={styles.divisor} style={{ marginBottom: '1.5rem', borderColor: '#e2e8f0' }} />
+          
+          <div style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: '700', marginBottom: '0.5rem', color: '#1e293b' }}>
+              Edição de Galeria de Produtos
+            </h3>
+            <p style={{ fontSize: '0.9rem', color: '#64748b', marginBottom: '1.5rem' }}>Adiciona fotos ao teu portfólio de trabalhos.</p>
 
-          <UploadPortfolio 
-            servicoId={servico.id} 
-            onUploadSuccess={handleUploadSuccess} 
-          />
-
-          <div className={styles.galeriaWrapper}>
-            <GaleriaPortfolio 
-              key={atualizador} 
-              servicoId={servico.id} 
-            />
+            <div style={{ marginBottom: '1.5rem' }}>
+              <UploadPortfolio servicoId={servico.id} onUploadSuccess={handleUploadSuccess} />
+            </div>
+            
+            <GaleriaPortfolio key={atualizador} servicoId={servico.id} isOwner={true} />
+            
           </div>
         </div>
 

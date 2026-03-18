@@ -1,78 +1,84 @@
 "use client";
-import { useEffect, useState } from "react";
-import { getPortfolioByServico, PortfolioFoto } from "@/service/portfolioService";
+import { useState, useEffect } from "react";
+import { getPortfolioByServico, deleteFotoPortfolio, PortfolioFoto } from "@/service/portfolioService";
 import styles from "./GaleriaPortfolio.module.css";
-import { FaTimes } from "react-icons/fa"; // Ícone de fechar
+import { FaTrash, FaTimes } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 interface GaleriaPortfolioProps {
   servicoId: number;
+  isOwner?: boolean;
 }
 
-export default function GaleriaPortfolio({ servicoId }: GaleriaPortfolioProps) {
+export default function GaleriaPortfolio({ servicoId, isOwner }: GaleriaPortfolioProps) {
   const [fotos, setFotos] = useState<PortfolioFoto[]>([]);
   const [loading, setLoading] = useState(true);
-  
-  // NOVO: Estado para controlar qual foto está aberta em ecrã inteiro
   const [fotoAmpliada, setFotoAmpliada] = useState<string | null>(null);
 
   useEffect(() => {
-    async function carregarFotos() {
-      try {
-        const dados = await getPortfolioByServico(servicoId);
-        setFotos(dados);
-      } catch (error) {
-        console.error("Erro ao carregar o portfólio:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
     carregarFotos();
   }, [servicoId]);
 
-  if (loading) return <p className={styles.texto}>A carregar imagens...</p>;
+  const carregarFotos = async () => {
+    try {
+      const data = await getPortfolioByServico(servicoId);
+      setFotos(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  if (fotos.length === 0) {
-    return <p className={styles.texto}>Este profissional ainda não adicionou fotos ao portfólio.</p>;
-  }
+  const handleDelete = async (e: React.MouseEvent, fotoId: number) => {
+    e.stopPropagation(); // Evita abrir o modal da foto
+    if (!confirm("Tem certeza que deseja excluir esta foto?")) return;
+    try {
+      await deleteFotoPortfolio(fotoId);
+      toast.success("Foto removida!");
+      carregarFotos();
+    } catch (error) {
+      toast.error("Erro ao remover foto.");
+    }
+  };
+
+  if (loading) return <p className={styles.empty}>A carregar galeria...</p>;
+  if (fotos.length === 0) return <p className={styles.empty}>Nenhuma foto adicionada.</p>;
 
   return (
-    <div className={styles.container}>
-      <h3 className={styles.titulo}>Portfólio de Trabalhos</h3>
-      <div className={styles.grid}>
-        {fotos.map((foto) => (
+    <>
+      {/* Container dinâmico: se for dono usa a lista Preta, se for cliente usa grelha */}
+      <div className={isOwner ? styles.editContainer : styles.grid}>
+        {fotos.map(foto => (
           <div 
             key={foto.id} 
-            className={styles.imagemWrapper}
-            onClick={() => setFotoAmpliada(foto.url)} // Ao clicar, define esta foto como a ampliada
+            className={isOwner ? styles.editCard : styles.imagemWrapper}
+            onClick={() => !isOwner && setFotoAmpliada(foto.url)}
           >
             <img 
               src={foto.url} 
-              alt={`Trabalho do serviço ${servicoId}`} 
-              className={styles.imagem}
+              alt="Trabalho do portfólio" 
+              className={isOwner ? styles.editImage : styles.imagem} 
             />
+            {/* Lixeira Vermelha do Modo de Edição */}
+            {isOwner && (
+              <button onClick={(e) => handleDelete(e, foto.id)} className={styles.deleteBtn} title="Excluir imagem">
+                <FaTrash />
+              </button>
+            )}
           </div>
         ))}
       </div>
 
-      {/* NOVO: Modal / Lightbox para a foto ampliada */}
+      {/* Lightbox para clientes expandirem a foto */}
       {fotoAmpliada && (
         <div className={styles.lightbox} onClick={() => setFotoAmpliada(null)}>
-          <button 
-            className={styles.fecharLightbox} 
-            onClick={() => setFotoAmpliada(null)}
-            aria-label="Fechar imagem"
-          >
+          <button className={styles.fecharLightbox} aria-label="Fechar">
             <FaTimes />
           </button>
-          
-          <img 
-            src={fotoAmpliada} 
-            alt="Foto ampliada" 
-            className={styles.imagemAmpliada} 
-            onClick={(e) => e.stopPropagation()} // Impede que clicar na imagem feche o modal
-          />
+          <img src={fotoAmpliada} alt="Foto ampliada" className={styles.imagemAmpliada} onClick={(e) => e.stopPropagation()}/>
         </div>
       )}
-    </div>
+    </>
   );
 }
