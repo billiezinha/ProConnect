@@ -1,34 +1,31 @@
-/* === ESTRUTURA BASE DO MODAL === */
+/* === ESTRUTURA BASE (CENTRALIZAÇÃO) === */
 .overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.7); /* O fundo overlay continua escuro */
+  inset: 0; /* Ocupa toda a tela */
+  background-color: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(5px);
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: center; /* Centraliza verticalmente */
+  justify-content: center; /* Centraliza horizontalmente */
   z-index: 10000;
-  padding: 20px;
+  padding: 16px; /* Evita que o modal encoste nas bordas do celular */
 }
 
 .modalContent {
-  background: var(--cor-fundo-card); /* ADAPTÁVEL AO MODO DARK */
-  color: var(--cor-texto);
-  border: 1px solid var(--cor-borda);
+  background: var(--cor-fundo-card, white);
+  color: var(--cor-texto, #1a1a1a);
   width: 100%;
   max-width: 550px;
   border-radius: 24px;
-  padding: 30px;
   position: relative;
-  box-shadow: var(--sombra-suave);
-  max-height: 90vh;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column; /* Necessário para o scroll interno */
+  
+  /* Altura dinâmica: 90dvh se adapta à barra de endereços do mobile */
+  max-height: 90dvh; 
+  box-shadow: var(--sombra-suave, 0 10px 30px rgba(0,0,0,0.3));
+  overflow: hidden; /* Garante que o conteúdo não saia das bordas arredondadas */
   animation: modalEnter 0.3s ease-out;
-  scrollbar-width: thin;
-  scrollbar-color: var(--cor-primaria) transparent;
 }
 
 @keyframes modalEnter {
@@ -36,372 +33,196 @@
   to { opacity: 1; transform: scale(1); }
 }
 
-.closeBtn {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background: var(--cor-fundo-input);
-  color: var(--cor-texto);
-  border: 1px solid var(--cor-borda);
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  font-size: 20px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-  transition: background 0.2s;
+/* === CABEÇALHO FIXO === */
+.header {
+  padding: 24px 30px;
+  border-bottom: 1px solid var(--cor-borda, #f0f0f0);
+  flex-shrink: 0; /* Não deixa o cabeçalho encolher */
 }
 
-.closeBtn:hover {
-  background: var(--cor-borda);
-}
-
-/* === CABEÇALHO E INFO === */
 .header h2 { 
-  font-size: 1.8rem; 
+  font-size: 1.6rem; 
   margin-bottom: 8px; 
-  color: var(--cor-texto); 
   padding-right: 40px; 
 }
 
+.badgeRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 .badgeCategoria {
-  display: inline-block;
-  background: var(--cor-fundo-secao);
-  color: var(--cor-primaria);
-  border: 1px solid var(--cor-primaria);
+  background: var(--cor-fundo-secao, #e1f5fe);
+  color: var(--cor-primaria, #0288d1);
   padding: 4px 12px;
   border-radius: 20px;
   font-size: 0.85rem;
   font-weight: 700;
 }
 
-.descricao { 
-  margin: 20px 0; 
-  color: var(--cor-texto-secundario); 
-  line-height: 1.6; 
-  font-size: 1rem;
+/* === CORPO COM SCROLL (A MÁGICA ACONTECE AQUI) === */
+.scrollBody {
+  padding: 0 30px 24px 30px;
+  overflow-y: auto; /* Só esta parte rola */
+  flex: 1; /* Ocupa todo o espaço disponível entre o topo e a base */
+  scrollbar-width: thin;
+  scrollbar-color: var(--cor-primaria, #25d366) transparent;
 }
 
-/* === SEÇÕES (PORTFÓLIO E AVALIAÇÕES) === */
+/* === SEÇÕES INTERNAS === */
 .section {
   margin-top: 25px;
-  border-top: 1px solid var(--cor-borda);
+  border-top: 1px solid var(--cor-borda, #eee);
   padding-top: 20px;
 }
 
 .section h3 { 
   font-size: 1.1rem; 
   margin-bottom: 15px; 
-  color: var(--cor-texto); 
   font-weight: 700; 
 }
 
+.descricao { 
+  margin: 20px 0; 
+  color: var(--cor-texto-secundario, #666); 
+  line-height: 1.6;
+}
+
+/* === TABELA DE PREÇOS === */
+.tabelaPrecos {
+  background: var(--cor-fundo-input, #f9f9f9);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.itemPreco {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  border-bottom: 1px dotted var(--cor-borda, #ddd);
+}
+
+.itemPreco:last-child { border-bottom: none; }
+
+/* === PORTFÓLIO === */
 .gridPortfolio {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  gap: 10px;
 }
 
 .fotoWrapper {
-  width: 100%;
   aspect-ratio: 1/1;
   border-radius: 12px;
   overflow: hidden;
-  background: var(--cor-fundo-input);
-  border: 1px solid var(--cor-borda);
+  cursor: pointer;
 }
 
 .foto {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s;
 }
 
-.foto:hover {
-  transform: scale(1.08);
-}
+.foto:hover { transform: scale(1.08); }
 
-/* === RATING E AVALIAÇÕES === */
-.ratingHeader { 
-  display: flex; 
-  align-items: center; 
-  gap: 12px; 
-  margin-top: 10px;
-}
-
-.starMain { font-weight: 800; color: var(--cor-texto); font-size: 1.3rem; }
-.totalAvaliacoes { color: var(--cor-texto-secundario); font-size: 0.9rem; }
-
+/* === AVALIAÇÕES === */
 .listaAvaliacoes {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.cardAvaliacao {
-  background: var(--cor-fundo-input);
-  padding: 16px;
-  border-radius: 16px;
-  border: 1px solid var(--cor-borda);
-}
-
-.avHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.avHeader strong { color: var(--cor-texto); font-size: 0.95rem; }
-.stars { color: #ffb800; }
-
-.cardAvaliacao p { 
-  font-size: 0.9rem; 
-  color: var(--cor-texto-secundario); 
-  margin: 0; 
-  line-height: 1.4;
-}
-
-/* === BOTÃO WHATSAPP === */
-.btnWhats {
-  width: 100%;
-  margin-top: 30px;
-  padding: 16px;
-  background: var(--cor-primaria);
-  color: var(--cor-texto-claro);
-  border: none;
-  border-radius: 16px;
-  font-weight: 700;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
-.btnWhats:hover { 
-  background: var(--cor-primaria-hover);
-  transform: translateY(-2px); 
-  box-shadow: 0 8px 20px rgba(139, 44, 245, 0.3);
-}
-
-.noData { 
-  font-style: italic; 
-  color: var(--cor-texto-secundario); 
-  font-size: 0.85rem; 
-  text-align: center; 
-  padding: 15px 0; 
-}
-
-/* Adiciona a "mãozinha" para indicar que a foto é clicável */
-.fotoWrapper {
-  cursor: pointer;
-}
-
-/* =========================================
-   LIGHTBOX (FOTO AMPLIADA NO MODAL)
-========================================= */
-.lightbox {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.9); /* Fundo quase todo preto */
-  backdrop-filter: blur(5px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999999; /* Tem de ser maior que o z-index do próprio Modal */
-  padding: 20px;
-}
-
-.fecharLightbox {
-  position: absolute;
-  top: 25px;
-  right: 35px;
-  background: transparent;
-  border: none;
-  color: white;
-  font-size: 2rem;
-  cursor: pointer;
-  z-index: 1000000;
-  transition: transform 0.2s ease;
-}
-
-.fecharLightbox:hover {
-  transform: scale(1.2);
-}
-
-.imagemAmpliada {
-  max-width: 90vw;
-  max-height: 90vh;
-  object-fit: contain; /* Para não cortar nenhum pedaço da foto */
-  border-radius: 8px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-  animation: zoomInFoto 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-@keyframes zoomInFoto {
-  from {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-/* === TABELA DE PREÇOS (NOVO) === */
-.tabelaPrecos {
-  background: var(--cor-fundo-input);
-  border-radius: 16px;
-  padding: 16px;
-  border: 1px solid var(--cor-borda);
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.itemPreco {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 8px;
-  border-bottom: 1px dotted var(--cor-borda);
+.cardAvaliacao {
+  background: var(--cor-fundo-input, #f8fafc);
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid var(--cor-borda, #e2e8f0);
 }
 
-.itemPreco:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
+.nomeAvaliador { font-weight: 700; font-size: 0.9rem; }
+.estrelasComentario { color: #ffb800; margin: 4px 0; }
+.textoComentario { font-size: 0.9rem; font-style: italic; margin: 0; }
+
+/* === FOOTER FIXO (BOTÃO WHATSAPP) === */
+.footer {
+  padding: 20px 30px;
+  border-top: 1px solid var(--cor-borda, #f0f0f0);
+  flex-shrink: 0; /* Mantém o botão sempre na base */
 }
 
-.itemPreco span {
-  font-size: 0.95rem;
-  color: var(--cor-texto);
-  font-weight: 500;
-}
-
-.itemPreco strong {
-  font-size: 1rem;
-  color: var(--cor-primaria);
+.btnWhats {
+  width: 100%;
+  padding: 16px;
+  background: var(--cor-primaria, #25d366);
+  color: white;
+  border: none;
+  border-radius: 16px;
   font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: transform 0.2s;
 }
 
-/* === AJUSTES DE RESPONSIVIDADE PARA O PORTFÓLIO === */
+.btnWhats:hover { transform: translateY(-2px); opacity: 0.9; }
+
+/* === BOTÃO FECHAR === */
+.closeBtn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: var(--cor-fundo-input, #eee);
+  color: var(--cor-texto);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+/* === LIGHTBOX (IMAGEM AMPLIADA) === */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20000;
+  padding: 20px;
+}
+
+.imagemAmpliada {
+  max-width: 90%;
+  max-height: 80%;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+/* === RESPONSIVIDADE MOBILE === */
 @media (max-width: 480px) {
-  .gridPortfolio {
-    grid-template-columns: repeat(2, 1fr); /* 2 colunas em telas muito pequenas */
+  .modalContent {
+    max-height: 95dvh; /* Usa quase a tela toda no celular */
+    border-radius: 20px;
   }
   
-  .modalContent {
-    padding: 20px;
-    border-radius: 20px 20px 0 0;
-    align-self: flex-end; /* Abre como "bottom sheet" no mobile */
-    max-height: 95vh;
+  .gridPortfolio {
+    grid-template-columns: repeat(2, 1fr);
   }
-}
 
-/* Estilo para o ícone de carregamento */
-.loadingText {
-  text-align: center;
-  color: var(--cor-texto-secundario);
-  font-size: 0.9rem;
-  padding: 20px;
-  animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-  0% { opacity: 0.6; }
-  50% { opacity: 1; }
-  100% { opacity: 0.6; }
-}
-
-/* Estilos para a secção de Avaliações no Modal */
-.avaliacoesContainer {
-  margin-top: 2rem;
-  border-top: 1px solid #e2e8f0;
-  padding-top: 1.5rem;
-}
-
-.avaliacoesTitulo {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 1rem;
-}
-
-.listaAvaliacoes {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  max-height: 250px; /* Cria uma barra de scroll se houver muitos comentários */
-  overflow-y: auto;
-  padding-right: 0.5rem;
-}
-
-.cardAvaliacao {
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 1rem;
-}
-
-.estrelasComentario {
-  display: flex;
-  gap: 0.25rem;
-  margin-bottom: 0.5rem;
-}
-
-.textoComentario {
-  color: #475569;
-  font-size: 0.95rem;
-  font-style: italic;
-  margin: 0;
-}
-
-.textoComentarioVazio {
-  color: #94a3b8;
-  font-size: 0.85rem;
-  margin: 0;
-}
-
-.semAvaliacoes {
-  color: #64748b;
-  font-size: 0.95rem;
-}
-
-.cardAvaliacao {
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem; /* Espaço entre o nome, estrelas e texto */
-}
-
-.nomeAvaliador {
-  font-size: 0.9rem;
-  color: #1e293b;
-  font-weight: 700;
-  text-transform: capitalize;
-}
-
-.estrelasComentario {
-  display: flex;
-  gap: 0.2rem;
-}
-
-.textoComentario {
-  color: #475569;
-  font-size: 0.95rem;
-  font-style: italic;
-  margin-top: 0.4rem;
+  .header h2 { font-size: 1.4rem; }
 }

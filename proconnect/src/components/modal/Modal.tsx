@@ -107,10 +107,12 @@ export default function Modal({ profissional, onClose }: ModalProps) {
   return (
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+        {/* Botão de fechar */}
         <button className={styles.closeBtn} onClick={onClose} aria-label="Fechar modal">
           <FaTimes />
         </button>
         
+        {/* CABEÇALHO (Fixo no topo) */}
         <div className={styles.header}>
            <h2>{profissional.nome || "Profissional"}</h2>
            <div className={styles.badgeRow}>
@@ -128,96 +130,81 @@ export default function Modal({ profissional, onClose }: ModalProps) {
            </div>
         </div>
         
-        <div className={styles.info}>
-          <p className={styles.descricao}>{profissional.descricao}</p>
-        </div>
+        {/* CORPO DO MODAL COM SCROLL INTERNO */}
+        <div className={styles.scrollBody}>
+          <div className={styles.section}>
+            <p className={styles.descricao}>{profissional.descricao}</p>
+          </div>
 
-        <div className={styles.section}>
-          <h3>Tabela de Preços</h3>
-          {profissional.precos && profissional.precos.length > 0 ? (
-            <div className={styles.tabelaPrecos}>
-              {profissional.precos.map((p, index) => (
-                <div key={index} className={styles.itemPreco}>
-                  <span>{p.nomeservico}</span>
-                  <strong>R$ {Number(p.precificacao).toFixed(2)}</strong>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className={styles.noData}>Preços sob consulta.</p>
-          )}
-        </div>
-
-        <div className={styles.section}>
-          <h3>Portfólio</h3>
-          {loading ? (
-            <p className={styles.loadingText}>Carregando galeria...</p>
-          ) : fotos.length > 0 ? (
-            <div className={styles.gridPortfolio}>
-              {fotos.map(f => (
-                <div key={f.id} className={styles.fotoWrapper} onClick={() => setFotoAmpliada(f.url)}>
-                  <img src={f.url} className={styles.foto} alt="Trabalho do profissional" />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className={styles.noData}>Nenhuma foto disponível.</p>
-          )}
-        </div>
-
-        {/* ✅ SECÇÃO ATUALIZADA: Comentários com nome do usuário */}
-        <div className={styles.section}>
-          <h3>Avaliações e Comentários</h3>
-          {resumo?.avaliacoes && resumo.avaliacoes.length > 0 ? (
-            <div className={styles.listaAvaliacoes}>
-              {resumo.avaliacoes.map((av: any, index: number) => (
-                <div key={index} className={styles.cardAvaliacao}>
-                  {/* Nome de quem fez o comentário */}
-                  <strong className={styles.nomeAvaliador}>
-                    {av.usuario?.nome || "Usuário anônimo"}
-                  </strong>
-
-                  <div className={styles.estrelasComentario}>
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <FaStar 
-                        key={star} 
-                        color={star <= av.star ? "#ffc107" : "#e4e5e9"} 
-                        size={14} 
-                      />
-                    ))}
+          <div className={styles.section}>
+            <h3>Tabela de Preços</h3>
+            {profissional.precos && profissional.precos.length > 0 ? (
+              <div className={styles.tabelaPrecos}>
+                {profissional.precos.map((p, index) => (
+                  <div key={index} className={styles.itemPreco}>
+                    <span>{p.nomeservico}</span>
+                    <strong>R$ {Number(p.precificacao).toFixed(2)}</strong>
                   </div>
-                  {av.descricao ? (
-                    <p className={styles.textoComentario}>"{av.descricao}"</p>
-                  ) : (
-                    <p className={styles.textoComentarioVazio}>(Avaliação sem comentário)</p>
-                  )}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className={styles.noData}>Este serviço ainda não possui avaliações. Seja o primeiro a avaliar!</p>
-          )}
+                ))}
+              </div>
+            ) : (
+              <p className={styles.noData}>Preços sob consulta.</p>
+            )}
+          </div>
+
+          <div className={styles.section}>
+            <h3>Portfólio</h3>
+            {loading ? (
+              <p className={styles.loadingText}>Carregando galeria...</p>
+            ) : fotos.length > 0 ? (
+              <div className={styles.gridPortfolio}>
+                {fotos.map(f => (
+                  <div key={f.id} className={styles.fotoWrapper} onClick={() => setFotoAmpliada(f.url)}>
+                    <img src={f.url} className={styles.foto} alt="Trabalho" />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className={styles.noData}>Nenhuma foto disponível.</p>
+            )}
+          </div>
+
+          <div className={styles.section}>
+            <h3>Avaliações e Comentários</h3>
+            {resumo?.avaliacoes && resumo.avaliacoes.length > 0 ? (
+              <div className={styles.listaAvaliacoes}>
+                {resumo.avaliacoes.map((av: any, index: number) => (
+                  <div key={index} className={styles.cardAvaliacao}>
+                    <strong className={styles.nomeAvaliador}>{av.usuario?.nome || "Usuário"}</strong>
+                    <div className={styles.estrelasComentario}>
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <FaStar key={star} color={star <= av.star ? "#ffc107" : "#e4e5e9"} size={14} />
+                      ))}
+                    </div>
+                    {av.descricao && <p className={styles.textoComentario}>"{av.descricao}"</p>}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className={styles.noData}>Ainda não possui avaliações.</p>
+            )}
+          </div>
         </div>
 
-        <button 
-          onClick={handleContatoClick} 
-          className={styles.btnWhats}
-          disabled={profissional.disponivel === false}
-          style={{
-            opacity: profissional.disponivel === false ? 0.5 : 1,
-            cursor: profissional.disponivel === false ? "not-allowed" : "pointer",
-            backgroundColor: profissional.disponivel === false ? "#94a3b8" : ""
-          }}
-        >
-          <FaWhatsapp style={{ fontSize: "1.2rem" }} /> 
-          {profissional.disponivel === false ? "Profissional Indisponível" : "Falar no WhatsApp"}
-        </button>
+        {/* FOOTER COM BOTÃO (Fixo na base) */}
+        <div className={styles.footer}>
+          <button 
+            onClick={handleContatoClick} 
+            className={styles.btnWhats}
+            disabled={profissional.disponivel === false}
+          >
+            <FaWhatsapp style={{ fontSize: "1.2rem" }} /> 
+            {profissional.disponivel === false ? "Profissional Indisponível" : "Falar no WhatsApp"}
+          </button>
+        </div>
 
         {fotoAmpliada && (
           <div className={styles.lightbox} onClick={() => setFotoAmpliada(null)}>
-            <button className={styles.fecharLightbox} aria-label="Fechar imagem">
-              <FaTimes />
-            </button>
             <img src={fotoAmpliada} alt="Imagem ampliada" className={styles.imagemAmpliada} />
           </div>
         )}
