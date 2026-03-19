@@ -4,14 +4,17 @@ import { getServicos } from "@/service/servicoService";
 import { getFavoritosIds, adicionarFavorito, removerFavorito } from "@/service/favoritoService"; 
 import { Servico } from "@/interfaces/ServicoProps";
 import styles from "./page.module.css";
-import { FaSearch, FaHeart, FaRegHeart, FaTimes } from "react-icons/fa";
+import { FaSearch, FaHeart, FaRegHeart, FaTimes, FaCommentDots } from "react-icons/fa";
 import Modal from "@/components/modal/Modal";
 import { LoadingGrid } from "@/components/loading/Loading";
 import toast from "react-hot-toast";
-import { categoryGroups, getServiceIcon, defaultIcon } from "../utils/categoryIcons";
+import { categoryGroups, getServiceIcon } from "../utils/categoryIcons";
 import AvaliacaoPendente from "@/components/AvaliacaoPendente/AvaliacaoPendente";
+import { useRouter } from 'next/navigation';
+import api from '@/service/api';
 
 export default function BuscaProfissionaisPage() {
+  const router = useRouter(); 
   const [servicos, setServicos] = useState<Servico[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
@@ -47,6 +50,37 @@ export default function BuscaProfissionaisPage() {
     carregarFavoritos();
   }, []);
 
+  const iniciarChat = async (profissionalId: number | undefined) => {
+    if (!profissionalId) return;
+    
+    try {
+      const userStr = localStorage.getItem('user');
+      if (!userStr) {
+        toast.error("Precisa de iniciar sessão primeiro para enviar mensagens!");
+        router.push('/login');
+        return;
+      }
+      
+      const cliente = JSON.parse(userStr);
+
+      if (cliente.id === profissionalId) {
+        toast.error("Não pode iniciar um chat com o seu próprio serviço.");
+        return;
+      }
+
+      await api.post('/chat', {
+        clienteId: cliente.id,
+        profissionalId: profissionalId
+      });
+
+      router.push('/chat');
+
+    } catch (error) {
+      console.error("Erro ao iniciar chat:", error);
+      toast.error("Não foi possível iniciar a conversa. Tente novamente.");
+    }
+  };
+
   const toggleFavorito = async (id: number, nome: string) => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -77,33 +111,24 @@ export default function BuscaProfissionaisPage() {
   };
 
   const filteredServicos = useMemo(() => {
-    // Para depuração: mostra no console F12 os nomes exatos que vêm do banco
-    if (servicos.length > 0) {
-       console.log("Categorias no DB:", servicos.map(s => `|${s.categoria?.nomeServico}|`));
-    }
-
     const busca = searchTerm.toLowerCase().trim();
 
     return servicos.filter(s => {
-      // Normalização dos dados do banco
       const nomeServicoDB = (s.categoria?.nomeServico || "").toLowerCase().trim();
       const titulo = (s.nomeNegocio || "").toLowerCase();
       const desc = (s.descricao || "").toLowerCase();
       const cidade = (s.localizacao?.cidade || s.usuario?.cidade || "").toLowerCase();
 
-      // 1. Lógica da Barra de Pesquisa (Filtro por texto)
       const passaBusca = !busca || 
         titulo.includes(busca) || 
         desc.includes(busca) || 
         nomeServicoDB.includes(busca) ||
         cidade.includes(busca);
 
-      // 2. Lógica das Macro Categorias (Filtro por Botão)
       let passaBotao = true;
       if (selectedCategory) {
         const grupo = categoryGroups[selectedCategory];
         if (grupo) {
-          // Criamos uma lista de comparação normalizada (sem espaços e tudo minúsculo)
           const servicosDoGrupoNormalizados = grupo.services.map(n => n.toLowerCase().trim());
           passaBotao = servicosDoGrupoNormalizados.includes(nomeServicoDB);
         }
@@ -197,9 +222,32 @@ export default function BuscaProfissionaisPage() {
                       </div>
                     </div>
 
-                    <div className={styles.cardFooter}>
-                      <button className={styles.detailsButton} onClick={() => { setSelectedProfissional(s); setShowModal(true); }}>
+                    <div className={styles.cardFooter} style={{ display: 'flex', gap: '10px' }}>
+                      <button 
+                        style={{ flex: 1 }}
+                        className={styles.detailsButton} 
+                        onClick={() => { setSelectedProfissional(s); setShowModal(true); }}
+                      >
                         Ver Detalhes
+                      </button>
+                      
+                      <button 
+                        onClick={() => iniciarChat(s.usuario?.id)}
+                        style={{ 
+                          flex: 1, 
+                          backgroundColor: '#8B2CF5', 
+                          color: '#fff', 
+                          border: 'none', 
+                          borderRadius: '8px', 
+                          fontWeight: '600', 
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px'
+                        }}
+                      >
+                        <FaCommentDots /> Chat
                       </button>
                     </div>
                   </div>
@@ -219,6 +267,7 @@ export default function BuscaProfissionaisPage() {
         <Modal 
           profissional={{ 
             id: selectedProfissional.id,
+            usuarioId: selectedProfissional.usuario?.id,
             nome: selectedProfissional.nomeNegocio,
             categoria: selectedProfissional.categoria?.nomeServico,
             descricao: selectedProfissional.descricao,

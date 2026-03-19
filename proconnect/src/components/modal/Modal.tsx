@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -9,7 +7,7 @@ import { registrarContato } from "@/service/contatoWhatsappService";
 import { criarServicoRealizado } from "@/service/servicoRealizadoService";
 import styles from "./Modal.module.css";
 // ✅ Importados ícones de navegação
-import { FaTimes, FaWhatsapp, FaStar, FaRegStar, FaStarHalfAlt, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaTimes, FaChevronLeft, FaChevronRight, FaStar, FaRegStar, FaStarHalfAlt } from "react-icons/fa"; // Corrigido
 
 interface ModalProps {
   profissional: {
@@ -18,9 +16,9 @@ interface ModalProps {
     categoria?: string;
     descricao?: string;
     telefone?: string;
-    precos?: any[]; 
-    portfolio?: any[]; 
-    disponivel?: boolean; 
+    precos?: any[];
+    portfolio?: any[];
+    disponivel?: boolean;
   };
   onClose: () => void;
 }
@@ -39,7 +37,7 @@ export default function Modal({ profissional, onClose }: ModalProps) {
       if (!profissional?.id) return;
       try {
         setLoading(true);
-        const [portfolioData, avaliacaoData] = await Promise.all([
+        const [portfolioData, avaliacaoData] = await Promise.all([ 
           getPortfolioByServico(profissional.id).catch(() => []),
           getAvaliacoesByServico(profissional.id).catch(() => ({ media: 0, total: 0, avaliacoes: [] }))
         ]);
@@ -94,10 +92,7 @@ export default function Modal({ profissional, onClose }: ModalProps) {
       router.push("/login");
       return;
     }
-    if (!profissional.telefone) {
-      toast.error("Este profissional não tem telefone cadastrado.");
-      return;
-    }
+
     try {
       await Promise.all([
         registrarContato(profissional.id),
@@ -106,13 +101,9 @@ export default function Modal({ profissional, onClose }: ModalProps) {
     } catch (err) {
       console.error("Erro ao registrar contato:", err);
     }
-    localStorage.setItem("@ProConnect:avaliar", JSON.stringify({
-      id: profissional.id,
-      nome: profissional.nome || "Profissional"
-    }));
-    const numeroLimpo = profissional.telefone.replace(/\D/g, "");
-    const mensagem = encodeURIComponent(`Olá, vi o seu perfil no ProConnect e gostaria de pedir um orçamento.`);
-    window.open(`https://wa.me/55${numeroLimpo}?text=${mensagem}`, "_blank");
+
+    // Redireciona para a página de chat
+    router.push(`/chat?profissionalId=${profissional.id}`);
     onClose();
   };
 
@@ -165,7 +156,6 @@ export default function Modal({ profissional, onClose }: ModalProps) {
               <p className={styles.loadingText}>Carregando galeria...</p>
             ) : fotos.length > 0 ? (
               <div className={styles.gridPortfolio}>
-                {/* ✅ onClick passa o INDEX da foto */}
                 {fotos.map((f, index) => (
                   <div key={f.id} className={styles.fotoWrapper} onClick={() => setFotoIndex(index)}>
                     <img src={f.url} className={styles.foto} alt="Trabalho" />
@@ -202,13 +192,11 @@ export default function Modal({ profissional, onClose }: ModalProps) {
         </div>
 
         <div className={styles.footer}>
-          <button onClick={handleContatoClick} className={styles.btnWhats} disabled={profissional.disponivel === false}>
-            <FaWhatsapp style={{ fontSize: "1.2rem" }} /> 
-            {profissional.disponivel === false ? "Profissional Indisponível" : "Falar no WhatsApp"}
+          <button onClick={handleContatoClick} className={styles.btnChat} disabled={profissional.disponivel === false}>
+            Iniciar Chat
           </button>
         </div>
 
-        {/* ✅ LIGHTBOX ATUALIZADO COM NAVEGAÇÃO */}
         {fotoIndex !== null && (
           <div className={styles.lightbox} onClick={() => setFotoIndex(null)}>
             <button className={styles.fecharLightbox} onClick={() => setFotoIndex(null)}>
@@ -230,7 +218,7 @@ export default function Modal({ profissional, onClose }: ModalProps) {
               src={fotos[fotoIndex].url} 
               alt="Imagem ampliada" 
               className={styles.imagemAmpliada} 
-              onClick={(e) => e.stopPropagation()} // Impede fechar ao clicar na imagem
+              onClick={(e) => e.stopPropagation()}
             />
           </div>
         )}
