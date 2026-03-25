@@ -326,17 +326,42 @@
 
 /* MOBILE */
 @media (max-width: 768px) {
+  .floatingWrapper {
+    bottom: 16px;
+    right: 16px;
+  }
+
   .chatPanel {
-    width: 100vw;
-    height: 100vh;
-    max-height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
     bottom: 0;
     right: 0;
+    width: 100vw;
+    height: 100dvh; /* dvh handles address bars perfectly */
+    max-height: 100dvh;
     border-radius: 0;
+    z-index: 10000;
   }
   
+  /* Proteção contra Notch (Ilha) no topo de iPhones */
+  .panelHeader {
+    padding-top: calc(16px + env(safe-area-inset-top));
+  }
+
   .fabButton {
-    bottom: 20px;
-    right: 20px;
+    width: 56px;
+    height: 56px;
+  }
+
+  /* Proteção contra a barra de deslizar (Home Bar) no fundo dos iPhones */
+  .inputArea {
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  }
+
+  /* Previne que o Safari faça Auto-Zoom intrusivo quando se clica para escrever */
+  .inputMsg {
+    padding: 12px 16px;
+    font-size: 16px !important;
   }
 }
