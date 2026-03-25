@@ -26,8 +26,17 @@ export default function BuscaProfissionaisPage() {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectedProfissional, setSelectedProfissional] = useState<Servico | null>(null);
   const [favoritos, setFavoritos] = useState<number[]>([]);
+  const [usuarioAtual, setUsuarioAtual] = useState<any>(null);
 
   useEffect(() => {
+    const fetchUser = async () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        getMe().then(user => setUsuarioAtual(user)).catch(() => {});
+      }
+    };
+    fetchUser();
+
     const fetchServicos = async () => {
       try {
         const data = await getServicos();
@@ -234,21 +243,23 @@ export default function BuscaProfissionaisPage() {
                       
                       <button 
                         onClick={() => iniciarChat(s.usuario?.id, s.nomeNegocio, s.imagem || '')}
+                        disabled={usuarioAtual?.id === s.usuario?.id}
                         style={{ 
                           flex: 1, 
-                          backgroundColor: '#8B2CF5', 
+                          backgroundColor: (usuarioAtual?.id === s.usuario?.id) ? '#ccc' : '#8B2CF5', 
                           color: '#fff', 
                           border: 'none', 
                           borderRadius: '8px', 
                           fontWeight: '600', 
-                          cursor: 'pointer',
+                          cursor: (usuarioAtual?.id === s.usuario?.id) ? 'not-allowed' : 'pointer',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
                           gap: '6px'
                         }}
+                        title={(usuarioAtual?.id === s.usuario?.id) ? "Este é o seu próprio serviço." : "Iniciar Chat"}
                       >
-                        <FaCommentDots /> Chat
+                        <FaCommentDots /> {(usuarioAtual?.id === s.usuario?.id) ? "O Seu Serviço" : "Chat"}
                       </button>
                     </div>
                   </div>
@@ -268,6 +279,8 @@ export default function BuscaProfissionaisPage() {
         <Modal 
           profissional={{ 
             id: selectedProfissional.id,
+            usuarioId: selectedProfissional.usuario?.id,
+            usuario: selectedProfissional.usuario,
             nome: selectedProfissional.nomeNegocio,
             categoria: selectedProfissional.categoria?.nomeServico,
             descricao: selectedProfissional.descricao,
@@ -276,7 +289,9 @@ export default function BuscaProfissionaisPage() {
             portfolio: selectedProfissional.portfolio,
             disponivel: selectedProfissional.usuario?.disponivel !== false
           }} 
+          isMeuServico={usuarioAtual?.id === selectedProfissional.usuario?.id}
           onClose={() => setShowModal(false)} 
+          onOpenChat={iniciarChat}
         />
       )}
       <AvaliacaoPendente />

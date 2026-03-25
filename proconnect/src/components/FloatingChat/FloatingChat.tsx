@@ -35,6 +35,7 @@ function FloatingChatContent() {
   const [conversaAtiva, setConversaAtiva] = useState<any>(null);
   const [mensagens, setMensagens] = useState<any[]>([]);
   const [texto, setTexto] = useState('');
+  const [abaAtiva, setAbaAtiva] = useState<'cliente' | 'profissional'>('cliente');
   
   const socketRef = useRef<Socket | null>(null);
   const mensagensFimRef = useRef<HTMLDivElement>(null);
@@ -284,58 +285,89 @@ function FloatingChatContent() {
   
   if (!hasToken && !usuarioAtual) return null;
 
+  const conversasFiltradas = conversas.filter(conv => {
+    if (!usuarioAtual) return false;
+    if (abaAtiva === 'cliente') {
+      return conv.clienteId === usuarioAtual.id; // Profissionais que contactei
+    } else {
+      return conv.profissionalId === usuarioAtual.id; // Clientes que me contactaram
+    }
+  });
+
   return (
     <div className={styles.floatingWrapper}>
       {/* PAINEL DO CHAT (Pop-up) */}
       <div className={`${styles.chatPanel} ${isOpen ? styles.chatPanelOpen : ''}`}>
         
         {/* --- CABEÇALHO GERAL --- */}
-        <div className={styles.panelHeader}>
-          {!conversaAtiva ? (
-            <div className={styles.panelHeaderTitle}>
-              <MessageSquare size={20} color="#8B2CF5" />
-              <h3>As Minhas Mensagens</h3>
-            </div>
-          ) : (
-            <div className={styles.activeChatHeaderInfo}>
-              <button 
-                className={styles.btnBack} 
-                onClick={backToList}
-                title="Voltar"
-              >
-                <ChevronLeft size={20} />
-              </button>
-              <div style={{ marginLeft: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div className={styles.avatarPlaceholder} style={{ width: '32px', height: '32px', margin: 0 }}>
-                  {obterImagemOutroUsuario(conversaAtiva) ? (
-                    <img src={obterImagemOutroUsuario(conversaAtiva)} alt="Avatar" style={{width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover'}} />
-                  ) : (
-                    <User size={16} />
-                  )}
-                </div>
-                <div>
-                  <h3 style={{ fontSize: '1rem', margin: 0 }}>{obterNomeOutroUsuario(conversaAtiva)}</h3>
+        <div className={styles.panelHeader} style={{ flexDirection: 'column', padding: 0, alignItems: 'stretch' }}>
+          
+          {/* Top Row: Title/Back & Close Button */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', width: '100%' }}>
+            {!conversaAtiva ? (
+              <div className={styles.panelHeaderTitle}>
+                <MessageSquare size={20} color="#8B2CF5" />
+                <h3>Minhas Mensagens</h3>
+              </div>
+            ) : (
+              <div className={styles.activeChatHeaderInfo}>
+                <button 
+                  className={styles.btnBack} 
+                  onClick={backToList}
+                  title="Voltar"
+                >
+                  <ChevronLeft size={20} />
+                </button>
+                <div style={{ marginLeft: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div className={styles.avatarPlaceholder} style={{ width: '32px', height: '32px', margin: 0 }}>
+                    {obterImagemOutroUsuario(conversaAtiva) ? (
+                      <img src={obterImagemOutroUsuario(conversaAtiva)} alt="Avatar" style={{width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover'}} />
+                    ) : (
+                      <User size={16} />
+                    )}
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: '1rem', margin: 0 }}>{obterNomeOutroUsuario(conversaAtiva)}</h3>
+                  </div>
                 </div>
               </div>
+            )}
+            
+            <button className={styles.btnClose} onClick={closeWidget}>
+              <X size={20} />
+            </button>
+          </div>
+
+          {/* Bottom Row: Tabs */}
+          {!conversaAtiva && (
+            <div className={styles.tabsContainer}>
+              <button 
+                className={`${styles.tabBtn} ${abaAtiva === 'cliente' ? styles.tabActive : ''}`}
+                onClick={() => setAbaAtiva('cliente')}
+              >
+                Minhas Contratações
+              </button>
+              <button 
+                className={`${styles.tabBtn} ${abaAtiva === 'profissional' ? styles.tabActive : ''}`}
+                onClick={() => setAbaAtiva('profissional')}
+              >
+                Meus Clientes
+              </button>
             </div>
           )}
-          
-          <button className={styles.btnClose} onClick={closeWidget}>
-            <X size={20} />
-          </button>
         </div>
 
         {/* --- CORPO DA JANELA --- */}
         {!conversaAtiva ? (
           // ECRÃ 1: LISTA DE CONVERSAS
           <div className={styles.conversasList}>
-            {conversas.length === 0 ? (
+            {conversasFiltradas.length === 0 ? (
               <div className={styles.emptyConversations}>
                 <MessageSquare size={48} opacity={0.2} />
-                <span>Nenhuma conversa ativa no momento. Procure um profissional para iniciar o seu chat!</span>
+                <span>Nenhuma conversa ativa nesta secção.</span>
               </div>
             ) : (
-              conversas.map((conv) => (
+              conversasFiltradas.map((conv) => (
                 <div 
                   key={conv.id} 
                   className={styles.conversaItem}

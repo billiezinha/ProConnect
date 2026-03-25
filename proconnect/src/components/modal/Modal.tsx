@@ -12,20 +12,13 @@ import api from '@/service/api';
 import { getMe } from '@/service/userService';
 
 interface ModalProps {
-  profissional: {
-    id: number;
-    nome?: string;
-    categoria?: string;
-    descricao?: string;
-    telefone?: string;
-    precos?: any[];
-    portfolio?: any[];
-    disponivel?: boolean;
-  };
+  profissional: any;
   onClose: () => void;
+  onOpenChat?: (userId: number | undefined, nome?: string, imagem?: string) => void;
+  isMeuServico?: boolean;
 }
 
-export default function Modal({ profissional, onClose }: ModalProps) {
+export default function Modal({ profissional, onClose, onOpenChat, isMeuServico }: ModalProps) {
   const router = useRouter();
   const [fotos, setFotos] = useState<{ id: number; url: string }[]>([]);
   const [resumo, setResumo] = useState<ResumoAvaliacao | null>(null);
@@ -96,30 +89,31 @@ export default function Modal({ profissional, onClose }: ModalProps) {
     }
 
     try {
-      await Promise.all([
-        registrarContato(profissional.id),
-        criarServicoRealizado(profissional.id),
-      ]);
-      
-      const token = localStorage.getItem('token');
-      if (token) {
-        const user = await getMe();
-        const response = await api.post('/chat', {
-          clienteId: user.id,
-          profissionalId: profissional.id
-        });
-        router.push(`?chatOpen=true&conversaId=${(response.data as any).id || ''}&profissionalId=${profissional.id}&profissionalNome=${encodeURIComponent(profissional.nome || '')}&profissionalImg=${encodeURIComponent(profissional.portfolio?.[0]?.url || '')}`);
-      } else {
-        toast.error("Para iniciar um chat, faça login primeiro!");
-        router.push('/login');
+      // 1. Tenta registar métricas analíticas em background de forma inofensiva
+      try {
+        await Promise.all([
+          registrarContato(profissional.id),
+          criarServicoRealizado(profissional.id),
+        ]);
+      } catch (analyticsErr) {
+        console.warn("Métricas de contato falharam. O chat avança normal:", analyticsErr);
       }
-    } catch (err) {
-      console.error("Erro ao registrar contato ou carregar chat:", err);
-      toast.error("A sessão expirou. Faça login novamente.");
-      router.push('/login');
-    }
+      
+      // 2. Aciona o abridor de chat injetado pelo Parente (Busca-Profissionais) garantindo Match de Props
+      if (onOpenChat) {
+         const targetId = profissional.usuario?.id || profissional.usuarioId;
+         const targetNome = profissional.nomeNegocio || profissional.nome || "Profissional";
+         const targetImagem = profissional.imagem || profissional.portfolio?.[0]?.url || "";
+         
+         onOpenChat(targetId, targetNome, targetImagem);
+      }
 
-    onClose();
+    } catch (err) {
+      console.error("Erro Crítico ao abrir chat:", err);
+      toast.error("Não foi possível iniciar a conversa. Verifique a sua ligação.");
+    } finally {
+      onClose();
+    }
   };
 
   return (
@@ -153,7 +147,7 @@ export default function Modal({ profissional, onClose }: ModalProps) {
             <h3>Tabela de Preços</h3>
             {profissional.precos && profissional.precos.length > 0 ? (
               <div className={styles.tabelaPrecos}>
-                {profissional.precos.map((p, index) => (
+                {profissional.precos.map((p: any, index: number) => (
                   <div key={index} className={styles.itemPreco}>
                     <span>{p.nomeservico}</span>
                     <strong>R$ {Number(p.precificacao).toFixed(2)}</strong>
@@ -207,8 +201,14 @@ export default function Modal({ profissional, onClose }: ModalProps) {
         </div>
 
         <div className={styles.footer}>
-          <button onClick={handleContatoClick} className={styles.btnChat} disabled={profissional.disponivel === false}>
-            Iniciar Chat
+          <button 
+            onClick={handleContatoClick} 
+            className={styles.btnChat} 
+            disabled={profissional.disponivel === false || isMeuServico}
+            title={isMeuServico ? "Não pode contactar a si próprio." : ""}
+            style={{ opacity: isMeuServico ? 0.5 : 1, cursor: isMeuServico ? 'not-allowed' : 'pointer' }}
+          >
+            {isMeuServico ? "O Seu Serviço" : "Iniciar Chat"}
           </button>
         </div>
 
