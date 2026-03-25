@@ -1,8 +1,15 @@
 import React from 'react';
-import { Instagram, Mail, MessageCircle, Globe } from 'lucide-react';
+import { Mail, MessageCircle, Globe } from 'lucide-react';
+import { FiInstagram } from 'react-icons/fi';
 import styles from './Footer.module.css';
+import { usePathname } from 'next/navigation';
 
 const Footer = () => {
+  const pathname = usePathname();
+  if (pathname === '/login' || pathname === '/cadastro-usuario' || pathname === '/chat') {
+    return null;
+  }
+
   return (
     <footer className={styles.footer}>
       <div className={styles.container}>
@@ -42,7 +49,7 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 className={styles.socialIcon}
               >
-                <Instagram size={24} />
+                <FiInstagram size={24} />
               </a>
               <a href="#" className={styles.socialIcon}>
                 <Globe size={24} />

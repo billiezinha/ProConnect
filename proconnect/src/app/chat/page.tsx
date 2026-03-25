@@ -1,13 +1,28 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import styles from './Chat.module.css';
 import { io, Socket } from 'socket.io-client';
 import api from '@/service/api';
 import Navbar from '@/components/navbar/Navbar';
-import { Send, User, MessageSquare } from 'lucide-react';
+import { Send, User, MessageSquare, Phone } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { getMe } from '@/service/userService';
 
 export default function ChatPage() {
+  return (
+    <Suspense fallback={<div>A carregar chat...</div>}>
+      <ChatContent />
+    </Suspense>
+  )
+}
+
+function ChatContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const conversaIdParam = searchParams.get('conversaId');
+  const profissionalIdParam = searchParams.get('profissionalId');
+
   const [usuarioAtual, setUsuarioAtual] = useState<any>(null);
   const [conversas, setConversas] = useState<any[]>([]);
   const [conversaAtiva, setConversaAtiva] = useState<any>(null);
@@ -17,24 +32,33 @@ export default function ChatPage() {
   const socketRef = useRef<Socket | null>(null);
   const mensagensFimRef = useRef<HTMLDivElement>(null);
 
-  // 1. Carrega o Utilizador e inicializa o Socket
   useEffect(() => {
-    // Tenta pegar o user do localStorage
-    const userStr = localStorage.getItem('user'); 
+    // Busca o user da API
+    const token = localStorage.getItem('token'); 
     
-    if (userStr) {
-      const user = JSON.parse(userStr);
-      setUsuarioAtual(user);
-      carregarConversas(user.id);
+    if (token) {
+      getMe().then(user => {
+        setUsuarioAtual(user);
+        carregarConversas(user.id);
 
-      // Liga-se ao servidor WebSocket
-      // ⚠️ Mude para http://localhost:3333 se estiver a testar localmente
-      socketRef.current = io("https://proconnectapi-2.onrender.com");
+        // Liga-se ao servidor WebSocket
+        socketRef.current = io("https://proconnectapi-2.onrender.com", {
+          auth: { token }
+        });
+        
+        socketRef.current.on("connect", () => console.log("Chat WS Conectado!"));
+        socketRef.current.on("connect_error", (err) => console.error("Erro WS:", err));
+      }).catch(err => {
+         console.error("Erro ao carregar usuário atual:", err);
+         router.push('/login');
+      });
 
       // Limpa a conexão quando sai da página
       return () => {
         socketRef.current?.disconnect();
       };
+    } else {
+      router.push('/login');
     }
   }, []);
 
@@ -64,8 +88,39 @@ export default function ChatPage() {
   const carregarConversas = async (userId: number) => {
     try {
       const res = await api.get(`/chat/usuario/${userId}`);
+      const conversasArray = res.data as any[];
       // CORREÇÃO: Avisamos o TypeScript que a resposta é um Array
-      setConversas(res.data as any[]); 
+      setConversas(conversasArray); 
+      
+      // Auto-abrir conversa se o parametro existir
+      if (!conversaAtiva) {
+        let convToOpen: any;
+        if (conversaIdParam && conversaIdParam !== 'undefined') {
+          convToOpen = conversasArray.find(c => String(c.id) === conversaIdParam);
+        }
+        if (!convToOpen && profissionalIdParam) {
+          convToOpen = conversasArray.find(c => 
+            String(c.profissionalId) === profissionalIdParam || 
+            String(c.clienteId) === profissionalIdParam ||
+            (c.profissional && String(c.profissional.id) === profissionalIdParam)
+          );
+        }
+
+        if (!convToOpen && conversaIdParam && conversaIdParam !== 'undefined' && profissionalIdParam) {
+           convToOpen = {
+             id: Number(conversaIdParam),
+             clienteId: userId,
+             profissionalId: Number(profissionalIdParam),
+             mensagens: []
+           };
+           // Adiciona à lista lateral visualmente
+           setConversas(prev => [convToOpen, ...prev]);
+        }
+
+        if (convToOpen) {
+          abrirConversa(convToOpen);
+        }
+      }
     } catch (error) {
       console.error("Erro ao carregar conversas", error);
     }
@@ -96,6 +151,14 @@ export default function ChatPage() {
       texto: texto
     };
 
+    // Atualização otimista: Mostra imediatamente no ecrã do remetente
+    const mensagemOtimista = {
+      ...dadosMensagem,
+      criadaEm: new Date().toISOString()
+    };
+    
+    setMensagens(prev => [...prev, mensagemOtimista]);
+
     // Envia a mensagem pelo WebSocket
     socketRef.current?.emit("enviar_mensagem", dadosMensagem);
     setTexto(''); // Limpa o input
@@ -103,15 +166,16 @@ export default function ChatPage() {
 
   // Função auxiliar para saber o nome da outra pessoa
   const obterNomeOutroUsuario = (conversa: any) => {
-    if (!usuarioAtual) return "";
-    return conversa.clienteId === usuarioAtual.id 
-      ? conversa.profissional.nome 
-      : conversa.cliente.nome;
+    if (!usuarioAtual) return "Desconhecido";
+    if (conversa.clienteId === usuarioAtual.id) {
+       return conversa.profissional?.nome || conversa.profissional?.nomeNegocio || "Profissional";
+    } else {
+       return conversa.cliente?.nome || "Cliente";
+    }
   };
 
   return (
     <>
-      <Navbar />
       <div className={styles.chatContainer}>
         
         {/* BARRA LATERAL - LISTA DE CONVERSAS */}
@@ -130,7 +194,7 @@ export default function ChatPage() {
                   className={`${styles.conversaItem} ${conversaAtiva?.id === conv.id ? styles.conversaAtiva : ''}`}
                   onClick={() => abrirConversa(conv)}
                 >
-                  <div className={styles.avatarPlaceholder}>
+                  <div className={`${styles.avatarPlaceholder} ${conversaAtiva?.id === conv.id ? styles.avatarPlaceholderActive : ''}`}>
                     <User size={24} />
                   </div>
                   <div className={styles.conversaInfo}>
@@ -161,11 +225,23 @@ export default function ChatPage() {
             <>
               {/* Cabeçalho da Conversa */}
               <div className={styles.chatHeader}>
-                <div className={styles.avatarPlaceholder}>
-                  <User size={24} />
+                <div className={styles.chatHeaderInfo}>
+                  <div className={styles.avatarPlaceholder}>
+                    <User size={24} />
+                  </div>
+                  <div>
+                    <h3 className={styles.chatHeaderName}>
+                      {obterNomeOutroUsuario(conversaAtiva)}
+                      <span className={`${styles.roleBadge} ${conversaAtiva.clienteId === usuarioAtual?.id ? styles.roleProfissional : styles.roleCliente}`}>
+                        {conversaAtiva.clienteId === usuarioAtual?.id ? 'Profissional' : 'Cliente'}
+                      </span>
+                    </h3>
+                  </div>
                 </div>
-                <div>
-                  <h3 className={styles.conversaNome}>{obterNomeOutroUsuario(conversaAtiva)}</h3>
+                <div className={styles.chatHeaderActions}>
+                  <button className={styles.iconButton} title="Ligar" onClick={() => alert("Ligar de momento indisponível.")}>
+                     <Phone size={18} />
+                  </button>
                 </div>
               </div>
 
@@ -173,16 +249,39 @@ export default function ChatPage() {
               <div className={styles.mensagensList}>
                 {mensagens.map((msg, index) => {
                   const isMinha = Number(msg.remetenteId) === Number(usuarioAtual?.id);
-                  return (
-                    <div key={index} className={`${styles.mensagemWrapper} ${isMinha ? styles.minhaMensagem : styles.outraMensagem}`}>
-                      <div className={styles.balao}>
-                        {msg.texto}
+                  const isProfissional = Number(msg.remetenteId) === Number(conversaAtiva.profissionalId);
+
+                  if (isMinha) {
+                    return (
+                      <div key={index} className={`${styles.mensagemGeral} ${styles.mensagemWrapperMinha}`}>
+                        <div className={`${styles.balao} ${styles.minhaMensagem}`}>
+                          {msg.texto}
+                        </div>
+                        <span className={styles.hora}>
+                          {new Date(msg.criadaEm).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </span>
                       </div>
-                      <span className={styles.hora}>
-                        {new Date(msg.criadaEm).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </span>
-                    </div>
-                  );
+                    );
+                  } else {
+                    return (
+                      <div key={index} className={styles.mensagemWrapperOutra}>
+                        <div className={styles.avatarPlaceholder} style={{ width: '40px', height: '40px', margin: 0 }}>
+                          <User size={18} />
+                        </div>
+                        <div className={styles.mensagemContentOutra}>
+                          <span className={styles.nomeRemetente}>
+                             {obterNomeOutroUsuario(conversaAtiva)} • {isProfissional ? 'Profissional' : 'Cliente'}
+                          </span>
+                          <div className={`${styles.balao} ${styles.outraMensagem}`}>
+                            {msg.texto}
+                          </div>
+                          <span className={styles.hora}>
+                            {new Date(msg.criadaEm).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  }
                 })}
                 {/* Referência invisível para rolar sempre para o fim */}
                 <div ref={mensagensFimRef} />

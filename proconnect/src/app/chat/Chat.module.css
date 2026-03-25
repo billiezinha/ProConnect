@@ -1,35 +1,35 @@
 .chatContainer {
   display: flex;
   height: calc(100vh - 80px); /* Desconta o tamanho da Navbar */
-  background-color: #f8fafc;
-  max-width: 1200px;
-  margin: 0 auto;
-  border-radius: 12px;
+  background-color: #ffffff;
+  max-width: 1400px;
+  margin: 20px auto;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.1);
   border: 1px solid #e2e8f0;
-  margin-top: 20px;
 }
 
 /* BARRA LATERAL (LISTA DE CONVERSAS) */
 .sidebar {
-  width: 350px;
-  background-color: #ffffff;
+  width: 380px;
+  background-color: #f8fafc;
   border-right: 1px solid #e2e8f0;
   display: flex;
   flex-direction: column;
 }
 
 .sidebarHeader {
-  padding: 20px;
-  border-bottom: 1px solid #e2e8f0;
+  padding: 24px 20px;
   background-color: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .sidebarHeader h2 {
-  font-size: 1.2rem;
-  font-weight: 600;
+  font-size: 1.4rem;
+  font-weight: 700;
   color: #0f172a;
+  letter-spacing: -0.02em;
 }
 
 .conversasList {
@@ -40,51 +40,58 @@
 .conversaItem {
   display: flex;
   align-items: center;
-  padding: 15px 20px;
+  padding: 16px 20px;
   cursor: pointer;
   border-bottom: 1px solid #f1f5f9;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
 }
 
 .conversaItem:hover {
-  background-color: #f8fafc;
+  background-color: #f1f5f9;
 }
 
 .conversaAtiva {
-  background-color: #f3e8ff;
+  background-color: #ffffff;
   border-left: 4px solid #8B2CF5;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 
 .avatarPlaceholder {
-  width: 45px;
-  height: 45px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background-color: #e2e8f0;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-right: 15px;
+  margin-right: 16px;
   color: #64748b;
+  flex-shrink: 0;
+}
+
+.avatarPlaceholderActive {
+  background-color: #f3e8ff;
+  color: #8B2CF5;
 }
 
 .conversaInfo {
   flex: 1;
+  overflow: hidden;
 }
 
 .conversaNome {
   font-weight: 600;
   color: #1e293b;
-  font-size: 1rem;
+  font-size: 1.05rem;
+  margin-bottom: 4px;
 }
 
 .ultimaMensagem {
   font-size: 0.85rem;
   color: #64748b;
-  margin-top: 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 200px;
 }
 
 /* ÁREA DE MENSAGENS */
@@ -96,115 +103,200 @@
 }
 
 .chatHeader {
-  padding: 20px;
+  padding: 20px 24px;
   border-bottom: 1px solid #e2e8f0;
   background-color: #ffffff;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+}
+
+.chatHeaderInfo {
+  display: flex;
+  align-items: center;
+}
+
+.chatHeaderName {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+}
+
+.roleBadge {
+  font-size: 0.70rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 12px;
+  margin-left: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.roleProfissional {
+  background-color: #f3e8ff;
+  color: #8B2CF5;
+}
+
+.roleCliente {
+  background-color: #e0f2fe;
+  color: #0284c7;
+}
+
+.chatHeaderActions {
+  display: flex;
+  gap: 12px;
+}
+
+.iconButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.iconButton:hover {
+  background-color: #f8fafc;
+  color: #0f172a;
 }
 
 .mensagensList {
   flex: 1;
-  padding: 20px;
+  padding: 24px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 20px;
   background-color: #f8fafc;
+  /* Premium dot pattern background */
+  background-image: radial-gradient(#e2e8f0 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
 }
 
 /* BALÕES DE MENSAGEM */
-.mensagemWrapper {
+.mensagemGeral {
   display: flex;
   flex-direction: column;
-  max-width: 70%;
+  max-width: 65%;
 }
 
-.minhaMensagem {
+.mensagemWrapperMinha {
   align-self: flex-end;
+  display: flex;
+  flex-direction: column;
   align-items: flex-end;
 }
 
-.outraMensagem {
+.mensagemWrapperOutra {
   align-self: flex-start;
+  display: flex;
+  gap: 12px;
+  max-width: 75%;
+}
+
+.mensagemContentOutra {
+  display: flex;
+  flex-direction: column;
   align-items: flex-start;
 }
 
 .balao {
-  padding: 12px 16px;
-  border-radius: 12px;
-  font-size: 0.95rem;
-  line-height: 1.4;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  padding: 14px 18px;
+  font-size: 1rem;
+  line-height: 1.5;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
 }
 
-.minhaMensagem .balao {
-  background-color: #8B2CF5;
+.minhaMensagem {
+  background: linear-gradient(135deg, #8B2CF5, #7122c9);
   color: #ffffff;
-  border-bottom-right-radius: 2px;
+  border-radius: 18px 18px 2px 18px;
 }
 
-.outraMensagem .balao {
+.outraMensagem {
   background-color: #ffffff;
-  color: #333333;
+  color: #1e293b;
   border: 1px solid #e2e8f0;
-  border-bottom-left-radius: 2px;
+  border-radius: 18px 18px 18px 2px;
+}
+
+.nomeRemetente {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 4px;
+  margin-left: 2px;
 }
 
 .hora {
   font-size: 0.7rem;
   color: #94a3b8;
-  margin-top: 5px;
+  margin-top: 6px;
 }
 
 /* INPUT DE MENSAGEM */
 .inputArea {
-  padding: 20px;
+  padding: 20px 24px;
   background-color: #ffffff;
   border-top: 1px solid #e2e8f0;
 }
 
 .formChat {
   display: flex;
-  gap: 10px;
+  gap: 12px;
+  align-items: center;
 }
 
 .inputMsg {
   flex: 1;
-  padding: 14px 20px;
+  padding: 16px 24px;
   border-radius: 30px;
   border: 1px solid #cbd5e1;
-  background-color: #f1f5f9;
+  background-color: #f8fafc;
   font-size: 1rem;
   outline: none;
+  transition: all 0.2s ease;
 }
 
 .inputMsg:focus {
   border-color: #8B2CF5;
   background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(139, 44, 245, 0.1);
 }
 
 .btnEnviar {
   background-color: #8B2CF5;
   color: white;
   border: none;
-  width: 50px;
-  height: 50px;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  transition: 0.2s;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(139, 44, 245, 0.2);
 }
 
 .btnEnviar:hover:not(:disabled) {
   background-color: #7122c9;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(139, 44, 245, 0.3);
 }
 
 .btnEnviar:disabled {
   background-color: #cbd5e1;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .emptyState {
@@ -214,4 +306,26 @@
   justify-content: center;
   align-items: center;
   color: #94a3b8;
+  background-color: #f8fafc;
+}
+
+.emptyState h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #475569;
+  margin-top: 16px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .chatContainer {
+    flex-direction: column;
+    margin: 10px;
+    height: calc(100vh - 90px);
+  }
+  
+  .sidebar {
+    width: 100%;
+    flex: 0.3;
+  }
 }

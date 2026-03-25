@@ -8,6 +8,8 @@ import { criarServicoRealizado } from "@/service/servicoRealizadoService";
 import styles from "./Modal.module.css";
 // ✅ Importados ícones de navegação
 import { FaTimes, FaChevronLeft, FaChevronRight, FaStar, FaRegStar, FaStarHalfAlt } from "react-icons/fa"; // Corrigido
+import api from '@/service/api';
+import { getMe } from '@/service/userService';
 
 interface ModalProps {
   profissional: {
@@ -98,12 +100,25 @@ export default function Modal({ profissional, onClose }: ModalProps) {
         registrarContato(profissional.id),
         criarServicoRealizado(profissional.id),
       ]);
+      
+      const token = localStorage.getItem('token');
+      if (token) {
+        const user = await getMe();
+        const response = await api.post('/chat', {
+          clienteId: user.id,
+          profissionalId: profissional.id
+        });
+        router.push(`/chat?conversaId=${(response.data as any).id || ''}&profissionalId=${profissional.id}`);
+      } else {
+        toast.error("Para iniciar um chat, faça login primeiro!");
+        router.push('/login');
+      }
     } catch (err) {
-      console.error("Erro ao registrar contato:", err);
+      console.error("Erro ao registrar contato ou carregar chat:", err);
+      toast.error("A sessão expirou. Faça login novamente.");
+      router.push('/login');
     }
 
-    // Redireciona para a página de chat
-    router.push(`/chat?profissionalId=${profissional.id}`);
     onClose();
   };
 

@@ -12,6 +12,7 @@ import { categoryGroups, getServiceIcon } from "../utils/categoryIcons";
 import AvaliacaoPendente from "@/components/AvaliacaoPendente/AvaliacaoPendente";
 import { useRouter } from 'next/navigation';
 import api from '@/service/api';
+import { getMe } from '@/service/userService';
 
 export default function BuscaProfissionaisPage() {
   const router = useRouter(); 
@@ -54,26 +55,26 @@ export default function BuscaProfissionaisPage() {
     if (!profissionalId) return;
     
     try {
-      const userStr = localStorage.getItem('user');
-      if (!userStr) {
+      const token = localStorage.getItem('token');
+      if (!token) {
         toast.error("Precisa de iniciar sessão primeiro para enviar mensagens!");
         router.push('/login');
         return;
       }
       
-      const cliente = JSON.parse(userStr);
+      const cliente = await getMe();
 
       if (cliente.id === profissionalId) {
         toast.error("Não pode iniciar um chat com o seu próprio serviço.");
         return;
       }
 
-      await api.post('/chat', {
+      const response = await api.post('/chat', {
         clienteId: cliente.id,
         profissionalId: profissionalId
       });
 
-      router.push('/chat');
+      router.push(`/chat?conversaId=${(response.data as any).id || ''}&profissionalId=${profissionalId}`);
 
     } catch (error) {
       console.error("Erro ao iniciar chat:", error);
@@ -267,7 +268,6 @@ export default function BuscaProfissionaisPage() {
         <Modal 
           profissional={{ 
             id: selectedProfissional.id,
-            usuarioId: selectedProfissional.usuario?.id,
             nome: selectedProfissional.nomeNegocio,
             categoria: selectedProfissional.categoria?.nomeServico,
             descricao: selectedProfissional.descricao,
