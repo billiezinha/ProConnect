@@ -74,7 +74,7 @@ export default function BuscaProfissionaisPage() {
         profissionalId: profissionalId
       });
 
-      router.push(`/chat?conversaId=${(response.data as any).id || ''}&profissionalId=${profissionalId}`);
+      router.push(`?chatOpen=true&conversaId=${(response.data as any).id || ''}&profissionalId=${profissionalId}`);
 
     } catch (error) {
       console.error("Erro ao iniciar chat:", error);

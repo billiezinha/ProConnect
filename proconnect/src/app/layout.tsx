@@ -5,6 +5,7 @@ import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer"; // 1. Importação do novo Footer
 import SplashScreen from "@/components/SplashScreen/SplashScreen";
+import FloatingChat from "@/components/FloatingChat/FloatingChat";
 import { ThemeProvider } from "@/context/ThemeContext";
 import "./globals.css";
 
@@ -61,6 +62,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <main style={{ flex: 1 }}>{children}</main>
 
               <Footer /> {/* 2. Footer adicionado aqui */}
+              
+              <FloatingChat />
             </motion.div>
           )}
         </ThemeProvider>
