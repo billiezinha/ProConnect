@@ -47,51 +47,71 @@ function FloatingChatContent() {
       
       if (!usuarioAtual) return; // Espera que o user carregue
 
-      let convToOpen: any;
-      // Procuramos primeiro NO CACHE TOTAL para garantir que achamos os IDs originais das conversas acabadas de criar
-      if (conversaIdParam && conversaIdParam !== 'undefined') {
-        convToOpen = rawConversasRef.current.find(c => String(c.id) === conversaIdParam);
-      }
-      if (!convToOpen && profissionalIdParam) {
-        convToOpen = rawConversasRef.current.find(c => 
-          String(c.profissionalId) === profissionalIdParam || 
-          String(c.clienteId) === profissionalIdParam ||
-          (c.profissional && String(c.profissional.id) === profissionalIdParam)
-        );
-      }
-
-      // Se não encontrou, e não temos ID porque a API.post falhou a devolução, construímos um fallback temporário
-      if (!convToOpen && profissionalIdParam) {
-         convToOpen = {
-           id: (conversaIdParam && conversaIdParam !== 'undefined') ? Number(conversaIdParam) : Date.now(),
-           clienteId: usuarioAtual.id,
-           profissionalId: Number(profissionalIdParam),
-           profissional: {
-             id: Number(profissionalIdParam),
-             nome: searchParams.get('profissionalNome') || "Profissional",
-             imagem: searchParams.get('profissionalImg') || null
-           },
-           mensagens: []
-         };
-         
-         // Injetamos na lista visual
-         setConversas(prev => {
-            if (!prev.find(p => p.id === convToOpen.id)) {
-              return [convToOpen, ...prev];
-            }
-            return prev;
-         });
-      }
-
-      // Abre a conversa apenas se não for já a ativa
-      setConversaAtiva((prev: any) => {
-        if (convToOpen && (!prev || prev.id !== convToOpen.id)) {
-          setTimeout(() => abrirConversa(convToOpen), 0);
+      const startResolvingConversation = async () => {
+        let convToOpen: any;
+        
+        // Procuramos primeiro NO CACHE TOTAL para garantir que achamos os IDs originais das conversas acabadas de criar
+        if (conversaIdParam && conversaIdParam !== 'undefined') {
+          convToOpen = rawConversasRef.current.find(c => String(c.id) === conversaIdParam);
         }
-        return prev;
-      });
+        if (!convToOpen && profissionalIdParam) {
+          convToOpen = rawConversasRef.current.find(c => 
+            String(c.profissionalId) === profissionalIdParam || 
+            String(c.clienteId) === profissionalIdParam ||
+            (c.profissional && String(c.profissional.id) === profissionalIdParam)
+          );
+        }
+
+        // Se ainda não achámos (foi criada há 5ms na página de busca), fazemos sync com DB real
+        if (!convToOpen && profissionalIdParam) {
+           try {
+             await carregarConversas(usuarioAtual.id); // Força refresh da rawConversasRef
+             
+             convToOpen = rawConversasRef.current.find(c => 
+               String(c.profissionalId) === profissionalIdParam || 
+               String(c.clienteId) === profissionalIdParam ||
+               (c.profissional && String(c.profissional.id) === profissionalIdParam)
+             );
+           } catch(err) {
+             console.error("Falha ao re-syncar o background das salas ativas.", err);
+           }
+        }
+
+        // Se MESMO ASSIM falhar, recorre à fantasma com ID provisional apenas para não crashar a UI
+        if (!convToOpen && profissionalIdParam) {
+           convToOpen = {
+             id: (conversaIdParam && conversaIdParam !== 'undefined') ? Number(conversaIdParam) : Date.now(),
+             clienteId: usuarioAtual.id,
+             profissionalId: Number(profissionalIdParam),
+             profissional: {
+               id: Number(profissionalIdParam),
+               nome: searchParams.get('profissionalNome') || "Profissional",
+               imagem: searchParams.get('profissionalImg') || null
+             },
+             mensagens: []
+           };
+           
+           // Injetamos na lista visual
+           setConversas(prev => {
+              if (!prev.find(p => p.id === convToOpen.id)) {
+                return [convToOpen, ...prev];
+              }
+              return prev;
+           });
+        }
+
+        // Abre a conversa apenas se não for já a ativa
+        setConversaAtiva((prev: any) => {
+          if (convToOpen && (!prev || prev.id !== convToOpen.id)) {
+            setTimeout(() => abrirConversa(convToOpen), 0);
+          }
+          return prev;
+        });
+      };
+
+      startResolvingConversation();
     }
-  }, [chatOpenParam, conversaIdParam, profissionalIdParam, usuarioAtual, conversas.length]);
+  }, [chatOpenParam, conversaIdParam, profissionalIdParam, usuarioAtual]);
 
   // Pede permissão para notificações nativas do Browser ao carregar o chat
   useEffect(() => {
