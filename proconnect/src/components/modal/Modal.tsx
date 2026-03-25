@@ -108,7 +108,7 @@ export default function Modal({ profissional, onClose }: ModalProps) {
           clienteId: user.id,
           profissionalId: profissional.id
         });
-        router.push(`?chatOpen=true&conversaId=${(response.data as any).id || ''}&profissionalId=${profissional.id}`);
+        router.push(`?chatOpen=true&conversaId=${(response.data as any).id || ''}&profissionalId=${profissional.id}&profissionalNome=${encodeURIComponent(profissional.nome || '')}&profissionalImg=${encodeURIComponent(profissional.portfolio?.[0]?.url || '')}`);
       } else {
         toast.error("Para iniciar um chat, faça login primeiro!");
         router.push('/login');

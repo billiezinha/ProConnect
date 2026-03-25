@@ -157,10 +157,10 @@
   flex-shrink: 0; /* Mantém o botão sempre na base */
 }
 
-.btnWhats {
+.btnChat {
   width: 100%;
   padding: 16px;
-  background: var(--cor-primaria, #25d366);
+  background: var(--cor-primaria, #8B2CF5);
   color: white;
   border: none;
   border-radius: 16px;
@@ -171,10 +171,11 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  transition: transform 0.2s;
+  transition: transform 0.2s, opacity 0.2s;
 }
 
-.btnWhats:hover { transform: translateY(-2px); opacity: 0.9; }
+.btnChat:hover:not(:disabled) { transform: translateY(-2px); opacity: 0.9; }
+.btnChat:disabled { background: var(--cor-borda); cursor: not-allowed; }
 
 /* === BOTÃO FECHAR === */
 .closeBtn {

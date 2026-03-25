@@ -38,13 +38,60 @@ function FloatingChatContent() {
   
   const socketRef = useRef<Socket | null>(null);
   const mensagensFimRef = useRef<HTMLDivElement>(null);
+  const rawConversasRef = useRef<any[]>([]); // Guarda AS TODAS (incluindo as fantasma geradas com 0 mensagens)
 
   // Observa os URL Params para auto-abrir o widget se ativado de fora
   useEffect(() => {
     if (chatOpenParam === 'true') {
       setIsOpen(true);
+      
+      if (!usuarioAtual) return; // Espera que o user carregue
+
+      let convToOpen: any;
+      // Procuramos primeiro NO CACHE TOTAL para garantir que achamos os IDs originais das conversas acabadas de criar
+      if (conversaIdParam && conversaIdParam !== 'undefined') {
+        convToOpen = rawConversasRef.current.find(c => String(c.id) === conversaIdParam);
+      }
+      if (!convToOpen && profissionalIdParam) {
+        convToOpen = rawConversasRef.current.find(c => 
+          String(c.profissionalId) === profissionalIdParam || 
+          String(c.clienteId) === profissionalIdParam ||
+          (c.profissional && String(c.profissional.id) === profissionalIdParam)
+        );
+      }
+
+      // Se não encontrou, e não temos ID porque a API.post falhou a devolução, construímos um fallback temporário
+      if (!convToOpen && profissionalIdParam) {
+         convToOpen = {
+           id: (conversaIdParam && conversaIdParam !== 'undefined') ? Number(conversaIdParam) : Date.now(),
+           clienteId: usuarioAtual.id,
+           profissionalId: Number(profissionalIdParam),
+           profissional: {
+             id: Number(profissionalIdParam),
+             nome: searchParams.get('profissionalNome') || "Profissional",
+             imagem: searchParams.get('profissionalImg') || null
+           },
+           mensagens: []
+         };
+         
+         // Injetamos na lista visual
+         setConversas(prev => {
+            if (!prev.find(p => p.id === convToOpen.id)) {
+              return [convToOpen, ...prev];
+            }
+            return prev;
+         });
+      }
+
+      // Abre a conversa apenas se não for já a ativa
+      setConversaAtiva((prev: any) => {
+        if (convToOpen && (!prev || prev.id !== convToOpen.id)) {
+          setTimeout(() => abrirConversa(convToOpen), 0);
+        }
+        return prev;
+      });
     }
-  }, [chatOpenParam, conversaIdParam, profissionalIdParam]);
+  }, [chatOpenParam, conversaIdParam, profissionalIdParam, usuarioAtual, conversas.length]);
 
   // Pede permissão para notificações nativas do Browser ao carregar o chat
   useEffect(() => {
@@ -132,41 +179,12 @@ function FloatingChatContent() {
       const res = await api.get(`/chat/usuario/${userId}`);
       const conversasArray = res.data as any[];
       
+      // Guarda uma cópia segura não filtrada no background
+      rawConversasRef.current = conversasArray;
+
       // FILTRAR CONVERSAS VAZIAS para a listagem visual (pedido do user)
       const conversasComHistorico = conversasArray.filter(c => c.mensagens && c.mensagens.length > 0);
       setConversas(conversasComHistorico); 
-      
-      // Lógica de auto-abrir vinda do URL
-      if (!conversaAtiva) {
-        let convToOpen: any;
-        if (conversaIdParam && conversaIdParam !== 'undefined') {
-          convToOpen = conversasArray.find(c => String(c.id) === conversaIdParam);
-        }
-        if (!convToOpen && profissionalIdParam) {
-          convToOpen = conversasArray.find(c => 
-            String(c.profissionalId) === profissionalIdParam || 
-            String(c.clienteId) === profissionalIdParam ||
-            (c.profissional && String(c.profissional.id) === profissionalIdParam)
-          );
-        }
-
-        // Se viemos do botão Chat e é uma conversa fantasma acabada de criar (0 mensagens)
-        if (!convToOpen && conversaIdParam && conversaIdParam !== 'undefined' && profissionalIdParam) {
-           convToOpen = {
-             id: Number(conversaIdParam),
-             clienteId: userId,
-             profissionalId: Number(profissionalIdParam),
-             mensagens: []
-           };
-           // Injetamos localmente na lista para garantir que se consegue falar com ele pela primeira vez
-           setConversas(prev => [convToOpen, ...prev]);
-        }
-
-        if (convToOpen) {
-          abrirConversa(convToOpen);
-          setIsOpen(true);
-        }
-      }
     } catch (error) {
       console.error("Erro ao carregar conversas do Floating Chat", error);
     }

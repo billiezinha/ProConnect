@@ -51,7 +51,7 @@ export default function BuscaProfissionaisPage() {
     carregarFavoritos();
   }, []);
 
-  const iniciarChat = async (profissionalId: number | undefined) => {
+  const iniciarChat = async (profissionalId: number | undefined, nome?: string, imagem?: string) => {
     if (!profissionalId) return;
     
     try {
@@ -74,7 +74,7 @@ export default function BuscaProfissionaisPage() {
         profissionalId: profissionalId
       });
 
-      router.push(`?chatOpen=true&conversaId=${(response.data as any).id || ''}&profissionalId=${profissionalId}`);
+      router.push(`?chatOpen=true&conversaId=${(response.data as any).id || ''}&profissionalId=${profissionalId}&profissionalNome=${encodeURIComponent(nome || '')}&profissionalImg=${encodeURIComponent(imagem || '')}`);
 
     } catch (error) {
       console.error("Erro ao iniciar chat:", error);
@@ -233,7 +233,7 @@ export default function BuscaProfissionaisPage() {
                       </button>
                       
                       <button 
-                        onClick={() => iniciarChat(s.usuario?.id)}
+                        onClick={() => iniciarChat(s.usuario?.id, s.nomeNegocio, s.imagem || '')}
                         style={{ 
                           flex: 1, 
                           backgroundColor: '#8B2CF5', 
