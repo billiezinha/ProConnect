@@ -184,11 +184,33 @@
   overflow: hidden;
 }
 
+.conversaNomeRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.bolinhaNaoLida {
+  background-color: var(--cor-perigo, #ef4444);
+  color: white;
+  font-size: 0.70rem;
+  font-weight: 700;
+  border-radius: 50%;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.4);
+}
+
 .conversaNome {
   font-weight: 600;
   color: var(--cor-texto);
   font-size: 1rem;
-  margin-bottom: 4px;
 }
 
 .ultimaMensagem {
@@ -197,6 +219,12 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: color 0.2s;
+}
+
+.fontBoldBlack {
+  font-weight: 700;
+  color: var(--cor-texto);
 }
 
 .avatarPlaceholder {

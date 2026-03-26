@@ -29,6 +29,7 @@ function FloatingChatContent() {
 
   const [isOpen, setIsOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [mensagensNaoLidas, setMensagensNaoLidas] = useState<Record<number, number>>({});
 
   const [usuarioAtual, setUsuarioAtual] = useState<any>(null);
   const [conversas, setConversas] = useState<any[]>([]);
@@ -161,8 +162,30 @@ function FloatingChatContent() {
 
       if (conversaAtiva && novaMensagem.conversaId === conversaAtiva.id) {
         setMensagens((prev) => [...prev, novaMensagem]);
-      } else {
-        // Se a conversa não está ativa, notifica o utilizador com Badge visual
+        // Atualiza a timestamp de leitura porque a conversa está literalmente aberta na sua cara
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(`@ProConnect:ChatRead:${conversaAtiva.id}`, String(Date.now()));
+        }
+      } else if (isOutraPessoa) {
+        // Se a pessoa receber uma mensagem, e não a tiver aberta ativa no momento, damos trigger à notificação
+        setMensagensNaoLidas(prev => ({
+          ...prev,
+          [novaMensagem.conversaId]: (prev[novaMensagem.conversaId] || 0) + 1
+        }));
+        
+        // Push a conversa para o topo ativando uma re-ordenação na rawConversasRef
+        setConversas(prevConversas => {
+          const arr = [...prevConversas];
+          const indiceDaConversa = arr.findIndex(c => c.id === novaMensagem.conversaId);
+          if (indiceDaConversa > -1) {
+             const [conversaRemovida] = arr.splice(indiceDaConversa, 1);
+             // Salva a mensagem como a "ultima" visível no preview do card
+             conversaRemovida.mensagens = [novaMensagem, ...(conversaRemovida.mensagens || [])];
+             arr.unshift(conversaRemovida);
+          }
+          return arr;
+        });
+
         setUnreadCount(prev => prev + 1);
       }
 
@@ -200,11 +223,42 @@ function FloatingChatContent() {
       const res = await api.get(`/chat/usuario/${userId}`);
       const conversasArray = res.data as any[];
       
-      // Guarda uma cópia segura não filtrada no background
       rawConversasRef.current = conversasArray;
 
-      // FILTRAR CONVERSAS VAZIAS para a listagem visual (pedido do user)
+      // FILTRAR CONVERSAS VAZIAS E CALCULAR UNREAD COUNTS
       const conversasComHistorico = conversasArray.filter(c => c.mensagens && c.mensagens.length > 0);
+      
+      if (typeof window !== 'undefined') {
+         let globNaoLidas = 0;
+         const mapNaoLidas: Record<number, number> = {};
+         
+         conversasComHistorico.forEach(c => {
+           const lastRead = Number(localStorage.getItem(`@ProConnect:ChatRead:${c.id}`) || 0);
+           let counter = 0;
+           
+           if (c.mensagens) {
+             // Conta todas as mensagens que sejam (DELE) e (CRIADAS DEPOIS DA ULTIMA VEZ QUE ABRIMOS O CHAT)
+             c.mensagens.forEach((m: any) => {
+               if (m.remetenteId !== userId && new Date(m.criadaEm).getTime() > lastRead) {
+                 counter++;
+               }
+             });
+           }
+           mapNaoLidas[c.id] = counter;
+           globNaoLidas += counter;
+         });
+
+         setUnreadCount(globNaoLidas);
+         setMensagensNaoLidas(mapNaoLidas);
+      }
+      
+      // Ordena por atividade mais recente (timestamp da última mensagem)
+      conversasComHistorico.sort((a,b) => {
+         const timeA = a.mensagens?.[0]?.criadaEm ? new Date(a.mensagens[0].criadaEm).getTime() : 0;
+         const timeB = b.mensagens?.[0]?.criadaEm ? new Date(b.mensagens[0].criadaEm).getTime() : 0;
+         return timeB - timeA;
+      });
+
       setConversas(conversasComHistorico); 
     } catch (error) {
       console.error("Erro ao carregar conversas do Floating Chat", error);
@@ -214,9 +268,22 @@ function FloatingChatContent() {
   const abrirConversa = async (conversa: any) => {
     setConversaAtiva(conversa);
     socketRef.current?.emit("entrar_conversa", conversa.id);
+    
+    // Zera contagens da conversa atual quando entra para a tela
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(`@ProConnect:ChatRead:${conversa.id}`, String(Date.now()));
+      
+      setMensagensNaoLidas(prev => {
+        const estadoAtualizado = { ...prev };
+        const decremento = estadoAtualizado[conversa.id] || 0;
+        
+        estadoAtualizado[conversa.id] = 0;
+        setUnreadCount(c => Math.max(0, c - decremento)); // Previne Math negativo de ghost states
+        return estadoAtualizado;
+      });
+    }
 
     try {
-      // Limpa mensagens locais enquanto busca
       setMensagens(conversa.mensagens || []);
       const res = await api.get(`/chat/${conversa.id}/mensagens`);
       setMensagens(res.data as any[]); 
@@ -241,6 +308,11 @@ function FloatingChatContent() {
       criadaEm: new Date().toISOString()
     };
     setMensagens(prev => [...prev, mensagemOtimista]);
+    
+    // Se a enviámos e a conversa está aberta, então garantidamente visualizámos o histórico
+    if (typeof window !== 'undefined') {
+       localStorage.setItem(`@ProConnect:ChatRead:${conversaAtiva.id}`, String(Date.now()));
+    }
 
     socketRef.current?.emit("enviar_mensagem", dadosMensagem);
     setTexto('');
@@ -371,10 +443,7 @@ function FloatingChatContent() {
                 <div 
                   key={conv.id} 
                   className={styles.conversaItem}
-                  onClick={() => {
-                    abrirConversa(conv);
-                    setUnreadCount(0); // reseta notifications pseudo
-                  }}
+                  onClick={() => abrirConversa(conv)}
                 >
                   <div className={styles.avatarPlaceholder}>
                     {obterImagemOutroUsuario(conv) ? (
@@ -384,10 +453,17 @@ function FloatingChatContent() {
                     )}
                   </div>
                   <div className={styles.conversaInfo}>
-                    <div className={styles.conversaNome}>
-                      {obterNomeOutroUsuario(conv)}
+                    <div className={styles.conversaNomeRow}>
+                      <span className={styles.conversaNome}>
+                        {obterNomeOutroUsuario(conv)}
+                      </span>
+                      {mensagensNaoLidas[conv.id] > 0 && (
+                        <div className={styles.bolinhaNaoLida}>
+                          {mensagensNaoLidas[conv.id] > 9 ? '9+' : mensagensNaoLidas[conv.id]}
+                        </div>
+                      )}
                     </div>
-                    <div className={styles.ultimaMensagem}>
+                    <div className={`${styles.ultimaMensagem} ${mensagensNaoLidas[conv.id] > 0 ? styles.fontBoldBlack : ''}`}>
                       {conv.mensagens && conv.mensagens.length > 0 
                         ? conv.mensagens[0].texto 
                         : "Nova mensagem ativa..."}
