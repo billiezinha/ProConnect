@@ -33,9 +33,10 @@ export default function LoginPage() {
 
       toast.success("Bem-vindo de volta!");
       
-      // ✅ IHC: Força o Next.js a revalidar os componentes (como a Navbar)
-      router.push("/Busca-profissionais");
-      router.refresh(); 
+      // ✅ IHC: Força o Browser a recarregar totalmente a página 
+      // para que os componentes globais (FloatingChat e Navbar) 
+      // leiam imediatamente o novo localStorage na montagem.
+      window.location.href = "/Busca-profissionais";
 
     } catch (error: any) {
       toast.error(error.message || "E-mail ou senha inválidos.");
