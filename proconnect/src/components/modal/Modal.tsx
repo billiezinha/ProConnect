@@ -14,7 +14,7 @@ import { getMe } from '@/service/userService';
 interface ModalProps {
   profissional: any;
   onClose: () => void;
-  onOpenChat?: (userId: number | undefined, nome?: string, imagem?: string) => void;
+  onOpenChat?: (userId: number | undefined, nome?: string, imagem?: string, servicoId?: number) => void;
   isMeuServico?: boolean;
 }
 
@@ -105,7 +105,7 @@ export default function Modal({ profissional, onClose, onOpenChat, isMeuServico 
          const targetNome = profissional.nomeNegocio || profissional.nome || "Profissional";
          const targetImagem = profissional.imagem || profissional.portfolio?.[0]?.url || "";
          
-         onOpenChat(targetId, targetNome, targetImagem);
+         onOpenChat(targetId, targetNome, targetImagem, profissional.id);
       }
 
     } catch (err) {

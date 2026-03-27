@@ -341,6 +341,34 @@ function FloatingChatContent() {
     }
   };
 
+  const acionarAvaliacaoModal = (profissionalId: number) => {
+    if (typeof window !== 'undefined') {
+      const meta = localStorage.getItem(`@ProConnect:ChatMetaData:${profissionalId}`);
+      if (meta) {
+        const parsed = JSON.parse(meta);
+        localStorage.setItem("@ProConnect:avaliar", JSON.stringify({ id: parsed.servicoId, nome: parsed.nome }));
+        window.dispatchEvent(new Event("focus")); // Acorda o AvaliacaoPendente
+        toast.success("Formulário de avaliação aberto!");
+      } else {
+        toast.error("Serviço original não encontrado. Não é possível avaliar a partir deste dispositivo.");
+      }
+    }
+  };
+
+  const finalizarServico = () => {
+    if (!conversaAtiva || !usuarioAtual) return;
+    
+    const dadosMensagem = {
+      conversaId: conversaAtiva.id,
+      remetenteId: usuarioAtual.id,
+      texto: "@@SYSTEM_EVAL_REQ@@"
+    };
+
+    setMensagens(prev => [...prev, { ...dadosMensagem, criadaEm: new Date().toISOString() }]);
+    socketRef.current?.emit("enviar_mensagem", dadosMensagem);
+    toast.success("Pedido de avaliação enviado ao cliente!");
+  };
+
   const obterImagemOutroUsuario = (conversa: any) => {
     if (!usuarioAtual) return null;
     if (conversa.clienteId === usuarioAtual.id) {
@@ -401,6 +429,18 @@ function FloatingChatContent() {
                   <div>
                     <h3 style={{ fontSize: '1rem', margin: 0 }}>{obterNomeOutroUsuario(conversaAtiva)}</h3>
                   </div>
+                </div>
+                {/* Botão de Finalizar Serviço para o Profissional */}
+                <div style={{ marginLeft: 'auto' }}>
+                  {abaAtiva === 'profissional' && (
+                    <button 
+                       className={styles.btnConcluir} 
+                       onClick={finalizarServico}
+                       title="Marcar serviço como concluído e pedir avaliação"
+                    >
+                      ✔️ Concluir
+                    </button>
+                  )}
                 </div>
               </div>
             )}
@@ -478,6 +518,30 @@ function FloatingChatContent() {
           <>
             <div className={styles.mensagensList}>
               {mensagens.map((msg, index) => {
+                
+                // INTERCETAR MENSAGENS DE SISTEMA (AVALIAÇÃO)
+                if (msg.texto === "@@SYSTEM_EVAL_REQ@@") {
+                  return (
+                    <div key={index} className={styles.systemBubble}>
+                      <div className={styles.systemIcon}>⭐</div>
+                      <h4 style={{ margin: '8px 0 4px 0', fontSize: '0.9rem' }}>Serviço Concluído</h4>
+                      <p style={{ margin: '0 0 12px 0', fontSize: '0.8rem', color: 'var(--cor-texto-secundario)', textAlign: 'center' }}>
+                        O profissional marcou o serviço como concluído.
+                      </p>
+                      {abaAtiva === 'cliente' ? (
+                        <button 
+                          className={styles.btnSystemAvaliar}
+                          onClick={() => acionarAvaliacaoModal(conversaAtiva.profissionalId)}
+                        >
+                          Avaliar Agora
+                        </button>
+                      ) : (
+                        <span style={{ fontSize: '0.75rem', opacity: 0.6 }}>O cliente foi notificado para avaliar.</span>
+                      )}
+                    </div>
+                  );
+                }
+
                 const isMinha = Number(msg.remetenteId) === Number(usuarioAtual?.id);
                 if (isMinha) {
                   return (

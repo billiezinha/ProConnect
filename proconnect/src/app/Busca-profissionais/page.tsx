@@ -60,7 +60,7 @@ export default function BuscaProfissionaisPage() {
     carregarFavoritos();
   }, []);
 
-  const iniciarChat = async (profissionalId: number | undefined, nome?: string, imagem?: string) => {
+  const iniciarChat = async (profissionalId: number | undefined, nome?: string, imagem?: string, servicoId?: number) => {
     if (!profissionalId) return;
     
     try {
@@ -82,6 +82,13 @@ export default function BuscaProfissionaisPage() {
         clienteId: cliente.id,
         profissionalId: profissionalId
       });
+
+      if (servicoId) {
+        localStorage.setItem(`@ProConnect:ChatMetaData:${profissionalId}`, JSON.stringify({
+          servicoId,
+          nome: nome || "Profissional"
+        }));
+      }
 
       router.push(`?chatOpen=true&conversaId=${(response.data as any).id || ''}&profissionalId=${profissionalId}&profissionalNome=${encodeURIComponent(nome || '')}&profissionalImg=${encodeURIComponent(imagem || '')}`);
 
@@ -242,7 +249,7 @@ export default function BuscaProfissionaisPage() {
                       </button>
                       
                       <button 
-                        onClick={() => iniciarChat(s.usuario?.id, s.nomeNegocio, s.imagem || '')}
+                        onClick={() => iniciarChat(s.usuario?.id, s.nomeNegocio, s.imagem || '', s.id)}
                         disabled={usuarioAtual?.id === s.usuario?.id}
                         style={{ 
                           flex: 1, 
