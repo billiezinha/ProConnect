@@ -216,7 +216,11 @@ const handleSubmit = async (e: React.FormEvent) => {
             <p style={{ fontSize: '0.9rem', color: '#64748b', marginBottom: '1.5rem' }}>Adiciona fotos ao teu portfólio de trabalhos.</p>
 
             <div style={{ marginBottom: '1.5rem' }}>
-              <UploadPortfolio servicoId={servico.id} onUploadSuccess={handleUploadSuccess} />
+              <UploadPortfolio 
+                servicoId={servico.id} 
+                onUploadSuccess={handleUploadSuccess} 
+                isPremium={servico.usuario?.plano === "premium"} 
+              />
             </div>
             
             <GaleriaPortfolio key={atualizador} servicoId={servico.id} isOwner={true} />

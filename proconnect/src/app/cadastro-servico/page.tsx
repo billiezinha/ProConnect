@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createServico, uploadImagemServico, uploadPortfolioServico } from "@/service/servicoService";
 import { getCategorias } from "@/service/categoriaService";
+import { getMe } from "@/service/userService";
 import type { Categoria } from "@/interfaces/CategoriaProps";
 import styles from "./Cadproduto.module.css";
 import { FaArrowLeft, FaCamera, FaImages, FaPlus, FaTrash, FaStar, FaInfoCircle, FaListUl } from "react-icons/fa";
@@ -21,19 +22,26 @@ export default function CadastroServicoPage() {
   const [previewCapa, setPreviewCapa] = useState<string | null>(null);
   const [fotosPortfolio, setFotosPortfolio] = useState<File[]>([]);
   const [previewsPortfolio, setPreviewsPortfolio] = useState<string[]>([]);
-  
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [usuarioAtual, setUsuarioAtual] = useState<any>(null);
 
   useEffect(() => {
-    const fetchCats = async () => {
+    const fetchData = async () => {
       try {
-        const data = await getCategorias();
-        setCategorias(data);
-      } catch { setError("Erro ao carregar categorias."); }
+        const [cats, user] = await Promise.all([
+          getCategorias(),
+          getMe().catch(() => null)
+        ]);
+        setCategorias(cats);
+        setUsuarioAtual(user);
+      } catch { setError("Erro ao carregar dados iniciais."); }
     };
-    fetchCats();
+    fetchData();
   }, []);
+
+  const isPremium = usuarioAtual?.plano === "premium";
+  const limiteFotos = isPremium ? 50 : 3;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -160,10 +168,16 @@ export default function CadastroServicoPage() {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label className={styles.label}><FaImages /> Portfólio (Máx 6 fotos)</label>
+                  <label className={styles.label}>
+                    <FaImages /> Portfólio (Máx {limiteFotos} fotos) 
+                    {!isPremium && <span style={{ fontSize: '0.8rem', color: '#8B2CF5', marginLeft: '10px' }}>Seja Premium para envios ilimitados!</span>}
+                  </label>
                   <input type="file" accept="image/*" multiple onChange={e => {
                     if (e.target.files) {
-                      const files = Array.from(e.target.files).slice(0, 6);
+                      const files = Array.from(e.target.files).slice(0, limiteFotos);
+                      if (e.target.files.length > limiteFotos) {
+                        alert(`O seu plano atual permite no máximo ${limiteFotos} fotos no portfólio.`);
+                      }
                       setFotosPortfolio(files);
                       setPreviewsPortfolio(files.map(f => URL.createObjectURL(f)));
                     }

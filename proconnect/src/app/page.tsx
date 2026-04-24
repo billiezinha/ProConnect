@@ -8,6 +8,7 @@ import {
   FaChartLine, 
   FaTools 
 } from 'react-icons/fa';
+import PlanosSection from '@/components/PlanosSection/PlanosSection';
 
 export default function Home() {
   return (
@@ -32,50 +33,7 @@ export default function Home() {
         </div>
       </main>
 
-      {/* Seção de Planos */}
-      <section id="planos" className={styles.section}>
-        <div className={styles.container}>
-          <h2 className={styles.tituloSecao}>Escolha o Plano Certo Para Você</h2>
-          <div className={styles.planosWrapper}>
-            
-            {/* Card Gratuito */}
-            <div className={styles.cardPlano}>
-              <h3 className={styles.planoTitulo}>Gratuito</h3>
-              <p className={styles.planoDescricao}>Ideal para começar a ter visibilidade na plataforma.</p>
-              <ul className={styles.planoLista}>
-                <li>✔️ Perfil Visível Para Clientes</li>
-                <li>✔️ Contato Direto</li>
-                <li>✔️ Receber Avaliações</li>
-              </ul>
-              <Link href="/cadastro-usuario" className={`${styles.botaoPlano} ${styles.butaoOutline}`}>
-                Começar Agora
-              </Link>
-            </div>
-            
-            {/* Card Premium */}
-            <div className={`${styles.cardPlano} ${styles.cardPlanoPremium}`}>
-              <div className={styles.planoBadge}>Mais Popular</div>
-              <h3 className={styles.planoTitulo}>Premium</h3>
-              <p className={styles.planoDescricao}>Maximize seu alcance e destaque-se da concorrência.</p>
-              <ul className={styles.planoLista}>
-                <li>✔️ Todos os benefícios do Gratuito</li>
-                <li>✔️ Destaque nos Resultados de Busca</li>
-                <li>✔️ Prioridade em Indicações</li>
-                <li>✔️ Análise de Desempenho do Perfil</li>
-              </ul>
-              <div className={styles.botaoPlano} style={{ 
-                backgroundColor: "var(--cor-fundo-secao)", 
-                border: "2px dashed var(--cor-borda)", 
-                color: "var(--cor-texto-secundario)", 
-                cursor: "not-allowed" 
-              }}>
-                Em breve...
-              </div>
-            </div>
-            
-          </div>
-        </div>
-      </section>
+      <PlanosSection />
 
       {/* Seção de Recursos */}
       <section className={`${styles.section} ${styles.recursos}`}>

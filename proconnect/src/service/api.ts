@@ -1,5 +1,6 @@
 // src/service/api.ts
 import axios from "axios";
+import toast from "react-hot-toast";
 
 /** Base URL
  * - Usa NEXT_PUBLIC_API_URL quando existir
@@ -64,7 +65,11 @@ api.interceptors.response.use(
 
     if (status === 401 && typeof window !== "undefined") {
       localStorage.removeItem("token");
+      toast.error("Sessão expirada. Faça login novamente.");
+    } else if ((status === 500 || !status) && typeof window !== "undefined") {
+      toast.error(message || "Ocorreu um erro de comunicação com o servidor.");
     }
+    
     return Promise.reject(new Error(message));
   }
 );

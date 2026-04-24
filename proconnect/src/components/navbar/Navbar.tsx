@@ -7,7 +7,8 @@ import {
   FaUserCircle, 
   FaHeart, 
   FaSearch, 
-  FaSignInAlt 
+  FaSignInAlt,
+  FaStar
 } from "react-icons/fa"; 
 import styles from "./Navbar.module.css";
 import Cookies from "js-cookie";
@@ -52,6 +53,11 @@ export default function Navbar() {
           <Link href="/Busca-profissionais" className={styles.navLink}>
             <FaSearch className={styles.mobileOnlyIcon} />
             <span className={styles.desktopText}>Explorar</span>
+          </Link>
+
+          <Link href="/#planos" className={styles.navLink}>
+            <FaStar className={styles.mobileOnlyIcon} style={{ color: '#ffc107' }} />
+            <span className={styles.desktopText}>Planos PRO</span>
           </Link>
 
           <Link href="/favoritos" className={styles.navLink}>

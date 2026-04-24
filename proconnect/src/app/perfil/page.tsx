@@ -4,9 +4,10 @@ import { useRouter } from "next/navigation";
 import { getMe, uploadFotoPerfil, updateMe } from "@/service/userService";
 import type { User } from "@/interfaces/UserProps";
 import styles from "./page.module.css";
+import { useSearchParams } from "next/navigation";
 import { 
   FaUserCircle, FaPhone, FaMapMarkerAlt, 
-  FaEdit, FaSignOutAlt, FaBriefcase, FaPlusCircle, FaCamera, FaCheckCircle, FaTimesCircle
+  FaEdit, FaSignOutAlt, FaBriefcase, FaPlusCircle, FaCamera, FaCheckCircle, FaTimesCircle, FaStar
 } from "react-icons/fa";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
@@ -14,6 +15,7 @@ import { LoadingProfile } from "@/components/loading/Loading";
 
 export default function PerfilPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -30,6 +32,12 @@ export default function PerfilPage() {
   const carregarUtilizador = async () => {
     try {
       const userData = await getMe();
+      
+      // Mock do plano Pro se vier do redirecionamento
+      if (searchParams.get('sucesso_plano') === 'true') {
+        userData.plano = "premium";
+      }
+
       setUser(userData);
       setEditNome(userData.nome || "");
       setEditTelefone(userData.telefone || "");
@@ -43,7 +51,15 @@ export default function PerfilPage() {
     }
   };
 
-  useEffect(() => { carregarUtilizador(); }, []);
+  useEffect(() => { 
+    carregarUtilizador(); 
+    if (searchParams.get('sucesso_plano') === 'true') {
+      setTimeout(() => {
+        toast.success("Parabéns! Você agora é um profissional PRO Ouro! 🌟", { duration: 5000 });
+        router.replace("/perfil"); // limpa a URL
+      }, 500);
+    }
+  }, [searchParams, router]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -120,6 +136,11 @@ export default function PerfilPage() {
               ) : (
                 <FaUserCircle className={styles.avatarPlaceholder} />
               )}
+              {user?.plano === "premium" && (
+                <div title="Profissional Ouro" style={{ position: 'absolute', bottom: 5, right: 10, background: '#ffc107', borderRadius: '50%', padding: '4px', display: 'flex', boxShadow: '0 2px 10px rgba(0,0,0,0.3)', border: '2px solid #fff' }}>
+                  <FaStar size={16} color="#000" />
+                </div>
+              )}
               <div className={styles.avatarOverlay}>
                 <button 
                   className={styles.avatarBtn} 
@@ -184,6 +205,9 @@ export default function PerfilPage() {
             </div>
             <div onClick={() => router.push("/cadastro-servico")} className={styles.actionCard}>
               <FaPlusCircle /><h4>Novo Serviço</h4>
+            </div>
+            <div onClick={() => router.push("/#planos")} className={`${styles.actionCard} ${styles.actionCardPro}`}>
+              <FaStar style={{ color: '#ffc107' }} /><h4>Plano Pro</h4>
             </div>
           </div>
         </main>

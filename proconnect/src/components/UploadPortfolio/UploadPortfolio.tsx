@@ -7,10 +7,11 @@ import { FaCloudUploadAlt, FaSpinner } from "react-icons/fa";
 
 interface UploadPortfolioProps {
   servicoId: number;
-  onUploadSuccess: () => void; // Função para atualizar a galeria após o envio
+  onUploadSuccess: () => void;
+  isPremium?: boolean;
 }
 
-export default function UploadPortfolio({ servicoId, onUploadSuccess }: UploadPortfolioProps) {
+export default function UploadPortfolio({ servicoId, onUploadSuccess, isPremium = false }: UploadPortfolioProps) {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -33,6 +34,18 @@ export default function UploadPortfolio({ servicoId, onUploadSuccess }: UploadPo
 
     setLoading(true);
     try {
+      if (!isPremium) {
+        // Import getPortfolioByServico inline or globally, but since we didn't import it at the top,
+        // let's do a dynamic import or require, or I will just import it at the top in the next step.
+        const { getPortfolioByServico } = await import("@/service/portfolioService");
+        const currentPhotos = await getPortfolioByServico(servicoId);
+        if (currentPhotos.length >= 3) {
+          toast.error("Limite do plano Gratuito atingido (3 fotos). Seja Premium!");
+          setLoading(false);
+          return;
+        }
+      }
+
       const formData = new FormData();
       // O nome "file" ou "imagem" depende de como o multer está configurado no teu backend
       formData.append("imagem", file); 
@@ -55,6 +68,7 @@ export default function UploadPortfolio({ servicoId, onUploadSuccess }: UploadPo
   return (
     <div className={styles.uploadContainer}>
       <h4>Adicionar nova foto ao portfólio</h4>
+      {!isPremium && <p style={{ fontSize: '0.85rem', color: '#8B2CF5', marginBottom: '1rem' }}>Plano Gratuito: Limite de 3 fotos.</p>}
       
       <div className={styles.dropzone}>
         <input 

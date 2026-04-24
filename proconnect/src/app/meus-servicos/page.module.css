@@ -33,8 +33,6 @@
 .header {
   background-color: var(--cor-fundo);
   padding: 1.5rem 0;
-  border-bottom: 1px solid var(--cor-borda);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .header .container {
@@ -70,6 +68,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
+  text-decoration: none;
 }
 
 .newServiceButton:hover,

@@ -130,7 +130,7 @@ export default function BuscaProfissionaisPage() {
   const filteredServicos = useMemo(() => {
     const busca = searchTerm.toLowerCase().trim();
 
-    return servicos.filter(s => {
+    const filtrados = servicos.filter(s => {
       const nomeServicoDB = (s.categoria?.nomeServico || "").toLowerCase().trim();
       const titulo = (s.nomeNegocio || "").toLowerCase();
       const desc = (s.descricao || "").toLowerCase();
@@ -152,6 +152,15 @@ export default function BuscaProfissionaisPage() {
       }
 
       return passaBusca && passaBotao;
+    });
+
+    // Ordenação Ouro: Profissionais Premium aparecem no topo
+    return filtrados.sort((a, b) => {
+      const aPremium = a.usuario?.plano === "premium";
+      const bPremium = b.usuario?.plano === "premium";
+      if (aPremium && !bPremium) return -1;
+      if (!aPremium && bPremium) return 1;
+      return 0; // Mantém a ordem original para os que têm o mesmo plano
     });
   }, [searchTerm, selectedCategory, servicos]);
 
@@ -223,7 +232,12 @@ export default function BuscaProfissionaisPage() {
                     </div>
 
                     <div className={styles.cardContent}>
-                      <h3 className={styles.servicoTitle}>{s.nomeNegocio}</h3>
+                      <h3 className={styles.servicoTitle}>
+                        {s.nomeNegocio}
+                        {s.usuario?.plano === "premium" && (
+                          <FaStar color="#ffc107" size={14} style={{ marginLeft: 6 }} title="Profissional PRO" />
+                        )}
+                      </h3>
                       
                       <div className={`${styles.statusBadge} ${isDisponivel ? styles.statusOn : styles.statusOff}`}>
                         <span className={`${styles.statusDot} ${isDisponivel ? styles.dotOn : styles.dotOff}`}></span>

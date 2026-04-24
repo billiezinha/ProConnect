@@ -124,7 +124,12 @@ export default function Modal({ profissional, onClose, onOpenChat, isMeuServico 
         </button>
         
         <div className={styles.header}>
-           <h2>{profissional.nome || "Profissional"}</h2>
+           <h2>
+             {profissional.nome || "Profissional"}
+             {profissional.usuario?.plano === "premium" && (
+               <span className={styles.badgePro} title="Profissional Premium"><FaStar color="#ffc107" size={14} style={{ marginLeft: 6, marginBottom: 2 }} /></span>
+             )}
+           </h2>
            <div className={styles.badgeRow}>
               <span className={styles.badgeCategoria}>{profissional.categoria}</span>
               <div className={styles.ratingInfo}>
