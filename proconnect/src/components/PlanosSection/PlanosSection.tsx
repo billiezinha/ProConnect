@@ -23,7 +23,7 @@ export default function PlanosSection() {
     
     try {
       const tipo = plan === "pro_anual" ? "anual" : "mensal";
-      const response = await api.post("/assinatura/criar", { tipo });
+      const response = await api.post<any>("/assinatura/criar", { tipo });
       
       if (response.data && response.data.url) {
         toast.success("Redirecionando para o Pagamento Seguro...");

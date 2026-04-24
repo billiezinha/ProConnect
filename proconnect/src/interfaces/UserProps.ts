@@ -29,6 +29,7 @@ export interface User {
   endereco?: string;
   imagem?: string;
   disponivel?: boolean; // ✨ ADICIONA ESTA LINHA AQUI
+  plano?: string; // ✨ ADICIONADO PARA PLANO PRO
 }
 
 // Token pode trazer userId como string/number, ou até em "sub"

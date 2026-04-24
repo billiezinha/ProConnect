@@ -4,7 +4,7 @@ import { getServicos } from "@/service/servicoService";
 import { getFavoritosIds, adicionarFavorito, removerFavorito } from "@/service/favoritoService"; 
 import { Servico } from "@/interfaces/ServicoProps";
 import styles from "./page.module.css";
-import { FaSearch, FaHeart, FaRegHeart, FaTimes, FaCommentDots } from "react-icons/fa";
+import { FaSearch, FaHeart, FaRegHeart, FaTimes, FaCommentDots, FaStar } from "react-icons/fa";
 import Modal from "@/components/modal/Modal";
 import { LoadingGrid } from "@/components/loading/Loading";
 import toast from "react-hot-toast";

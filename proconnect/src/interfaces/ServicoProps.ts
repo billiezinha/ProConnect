@@ -33,7 +33,8 @@ export interface Servico {
     telefone: string;
     nome?: string;
     disponivel?: boolean;
-    cidade?: string; // ✨ ADICIONADO AQUI
+    cidade?: string;
+    plano?: string; // ✨ ADICIONADO PARA PLANO PRO
   };
   localizacao?: {    // ✨ ADICIONADO AQUI
     cidade?: string;
