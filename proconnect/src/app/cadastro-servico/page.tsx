@@ -7,7 +7,7 @@ import { getCategorias } from "@/service/categoriaService";
 import { getMe } from "@/service/userService";
 import type { Categoria } from "@/interfaces/CategoriaProps";
 import styles from "./Cadproduto.module.css";
-import { FaArrowLeft, FaCamera, FaImages, FaPlus, FaTrash, FaStar, FaInfoCircle, FaListUl } from "react-icons/fa";
+import { FaArrowLeft, FaCamera, FaImages, FaPlus, FaTrash, FaStar, FaInfoCircle, FaListUl, FaCommentDots } from "react-icons/fa";
 import SelectCategoria from "@/components/ui/SelectCategoria";
 
 export default function CadastroServicoPage() {
@@ -100,10 +100,10 @@ export default function CadastroServicoPage() {
   return (
     <div className={styles.body}>
       <header className={styles.header}>
-        <div className={styles.container}>
+        <div className={`${styles.container} ${styles.headerContainer}`}>
           <Link href="/perfil" className={styles.backButton}><FaArrowLeft /></Link>
           <h1 className={styles.headerTitle}>Novo Serviço</h1>
-          <div style={{ width: "30px" }}></div>
+          <div style={{ width: "24px" }}></div>
         </div>
       </header>
 
@@ -193,24 +193,34 @@ export default function CadastroServicoPage() {
             <div className={styles.previewSection}>
               <h3 className={styles.previewTitle}>Prévia do Card</h3>
               <div className={styles.cardPreview}>
-                <div className={styles.cardImageContainer}>
-                  {previewCapa ? <img src={previewCapa} alt="Capa" /> : <div className={styles.placeholderImg}>Sua Foto</div>}
-                  <div className={styles.cardBadge}>{categorias.find(c => c.id === categoriaId)?.nomeServico || "Categoria"}</div>
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                  <div className={styles.cardImageContainer}>
+                    {previewCapa ? <img src={previewCapa} alt="Capa" /> : <div className={styles.placeholderImg}>Sua Foto</div>}
+                    <div className={styles.cardBadge}>{categorias.find(c => c.id === categoriaId)?.nomeServico || "Categoria"}</div>
+                  </div>
+                  <div className={styles.cardContent}>
+                    <div className={styles.cardHeader}>
+                      <h4>{nomeNegocio || "Nome do Negócio"}</h4>
+                      <span className={styles.rating}><FaStar color="#f1c40f" /> 5.0</span>
+                    </div>
+                    <p className={styles.previewDesc}>
+                      {descricao ? (descricao.length > 80 ? descricao.substring(0, 80) + "..." : descricao) : "Sua descrição aparecerá aqui."}
+                    </p>
+                    <p className={styles.cardPreco}>
+                      A partir de: <strong>R$ {precos.length > 0 ? Math.min(...precos.map(p => p.precificacao)).toFixed(2) : "0.00"}</strong>
+                    </p>
+                    <div className={styles.portfolioMini}>
+                      {previewsPortfolio.map((url, i) => <img key={i} src={url} alt="Portfolio" />)}
+                    </div>
+                  </div>
                 </div>
-                <div className={styles.cardContent}>
-                  <div className={styles.cardHeader}>
-                    <h4>{nomeNegocio || "Nome do Negócio"}</h4>
-                    <span className={styles.rating}><FaStar color="#f1c40f" /> 5.0</span>
-                  </div>
-                  <p className={styles.previewDesc}>
-                    {descricao ? (descricao.length > 80 ? descricao.substring(0, 80) + "..." : descricao) : "Sua descrição aparecerá aqui."}
-                  </p>
-                  <p className={styles.cardPreco}>
-                    A partir de: <strong>R$ {precos.length > 0 ? Math.min(...precos.map(p => p.precificacao)).toFixed(2) : "0.00"}</strong>
-                  </p>
-                  <div className={styles.portfolioMini}>
-                    {previewsPortfolio.map((url, i) => <img key={i} src={url} alt="Portfolio" />)}
-                  </div>
+                <div className={styles.cardFooter} style={{ display: 'flex', gap: '10px' }}>
+                  <button className={styles.submitButton} style={{ flex: 1, margin: 0, padding: '0.8rem' }} type="button" disabled>
+                    Ver Detalhes
+                  </button>
+                  <button className={styles.chatButton} style={{ flex: 1, padding: '0.8rem' }} type="button" disabled>
+                    <FaCommentDots /> Chat
+                  </button>
                 </div>
               </div>
             </div>

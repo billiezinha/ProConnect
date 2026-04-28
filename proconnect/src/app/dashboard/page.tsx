@@ -231,7 +231,7 @@ export default function DashboardPage() {
             <div className={styles.listArea}>
               {servicosMaisVisualizados.length > 0 ? (
                 servicosMaisVisualizados.map((svc, i) => (
-                  <div key={svc.id} className={styles.listItem}>
+                  <div key={svc.id || `view-${i}`} className={styles.listItem}>
                     <span className={styles.listIndex}>{i + 1}</span>
                     <span className={styles.listName}>{svc.nomeNegocio}</span>
                     <span className={styles.listScore}><FaEye /> {svc.total}</span>
@@ -248,7 +248,7 @@ export default function DashboardPage() {
             <div className={styles.listArea}>
               {servicosMaisFavoritados.length > 0 ? (
                 servicosMaisFavoritados.map((svc, i) => (
-                  <div key={svc.id} className={styles.listItem}>
+                  <div key={svc.id || `fav-${i}`} className={styles.listItem}>
                     <span className={styles.listIndex}>{i + 1}</span>
                     <span className={styles.listName}>{svc.nomeNegocio}</span>
                     <span className={styles.listScore}><FaHeart /> {svc.total}</span>

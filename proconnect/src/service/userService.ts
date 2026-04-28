@@ -13,7 +13,20 @@ export async function getUserById(id: number | string): Promise<User> {
 
 export async function getMe(): Promise<User> {
   const resp = await api.get<User>("/usuario/me");
-  return resp.data;
+  let user = resp.data;
+  
+  // Workaround: O backend do Render não está retornando o campo "plano".
+  // Vamos tentar acessar uma rota premium (dashboard) para descobrir se o usuário é PRO.
+  if (user && user.plano !== "premium") {
+    try {
+      await api.get("/dashboard?periodo=mes");
+      user.plano = "premium"; // Se não deu erro de permissão (403), ele é premium!
+    } catch (e) {
+      // Ignora, ele realmente é gratuito
+    }
+  }
+  
+  return user;
 }
 
 export async function updateUser(id: number | string, payload: UpdateUserPayload): Promise<User> {

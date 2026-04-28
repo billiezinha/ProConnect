@@ -160,8 +160,15 @@ export default function PerfilPage() {
               accept="image/*" 
             />
 
-            <h2>{user?.nome}</h2>
-            <p className={styles.userEmail}>{user?.email}</p>
+            <h2>
+              {user?.nome}
+              {user?.plano === "premium" && (
+                <span style={{ marginLeft: 8, color: '#ffc107', fontSize: '1rem' }} title="Premium Ativo">
+                  <FaStar />
+                </span>
+              )}
+            </h2>
+            <p className={styles.userEmail}>{user?.email} - Plano: {user?.plano || 'Gratuito'}</p>
 
             <div className={styles.statusSection}>
                <button 

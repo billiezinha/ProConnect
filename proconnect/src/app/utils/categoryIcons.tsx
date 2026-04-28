@@ -54,7 +54,7 @@ export const categoryGroups: Record<string, { icon: ReactNode, services: string[
       "Professor(a) Particular", "Tradutor(a) / Intérprete", "Advogado", 
       "Contador(a)", "Consultor(a) Financeiro", "Corretor de Imóveis",
       "Professor(a) de Idiomas", "Professor(a) de Música", 
-      "Tradutor(a) Juramentado(a)", "Síndico Profissional"
+      "Tradutor(a) Juramentado(a)", "Síndico Profissional", "Instrutor Autônomo"
     ]
   },
   "Automotivo & Transporte": {
