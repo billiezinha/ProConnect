@@ -174,33 +174,6 @@ export default function Modal({ profissional, onClose, onOpenChat, isMeuServico 
           </div>
 
           <div className={styles.section}>
-            <h3>Formas de Contato</h3>
-            {isMeuServico ? (
-              <p className={styles.noData}>Este é o seu serviço, você não pode contatar a si mesmo.</p>
-            ) : (
-              <div className={styles.contactButtonsGrid}>
-                <button 
-                  onClick={handleChatClick} 
-                  className={styles.btnContactChat} 
-                  disabled={profissional.disponivel === false}
-                >
-                  <FaComments size={20} />
-                  <span>Chat no ProConnect</span>
-                </button>
-                
-                <button 
-                  onClick={handleWhatsAppClick} 
-                  className={styles.btnContactWpp} 
-                  disabled={profissional.disponivel === false}
-                >
-                  <FaWhatsapp size={20} />
-                  <span>Chamar no WhatsApp</span>
-                </button>
-              </div>
-            )}
-          </div>
-
-          <div className={styles.section}>
             <h3>Tabela de Preços</h3>
             {profissional.precos && profissional.precos.length > 0 ? (
               <div className={styles.tabelaPrecos}>
@@ -255,6 +228,32 @@ export default function Modal({ profissional, onClose, onOpenChat, isMeuServico 
               <p className={styles.noData}>Ainda não possui avaliações.</p>
             )}
           </div>
+        </div>
+
+        <div className={styles.footer}>
+            {isMeuServico ? (
+              <p className={styles.noData} style={{ textAlign: 'center', margin: 0 }}>Este é o seu serviço, você não pode contatar a si mesmo.</p>
+            ) : (
+              <div className={styles.contactButtonsGrid}>
+                <button 
+                  onClick={handleChatClick} 
+                  className={styles.btnContactChat} 
+                  disabled={profissional.disponivel === false}
+                >
+                  <FaComments size={20} />
+                  <span>Chat no ProConnect</span>
+                </button>
+                
+                <button 
+                  onClick={handleWhatsAppClick} 
+                  className={styles.btnContactWpp} 
+                  disabled={profissional.disponivel === false}
+                >
+                  <FaWhatsapp size={20} />
+                  <span>Chamar no WhatsApp</span>
+                </button>
+              </div>
+            )}
         </div>
 
         {fotoIndex !== null && (

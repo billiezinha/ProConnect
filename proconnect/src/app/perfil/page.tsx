@@ -206,9 +206,15 @@ export default function PerfilPage() {
             <div onClick={() => router.push("/cadastro-servico")} className={styles.actionCard}>
               <FaPlusCircle /><h4>Novo Serviço</h4>
             </div>
-            <div onClick={() => router.push("/#planos")} className={`${styles.actionCard} ${styles.actionCardPro}`}>
-              <FaStar style={{ color: '#ffc107' }} /><h4>Plano Pro</h4>
-            </div>
+            {user?.plano === "premium" ? (
+              <div onClick={() => router.push("/dashboard")} className={`${styles.actionCard} ${styles.actionCardPro}`}>
+                <FaStar style={{ color: '#ffc107' }} /><h4>Meu Dashboard</h4>
+              </div>
+            ) : (
+              <div onClick={() => router.push("/#planos")} className={`${styles.actionCard} ${styles.actionCardPro}`}>
+                <FaStar style={{ color: '#ffc107' }} /><h4>Plano Pro</h4>
+              </div>
+            )}
           </div>
         </main>
       </div>

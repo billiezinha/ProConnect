@@ -72,7 +72,7 @@
 .avatar {
   width: 80px;
   height: 80px;
-  border-radius: 50%;
+  border-radius: 16px;
   object-fit: cover;
   border: 3px solid #ffc107;
   box-shadow: 0 0 15px rgba(255, 193, 7, 0.3);
@@ -81,7 +81,7 @@
 .avatarPlaceholder {
   width: 80px;
   height: 80px;
-  border-radius: 50%;
+  border-radius: 16px;
   color: #888;
   background: #333;
   display: flex;

@@ -218,38 +218,40 @@ export default function BuscaProfissionaisPage() {
 
                 return (
                   <div key={s.id} className={styles.servicoCard}>
-                    <div className={styles.cardImageContainer}>
-                      {s.imagem ? (
-                        <img src={s.imagem} alt={s.nomeNegocio} className={styles.cardImage} />
-                      ) : (
-                        <div className={styles.cardImagePlaceholder}>
-                          <span className={styles.cardCategoryIcon}>{icon}</span>
-                        </div>
-                      )}
-                      <button className={styles.favButton} onClick={() => toggleFavorito(s.id, s.nomeNegocio)}>
-                        {favoritos.includes(s.id) ? <FaHeart className={styles.iconFill} /> : <FaRegHeart className={styles.iconOutline} />}
-                      </button>
-                    </div>
-
-                    <div className={styles.cardContent}>
-                      <h3 className={styles.servicoTitle}>
-                        {s.nomeNegocio}
-                        {s.usuario?.plano === "premium" && (
-                          <FaStar color="#ffc107" size={14} style={{ marginLeft: 6 }} title="Profissional PRO" />
+                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                      <div className={styles.cardImageContainer}>
+                        {s.imagem ? (
+                          <img src={s.imagem} alt={s.nomeNegocio} className={styles.cardImage} />
+                        ) : (
+                          <div className={styles.cardImagePlaceholder}>
+                            <span className={styles.cardCategoryIcon}>{icon}</span>
+                          </div>
                         )}
-                      </h3>
-                      
-                      <div className={`${styles.statusBadge} ${isDisponivel ? styles.statusOn : styles.statusOff}`}>
-                        <span className={`${styles.statusDot} ${isDisponivel ? styles.dotOn : styles.dotOff}`}></span>
-                        {isDisponivel ? "Disponível agora" : "Indisponível"}
+                        <button className={styles.favButton} onClick={() => toggleFavorito(s.id, s.nomeNegocio)}>
+                          {favoritos.includes(s.id) ? <FaHeart className={styles.iconFill} /> : <FaRegHeart className={styles.iconOutline} />}
+                        </button>
                       </div>
 
-                      <p className={styles.servicoDescription}>
-                        {s.descricao.length > 110 ? `${s.descricao.substring(0, 110)}...` : s.descricao}
-                      </p>
-                      
-                      <div className={styles.cityText}>
-                        📍 {s.localizacao?.cidade || s.usuario?.cidade || "Local não informado"}
+                      <div className={styles.cardContent}>
+                        <h3 className={styles.servicoTitle}>
+                          {s.nomeNegocio}
+                          {s.usuario?.plano === "premium" && (
+                            <FaStar color="#ffc107" size={14} style={{ marginLeft: 6 }} title="Profissional PRO" />
+                          )}
+                        </h3>
+                        
+                        <div className={`${styles.statusBadge} ${isDisponivel ? styles.statusOn : styles.statusOff}`}>
+                          <span className={`${styles.statusDot} ${isDisponivel ? styles.dotOn : styles.dotOff}`}></span>
+                          {isDisponivel ? "Disponível agora" : "Indisponível"}
+                        </div>
+
+                        <p className={styles.servicoDescription}>
+                          {s.descricao.length > 110 ? `${s.descricao.substring(0, 110)}...` : s.descricao}
+                        </p>
+                        
+                        <div className={styles.cityText}>
+                          📍 {s.localizacao?.cidade || s.usuario?.cidade || "Local não informado"}
+                        </div>
                       </div>
                     </div>
 
