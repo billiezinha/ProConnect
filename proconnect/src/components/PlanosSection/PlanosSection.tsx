@@ -35,6 +35,8 @@ export default function PlanosSection() {
       if (error?.response?.status === 403) {
         toast.error("Você precisa anunciar um serviço antes de assinar o plano PRO.");
         setTimeout(() => router.push("/cadastro-servico"), 2500);
+      } else if (error?.response?.status === 409) {
+        toast.error("Ops! Você já possui um plano ativo no momento.");
       } else {
         toast.error(error?.response?.data?.error || "Erro ao iniciar o pagamento. Tente novamente.");
       }

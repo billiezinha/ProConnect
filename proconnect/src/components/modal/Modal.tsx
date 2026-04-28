@@ -6,8 +6,8 @@ import { getAvaliacoesByServico, ResumoAvaliacao } from "@/service/avaliacaoServ
 import { registrarContato } from "@/service/contatoWhatsappService";
 import { criarServicoRealizado } from "@/service/servicoRealizadoService";
 import styles from "./Modal.module.css";
-// ✅ Importados ícones de navegação
-import { FaTimes, FaChevronLeft, FaChevronRight, FaStar, FaRegStar, FaStarHalfAlt } from "react-icons/fa"; // Corrigido
+// ✅ Importados ícones de navegação e whatsapp
+import { FaTimes, FaChevronLeft, FaChevronRight, FaStar, FaRegStar, FaStarHalfAlt, FaWhatsapp, FaComments } from "react-icons/fa"; 
 import api from '@/service/api';
 import { getMe } from '@/service/userService';
 
@@ -76,30 +76,30 @@ export default function Modal({ profissional, onClose, onOpenChat, isMeuServico 
     return stars;
   };
 
-  const handleContatoClick = async () => {
-    if (profissional.disponivel === false) {
-      toast.error("Este profissional não está recebendo contatos no momento.");
-      return;
-    }
+  const checkLogin = () => {
     const token = localStorage.getItem("token");
     if (!token) {
       toast.error("Para entrar em contato, faça login primeiro!");
       router.push("/login");
+      return false;
+    }
+    return true;
+  };
+
+  const handleChatClick = async () => {
+    if (profissional.disponivel === false) {
+      toast.error("Este profissional não está recebendo contatos no momento.");
       return;
     }
+    if (!checkLogin()) return;
 
     try {
-      // 1. Tenta registar métricas analíticas em background de forma inofensiva
       try {
-        await Promise.all([
-          registrarContato(profissional.id),
-          criarServicoRealizado(profissional.id),
-        ]);
+        await criarServicoRealizado(profissional.id);
       } catch (analyticsErr) {
-        console.warn("Métricas de contato falharam. O chat avança normal:", analyticsErr);
+        console.warn("Métricas de contato falharam:", analyticsErr);
       }
       
-      // 2. Aciona o abridor de chat injetado pelo Parente (Busca-Profissionais) garantindo Match de Props
       if (onOpenChat) {
          const targetId = profissional.usuario?.id || profissional.usuarioId;
          const targetNome = profissional.nomeNegocio || profissional.nome || "Profissional";
@@ -107,12 +107,36 @@ export default function Modal({ profissional, onClose, onOpenChat, isMeuServico 
          
          onOpenChat(targetId, targetNome, targetImagem, profissional.id);
       }
-
     } catch (err) {
-      console.error("Erro Crítico ao abrir chat:", err);
-      toast.error("Não foi possível iniciar a conversa. Verifique a sua ligação.");
+      toast.error("Não foi possível iniciar a conversa.");
     } finally {
       onClose();
+    }
+  };
+
+  const handleWhatsAppClick = async () => {
+    if (profissional.disponivel === false) {
+      toast.error("Este profissional não está recebendo contatos no momento.");
+      return;
+    }
+    if (!checkLogin()) return;
+
+    try {
+      await registrarContato(profissional.id);
+      
+      const telefone = profissional.usuario?.telefone || profissional.telefone;
+      if (telefone) {
+        const numeroLimpo = telefone.replace(/\D/g, "");
+        const numeroWpp = numeroLimpo.startsWith("55") ? numeroLimpo : `55${numeroLimpo}`;
+        const nomeSvc = profissional.nomeNegocio || profissional.nome || "serviço";
+        const msg = encodeURIComponent(`Olá, vi seu serviço (${nomeSvc}) no ProConnect e gostaria de mais informações!`);
+        window.open(`https://wa.me/${numeroWpp}?text=${msg}`, "_blank");
+      } else {
+        toast.error("O profissional não disponibilizou um número de WhatsApp.");
+      }
+    } catch (err) {
+      console.error("Erro ao registrar WhatsApp:", err);
+      toast.error("Não foi possível abrir o WhatsApp.");
     }
   };
 
@@ -125,13 +149,13 @@ export default function Modal({ profissional, onClose, onOpenChat, isMeuServico 
         
         <div className={styles.header}>
            <h2>
-             {profissional.nome || "Profissional"}
+             {profissional.nomeNegocio || profissional.nome || "Serviço"}
              {profissional.usuario?.plano === "premium" && (
                <span className={styles.badgePro} title="Profissional Premium"><FaStar color="#ffc107" size={14} style={{ marginLeft: 6, marginBottom: 2 }} /></span>
              )}
            </h2>
            <div className={styles.badgeRow}>
-              <span className={styles.badgeCategoria}>{profissional.categoria}</span>
+              <span className={styles.badgeCategoria}>{profissional.categoria?.nomeServico || profissional.categoria || "Serviço"}</span>
               <div className={styles.ratingInfo}>
                 <div className={styles.starsContainer}>
                   {renderStars(resumo?.media || 0)}
@@ -145,7 +169,35 @@ export default function Modal({ profissional, onClose, onOpenChat, isMeuServico 
         
         <div className={styles.scrollBody}>
           <div className={styles.section}>
+            <h3>Detalhes</h3>
             <p className={styles.descricao}>{profissional.descricao}</p>
+          </div>
+
+          <div className={styles.section}>
+            <h3>Formas de Contato</h3>
+            {isMeuServico ? (
+              <p className={styles.noData}>Este é o seu serviço, você não pode contatar a si mesmo.</p>
+            ) : (
+              <div className={styles.contactButtonsGrid}>
+                <button 
+                  onClick={handleChatClick} 
+                  className={styles.btnContactChat} 
+                  disabled={profissional.disponivel === false}
+                >
+                  <FaComments size={20} />
+                  <span>Chat no ProConnect</span>
+                </button>
+                
+                <button 
+                  onClick={handleWhatsAppClick} 
+                  className={styles.btnContactWpp} 
+                  disabled={profissional.disponivel === false}
+                >
+                  <FaWhatsapp size={20} />
+                  <span>Chamar no WhatsApp</span>
+                </button>
+              </div>
+            )}
           </div>
 
           <div className={styles.section}>
@@ -203,18 +255,6 @@ export default function Modal({ profissional, onClose, onOpenChat, isMeuServico 
               <p className={styles.noData}>Ainda não possui avaliações.</p>
             )}
           </div>
-        </div>
-
-        <div className={styles.footer}>
-          <button 
-            onClick={handleContatoClick} 
-            className={styles.btnChat} 
-            disabled={profissional.disponivel === false || isMeuServico}
-            title={isMeuServico ? "Não pode contactar a si próprio." : ""}
-            style={{ opacity: isMeuServico ? 0.5 : 1, cursor: isMeuServico ? 'not-allowed' : 'pointer' }}
-          >
-            {isMeuServico ? "O Seu Serviço" : "Iniciar Chat"}
-          </button>
         </div>
 
         {fotoIndex !== null && (

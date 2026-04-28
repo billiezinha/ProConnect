@@ -1,0 +1,114 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--background-color);
+  padding: 20px;
+}
+
+.card {
+  background: var(--card-bg, #1a1a1a);
+  border: 1px solid var(--border-color, #333);
+  border-radius: 20px;
+  padding: 50px 30px;
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.iconSuccess {
+  font-size: 5rem;
+  color: #4CAF50;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 0 15px rgba(76, 175, 80, 0.4));
+}
+
+.iconError {
+  font-size: 5rem;
+  color: #F44336;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 0 15px rgba(244, 67, 54, 0.4));
+}
+
+.iconPending {
+  font-size: 5rem;
+  color: #FFC107;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.4));
+}
+
+.card h1 {
+  font-size: 2rem;
+  color: var(--text-color, #fff);
+  margin-bottom: 15px;
+}
+
+.card p {
+  font-size: 1.1rem;
+  color: #ccc;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.subtitle {
+  font-size: 0.95rem !important;
+  color: #aaa !important;
+  margin-bottom: 30px !important;
+}
+
+.btnAction, .btnActionError, .btnActionNeutral {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px 30px;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  width: 100%;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: white;
+}
+
+.btnAction {
+  background: linear-gradient(135deg, #8B2CF5 0%, #6441A5 100%);
+  box-shadow: 0 4px 15px rgba(139, 44, 245, 0.3);
+}
+
+.btnAction:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(139, 44, 245, 0.5);
+}
+
+.btnActionError {
+  background: #333;
+  color: #fff;
+}
+
+.btnActionError:hover {
+  background: #444;
+  transform: translateY(-2px);
+}
+
+.btnActionNeutral {
+  background: transparent;
+  color: #aaa;
+  border: 1px solid #555;
+}
+
+.btnActionNeutral:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  border-color: #888;
+}

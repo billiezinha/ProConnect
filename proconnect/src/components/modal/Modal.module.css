@@ -321,3 +321,58 @@
     right: 20px;
   }
 }
+.contactButtonsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+@media (max-width: 500px) {
+  .contactButtonsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.btnContactChat, .btnContactWpp {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: white;
+}
+
+.btnContactChat {
+  background: var(--cor-primaria, #8B2CF5);
+}
+
+.btnContactChat:hover:not(:disabled) {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+.btnContactWpp {
+  background: #25D366;
+}
+
+.btnContactWpp:hover:not(:disabled) {
+  background: #1EBE5D;
+  transform: translateY(-2px);
+}
+
+.btnContactChat:disabled, .btnContactWpp:disabled {
+  background: #555;
+  cursor: not-allowed;
+  transform: none;
+  opacity: 0.7;
+}
+
+.footer { display: none; }
+
