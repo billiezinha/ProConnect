@@ -1,0 +1,218 @@
+.wrapper {
+  display: flex;
+  min-height: 100vh;
+  background-color: #121214;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #1e1e24;
+  border-right: 1px solid #333;
+  display: flex;
+  flex-direction: column;
+}
+
+.logoArea {
+  padding: 20px;
+  border-bottom: 1px solid #333;
+}
+
+.logoArea h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+.logoArea span {
+  color: #8b2cf5;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+}
+
+.nav button {
+  background: none;
+  border: none;
+  color: #aaa;
+  padding: 15px 20px;
+  text-align: left;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s;
+}
+
+.nav button:hover {
+  background-color: rgba(139, 44, 245, 0.1);
+  color: #fff;
+}
+
+.activeTab {
+  background-color: rgba(139, 44, 245, 0.2) !important;
+  color: #8b2cf5 !important;
+  border-right: 3px solid #8b2cf5;
+}
+
+.mainContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  height: 70px;
+  background-color: #1e1e24;
+  border-bottom: 1px solid #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 30px;
+}
+
+.header h1 {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.adminInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: rgba(76, 175, 80, 0.1);
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  color: #4CAF50;
+  font-weight: 500;
+}
+
+.contentSection {
+  padding: 30px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.statCard {
+  background-color: #1e1e24;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #333;
+}
+
+.statCard h3 {
+  font-size: 0.9rem;
+  color: #aaa;
+  margin-bottom: 10px;
+}
+
+.statValue {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 5px;
+}
+
+.statVarPositive {
+  font-size: 0.8rem;
+  color: #4CAF50;
+}
+
+.alertBox {
+  background-color: rgba(255, 152, 0, 0.1);
+  border: 1px solid rgba(255, 152, 0, 0.3);
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.alertBox h3 {
+  color: #ff9800;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.alertBox p {
+  color: #ddd;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.tableContainer {
+  background-color: #1e1e24;
+  border-radius: 12px;
+  border: 1px solid #333;
+  overflow: hidden;
+  margin-top: 20px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th, .table td {
+  padding: 15px 20px;
+  text-align: left;
+  border-bottom: 1px solid #333;
+}
+
+.table th {
+  background-color: #25252b;
+  color: #aaa;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.table td {
+  font-size: 0.95rem;
+}
+
+.statusActive {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background-color: rgba(76, 175, 80, 0.1);
+  color: #4CAF50;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.actionBtn {
+  background-color: rgba(244, 67, 54, 0.1);
+  color: #F44336;
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.actionBtn:hover {
+  background-color: #F44336;
+  color: #fff;
+}

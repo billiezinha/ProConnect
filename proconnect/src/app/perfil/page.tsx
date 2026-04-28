@@ -1,13 +1,14 @@
 "use client";
 import { useState, useEffect, useRef, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
-import { getMe, uploadFotoPerfil, updateMe } from "@/service/userService";
+import { getMe, uploadFotoPerfil, updateMe, deleteAccount } from "@/service/userService";
 import type { User } from "@/interfaces/UserProps";
 import styles from "./page.module.css";
 import { useSearchParams } from "next/navigation";
 import { 
   FaUserCircle, FaPhone, FaMapMarkerAlt, 
-  FaEdit, FaSignOutAlt, FaBriefcase, FaPlusCircle, FaCamera, FaCheckCircle, FaTimesCircle, FaStar
+  FaEdit, FaSignOutAlt, FaBriefcase, FaPlusCircle, FaCamera, FaCheckCircle, FaTimesCircle, FaStar,
+  FaTrash, FaHistory, FaCreditCard
 } from "react-icons/fa";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
@@ -21,6 +22,8 @@ export default function PerfilPage() {
   const [uploading, setUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   
   const [editNome, setEditNome] = useState("");
   const [editTelefone, setEditTelefone] = useState("");
@@ -106,6 +109,19 @@ export default function PerfilPage() {
       toast.error("Erro ao atualizar.");
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    setIsDeleting(true);
+    try {
+      await deleteAccount();
+      toast.success("Conta excluída com sucesso.");
+      handleLogout();
+    } catch {
+      toast.error("Erro ao excluir conta. Tente novamente.");
+      setIsDeleting(false);
+      setIsDeleteModalOpen(false);
     }
   };
 
@@ -222,7 +238,33 @@ export default function PerfilPage() {
                 <FaStar style={{ color: '#ffc107' }} /><h4>Plano Pro</h4>
               </div>
             )}
+            
+            <div onClick={() => router.push("/historico-pagamentos")} className={styles.actionCard}>
+              <FaHistory /><h4>Histórico de Pagamentos</h4>
+            </div>
+            {user?.plano === "premium" && (
+              <div onClick={() => router.push("/gerenciar-assinatura")} className={styles.actionCard}>
+                <FaCreditCard /><h4>Gerenciar Assinatura</h4>
+              </div>
+            )}
           </div>
+
+          <section className={styles.card} style={{ marginTop: '20px', border: '1px solid rgba(244, 67, 54, 0.3)' }}>
+            <div className={styles.cardHeader}>
+              <h3 style={{ color: '#F44336' }}><FaTrash /> Área de Risco</h3>
+            </div>
+            <div style={{ padding: '20px' }}>
+              <p style={{ color: '#aaa', marginBottom: '15px' }}>
+                A exclusão da sua conta apagará permanentemente todos os seus dados, serviços e avaliações. Esta ação não pode ser desfeita.
+              </p>
+              <button 
+                onClick={() => setIsDeleteModalOpen(true)} 
+                style={{ backgroundColor: 'rgba(244, 67, 54, 0.1)', color: '#F44336', border: '1px solid #F44336', padding: '10px 15px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}
+              >
+                Excluir Minha Conta
+              </button>
+            </div>
+          </section>
         </main>
       </div>
 
@@ -273,6 +315,25 @@ export default function PerfilPage() {
               </div>
             </form>
 
+          </div>
+        </div>
+      )}
+
+      {isDeleteModalOpen && (
+        <div className={styles.modalOverlay} onClick={() => setIsDeleteModalOpen(false)}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <h3 className={styles.modalTitle} style={{ color: '#F44336' }}>Excluir Conta Permanentemente</h3>
+            <p style={{ color: '#ccc', marginBottom: '20px', textAlign: 'center', lineHeight: '1.5' }}>
+              Tem certeza que deseja excluir sua conta? Todos os seus serviços, clientes e histórico serão perdidos. <br/><br/><b>Esta ação é irreversível.</b>
+            </p>
+            <div className={styles.modalActions}>
+              <button type="button" onClick={() => setIsDeleteModalOpen(false)} className={styles.cancelBtn} disabled={isDeleting}>
+                Cancelar
+              </button>
+              <button onClick={handleDeleteAccount} style={{ backgroundColor: '#F44336', color: '#fff', border: 'none', padding: '12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }} disabled={isDeleting}>
+                {isDeleting ? "Excluindo..." : "Sim, Quero Excluir"}
+              </button>
+            </div>
           </div>
         </div>
       )}

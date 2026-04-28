@@ -53,3 +53,8 @@ export async function updateMe(id: number, data: Partial<User>): Promise<User> {
   const resp = await api.put<User>("/usuario/me", data);
   return resp.data;
 }
+
+// Remove a conta do usuário
+export async function deleteAccount(): Promise<void> {
+  await api.delete("/usuario/me");
+}
