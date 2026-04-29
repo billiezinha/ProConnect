@@ -163,8 +163,8 @@
   position: absolute;
   top: 15px;
   right: -25px;
-  background: #ffc107;
-  color: #000;
+  background: var(--cor-primaria);
+  color: white;
   font-size: 0.7rem;
   font-weight: 800;
   padding: 4px 25px;

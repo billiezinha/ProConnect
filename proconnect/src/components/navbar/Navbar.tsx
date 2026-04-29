@@ -55,10 +55,7 @@ export default function Navbar() {
             <span className={styles.desktopText}>Explorar</span>
           </Link>
 
-          <Link href="/#planos" className={styles.navLink}>
-            <FaStar className={styles.mobileOnlyIcon} style={{ color: '#ffc107' }} />
-            <span className={styles.desktopText}>Planos PRO</span>
-          </Link>
+
 
           <Link href="/favoritos" className={styles.navLink}>
             <div className={styles.favBadgeWrapper}>

@@ -151,7 +151,7 @@ export default function Modal({ profissional, onClose, onOpenChat, isMeuServico 
            <h2>
              {profissional.nomeNegocio || profissional.nome || "Serviço"}
              {profissional.usuario?.plano === "premium" && (
-               <span className={styles.badgePro} title="Profissional Premium"><FaStar color="#ffc107" size={14} style={{ marginLeft: 6, marginBottom: 2 }} /></span>
+               <span className={styles.badgePro} title="Profissional Premium"><FaStar color="var(--cor-primaria)" size={14} style={{ marginLeft: 6, marginBottom: 2 }} /></span>
              )}
            </h2>
            <div className={styles.badgeRow}>

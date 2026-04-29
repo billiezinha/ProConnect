@@ -53,7 +53,7 @@
 }
 
 .starIcon {
-  color: #ffc107;
+  color: var(--cor-primaria, #8b2cf5);
 }
 
 .title {
@@ -78,9 +78,9 @@
 }
 
 .warningBox {
-  background: rgba(255, 193, 7, 0.1);
-  border: 1px solid rgba(255, 193, 7, 0.4);
-  color: #ffc107;
+  background: rgba(139, 44, 245, 0.1);
+  border: 1px solid rgba(139, 44, 245, 0.4);
+  color: var(--cor-primaria, #8b2cf5);
   padding: 1rem 1.5rem;
   border-radius: 12px;
   text-align: center;

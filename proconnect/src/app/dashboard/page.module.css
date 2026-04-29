@@ -48,7 +48,7 @@
 }
 
 .periodoSelect:hover {
-  border-color: #ffc107;
+  border-color: var(--cor-primaria);
 }
 
 .header::before {
@@ -58,7 +58,7 @@
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle at center, rgba(255, 193, 7, 0.1) 0%, transparent 60%);
+  background: radial-gradient(circle at center, rgba(139, 44, 245, 0.15) 0%, transparent 60%);
   pointer-events: none;
 }
 
@@ -74,8 +74,8 @@
   height: 80px;
   border-radius: 16px;
   object-fit: cover;
-  border: 3px solid #ffc107;
-  box-shadow: 0 0 15px rgba(255, 193, 7, 0.3);
+  border: 3px solid var(--cor-primaria);
+  box-shadow: 0 0 15px rgba(139, 44, 245, 0.3);
 }
 
 .avatarPlaceholder {
@@ -87,7 +87,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 3px solid #ffc107;
+  border: 3px solid var(--cor-primaria);
 }
 
 .welcomeText h1 {
@@ -102,28 +102,28 @@
 }
 
 .proBadge {
-  background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
-  color: #000;
+  background: linear-gradient(135deg, var(--cor-primaria) 0%, var(--cor-primaria-hover) 100%);
+  color: white;
   padding: 8px 16px;
   border-radius: 20px;
   font-weight: bold;
   display: flex;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+  box-shadow: 0 4px 15px rgba(139, 44, 245, 0.4);
   font-size: 0.9rem;
 }
 
 /* Alertas/Insights */
 .insightsBox {
-  background: rgba(255, 193, 7, 0.1);
-  border: 1px solid rgba(255, 193, 7, 0.3);
+  background: rgba(139, 44, 245, 0.1);
+  border: 1px solid rgba(139, 44, 245, 0.3);
   border-radius: 12px;
   padding: 20px;
 }
 
 .insightsBox h3 {
-  color: #ffc107;
+  color: var(--cor-primaria);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -147,7 +147,7 @@
 
 .insightsBox li::before {
   content: '•';
-  color: #ffc107;
+  color: var(--cor-primaria);
   position: absolute;
   left: 0;
   font-size: 1.2rem;
@@ -273,7 +273,7 @@
 .rankNum {
   font-size: 3rem;
   font-weight: bold;
-  color: #ffc107;
+  color: var(--cor-primaria);
   line-height: 1;
 }
 
@@ -386,8 +386,8 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
-  color: #000;
+  background: linear-gradient(135deg, var(--cor-primaria) 0%, var(--cor-primaria-hover) 100%);
+  color: white;
   padding: 12px 30px;
   border-radius: 30px;
   font-weight: bold;
